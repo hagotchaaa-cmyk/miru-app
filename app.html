@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miru — Your Matches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --forest:#0F1F12;--forest2:#162A19;--forest3:#1E3B22;
+  --moss:#2D5533;--sage:#5C8A5E;--mint:#A8C8A0;
+  --cream:#F5F0E4;--cream2:#EDE6D2;
+  --pop:#D4F55A;--pop-dim:rgba(212,245,90,0.1);
+  --border:rgba(92,138,94,0.25);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Cabinet Grotesk',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--forest);color:var(--cream);
+  font-family:var(--sans);overflow-x:hidden;min-height:100vh;
+  cursor:none;
+}
+
+/* CURSOR */
+.cursor{position:fixed;width:12px;height:12px;background:var(--pop);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;transition:width .15s,height .15s;}
+.cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(168,200,160,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* BG */
+.bg-blob{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;}
+.bg1{width:500px;height:500px;background:rgba(45,85,51,.25);top:-100px;right:-100px;}
+.bg2{width:400px;height:400px;background:rgba(30,59,34,.3);bottom:-80px;left:-80px;}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;
+  background:rgba(15,31,18,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:baseline;gap:4px;}
+.logo-word{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--cream);}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--pop);margin-bottom:3px;}
+.nav-center{display:flex;gap:0;background:rgba(22,42,25,.6);border:1px solid var(--border);border-radius:999px;padding:3px;}
+.nav-tab{
+  padding:.4rem 1.1rem;border-radius:999px;
+  font-size:12px;font-weight:500;letter-spacing:.5px;
+  color:rgba(245,240,228,.4);cursor:pointer;transition:all .2s;
+  border:none;background:transparent;font-family:var(--sans);
+}
+.nav-tab.active{background:var(--pop);color:var(--forest);font-weight:700;}
+.nav-right{display:flex;align-items:center;gap:.75rem;}
+.nav-notif{
+  position:relative;width:36px;height:36px;border-radius:50%;
+  background:rgba(22,42,25,.7);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .2s;font-size:16px;
+}
+.nav-notif:hover{border-color:var(--sage);}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--pop);border:2px solid var(--forest);}
+.nav-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--moss),var(--forest3));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:14px;font-weight:700;color:var(--cream);
+  border:2px solid var(--pop);cursor:pointer;
+}
+
+/* MAIN LAYOUT */
+main{
+  max-width:480px;margin:0 auto;
+  padding:1.5rem 1.25rem 6rem;
+  position:relative;z-index:1;
+}
+
+/* HEADER */
+.dash-header{margin-bottom:1.5rem;animation:fadeUp .6s .1s both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.dash-greeting{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,228,.4);margin-bottom:.3rem;}
+.dash-title{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.1;}
+.dash-title em{font-style:italic;color:var(--mint);}
+
+/* COUNTDOWN STRIP */
+.countdown-strip{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1rem;border-radius:14px;
+  background:rgba(22,42,25,.6);border:1px solid var(--border);
+  margin-bottom:1.5rem;animation:fadeUp .6s .2s both;
+}
+.cd-left{display:flex;align-items:center;gap:.6rem;}
+.cd-pulse{width:8px;height:8px;border-radius:50%;background:var(--pop);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.cd-text{font-size:13px;color:rgba(245,240,228,.55);}
+.cd-text span{color:var(--cream);font-weight:700;}
+.cd-right{font-size:12px;color:var(--pop);font-weight:700;letter-spacing:.5px;}
+
+/* MATCH CARDS */
+.matches-list{display:flex;flex-direction:column;gap:1.25rem;}
+
+.match-card{
+  border-radius:20px;overflow:hidden;
+  border:1.5px solid var(--border);
+  background:var(--forest2);
+  animation:fadeUp .6s both;
+  transition:border-color .25s,transform .25s;
+}
+.match-card:hover{border-color:rgba(92,138,94,.5);}
+.match-card:nth-child(1){animation-delay:.3s;}
+.match-card:nth-child(2){animation-delay:.45s;}
+.match-card:nth-child(3){animation-delay:.6s;}
+
+/* VIDEO THUMB */
+.video-thumb{
+  position:relative;height:260px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;cursor:pointer;
+}
+.vt-1{background:linear-gradient(145deg,#112216 0%,#1e4025 60%,#2d5533 100%);}
+.vt-2{background:linear-gradient(145deg,#0f1f12 0%,#1a3520 60%,#234428 100%);}
+.vt-3{background:linear-gradient(145deg,#141f10 0%,#223820 60%,#2d4a20 100%);}
+.vt-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,31,18,1) 0%,rgba(15,31,18,.3) 50%,transparent 100%);}
+
+/* Decorative circles in thumb */
+.vt-deco{position:absolute;border-radius:50%;border:1px solid rgba(168,200,160,.08);}
+.vt-deco1{width:200px;height:200px;top:-40px;right:-40px;}
+.vt-deco2{width:120px;height:120px;bottom:20px;left:-20px;}
+
+.play-btn{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(212,245,90,.9);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;
+  box-shadow:0 0 30px rgba(212,245,90,.3);
+  transition:transform .2s,box-shadow .2s;
+}
+.play-btn:hover{transform:scale(1.1);box-shadow:0 0 50px rgba(212,245,90,.5);}
+.play-tri{width:0;height:0;border-style:solid;border-width:9px 0 9px 18px;border-color:transparent transparent transparent var(--forest);margin-left:3px;}
+
+.video-dur{position:absolute;bottom:12px;right:14px;z-index:3;font-size:11px;color:rgba(245,240,228,.6);letter-spacing:.5px;}
+.video-prompt-tag{
+  position:absolute;top:12px;left:12px;z-index:3;
+  padding:4px 10px;border-radius:999px;font-size:11px;font-style:italic;
+  background:rgba(15,31,18,.6);border:1px solid rgba(168,200,160,.2);
+  color:rgba(245,240,228,.7);font-family:var(--serif);
+  backdrop-filter:blur(4px);
+}
+.match-score{
+  position:absolute;top:12px;right:12px;z-index:3;
+  padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(212,245,90,.15);border:1px solid rgba(212,245,90,.3);
+  color:var(--pop);
+}
+
+/* CARD BODY */
+.card-body{padding:1rem 1.1rem 1.1rem;}
+.card-top-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.4rem;}
+.card-name{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1;}
+.card-age{font-size:14px;color:rgba(245,240,228,.4);margin-left:.5rem;}
+.card-distance{font-size:11px;color:rgba(245,240,228,.35);letter-spacing:.5px;margin-top:3px;}
+.card-intent-badge{
+  padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  background:var(--pop-dim);border:1px solid rgba(212,245,90,.25);color:var(--pop);
+  white-space:nowrap;flex-shrink:0;
+}
+
+.card-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0;}
+.ctag{
+  padding:3px 10px;border-radius:999px;font-size:11px;
+  background:rgba(92,138,94,.12);border:1px solid rgba(92,138,94,.25);color:var(--mint);
+}
+
+/* COMPATIBILITY BAR */
+.compat{margin:.75rem 0;}
+.compat-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:.4rem;}
+.compat-label span:first-child{color:rgba(245,240,228,.4);letter-spacing:.5px;text-transform:uppercase;}
+.compat-label span:last-child{color:var(--pop);font-weight:700;}
+.compat-bar{height:3px;background:rgba(92,138,94,.15);border-radius:2px;overflow:hidden;}
+.compat-fill{height:100%;background:var(--pop);border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+
+/* ACTION BUTTONS */
+.card-actions{display:flex;gap:.65rem;margin-top:1rem;}
+.btn-pass{
+  flex:1;padding:.75rem;border-radius:999px;
+  border:1.5px solid var(--border);background:transparent;
+  color:rgba(245,240,228,.45);font-family:var(--sans);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+}
+.btn-pass:hover{border-color:rgba(255,100,100,.4);color:rgba(255,150,150,.7);}
+.btn-connect{
+  flex:2;padding:.75rem;border-radius:999px;
+  border:none;background:var(--pop);color:var(--forest);
+  font-family:var(--sans);font-size:13px;font-weight:800;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 0 30px rgba(212,245,90,.2);
+}
+.btn-connect:hover{transform:translateY(-1px);box-shadow:0 0 50px rgba(212,245,90,.35);}
+.btn-connect.connected{background:var(--forest3);color:var(--mint);border:1.5px solid var(--sage);box-shadow:none;}
+.btn-save{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid var(--border);background:transparent;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;font-size:18px;
+}
+.btn-save:hover{border-color:rgba(212,245,90,.4);background:var(--pop-dim);}
+.btn-save.saved{border-color:var(--pop);background:var(--pop-dim);}
+
+/* EMPTY / ALL DONE STATE */
+.all-done{
+  display:none;text-align:center;padding:4rem 1rem;
+  animation:fadeUp .6s ease both;
+}
+.all-done.show{display:block;}
+.done-icon{font-size:48px;margin-bottom:1rem;}
+.done-title{font-family:var(--serif);font-size:28px;font-weight:700;margin-bottom:.75rem;}
+.done-title em{font-style:italic;color:var(--pop);}
+.done-sub{font-size:14px;color:rgba(245,240,228,.5);line-height:1.7;max-width:300px;margin:0 auto 2rem;}
+.done-time{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.75rem 1.5rem;border-radius:999px;
+  background:rgba(22,42,25,.6);border:1px solid var(--border);
+  font-size:13px;color:var(--mint);
+}
+
+/* BOTTOM NAV (mobile style) */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:.75rem 1rem 1.25rem;
+  background:rgba(15,31,18,.95);
+  backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+}
+.bnav-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;transition:all .2s;padding:.25rem .75rem;border-radius:12px;
+}
+.bnav-item:hover{background:rgba(92,138,94,.1);}
+.bnav-item.active .bnav-icon{color:var(--pop);}
+.bnav-item.active .bnav-label{color:var(--pop);}
+.bnav-icon{font-size:20px;color:rgba(245,240,228,.3);transition:color .2s;}
+.bnav-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,228,.3);transition:color .2s;}
+
+/* PASSED STATE */
+.match-card.passed{
+  opacity:.3;transform:scale(.97);pointer-events:none;
+  transition:all .4s ease;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  padding:.65rem 1.25rem;border-radius:999px;
+  background:var(--forest3);border:1px solid var(--sage);
+  font-size:13px;color:var(--mint);font-weight:500;
+  z-index:200;opacity:0;transition:all .3s;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:480px){
+  main{padding:1.25rem 1rem 6rem;}
+  .nav-center{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+<div class="bg-blob bg1"></div>
+<div class="bg-blob bg2"></div>
+<div class="toast" id="toast"></div>
+
+<nav>
+  <div class="logo"><span class="logo-word">miru</span><div class="logo-dot"></div></div>
+  <div class="nav-center">
+    <button class="nav-tab active">Matches</button>
+    <button class="nav-tab" onclick="showToast('Messages coming soon ✦')">Messages</button>
+    <button class="nav-tab" onclick="showToast('Explore coming soon ✦')">Explore</button>
+  </div>
+  <div class="nav-right">
+    <div class="nav-notif" onclick="showToast('No new notifications')">
+      🔔<div class="notif-dot"></div>
+    </div>
+    <div class="nav-avatar" id="navAvatar" onclick="window.location.href='onboarding.html'">Y</div>
+  </div>
+</nav>
+
+<main>
+  <!-- HEADER -->
+  <div class="dash-header">
+    <div class="dash-greeting">Good morning, <span id="greetName">friend</span> ✦</div>
+    <h1 class="dash-title">Your <em>3 matches</em><br>dropped today.</h1>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-strip">
+    <div class="cd-left">
+      <div class="cd-pulse"></div>
+      <div class="cd-text">Next batch in <span id="countdown">13:47:22</span></div>
+    </div>
+    <div class="cd-right">3 / 3 left</div>
+  </div>
+
+  <!-- MATCHES -->
+  <div class="matches-list" id="matchesList">
+
+    <!-- MATCH 1 -->
+    <div class="match-card" id="card0">
+      <div class="video-thumb vt-1" onclick="showToast('Video playback coming in v2 ✦')">
+        <div class="vt-deco vt-deco1"></div>
+        <div class="vt-deco vt-deco2"></div>
+        <div class="vt-fade"></div>
+        <div class="play-btn"><div class="play-tri"></div></div>
+        <div class="video-dur">0:22</div>
+        <div class="video-prompt-tag">"Make me laugh..."</div>
+        <div class="match-score">97% match</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:.4rem;">
+              <div class="card-name">Sofia R.</div>
+              <span class="card-age">27</span>
+            </div>
+            <div class="card-distance">📍 2.4 mi · Phoenix, AZ</div>
+          </div>
+          <div class="card-intent-badge">Relationship</div>
+        </div>
+        <div class="card-tags">
+          <span class="ctag">chill</span>
+          <span class="ctag">artsy</span>
+          <span class="ctag">tonight</span>
+          <span class="ctag">dog mom</span>
+        </div>
+        <div class="compat">
+          <div class="compat-label"><span>Compatibility</span><span>97%</span></div>
+          <div class="compat-bar"><div class="compat-fill" style="width:0%" data-width="97%"></div></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-pass" onclick="passCard(0)">Pass</button>
+          <button class="btn-connect" id="connect0" onclick="connectCard(0, 'Sofia')">✦ Connect</button>
+          <button class="btn-save" id="save0" onclick="saveCard(0)">🤍</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCH 2 -->
+    <div class="match-card" id="card1">
+      <div class="video-thumb vt-2" onclick="showToast('Video playback coming in v2 ✦')">
+        <div class="vt-deco vt-deco1"></div>
+        <div class="vt-deco vt-deco2"></div>
+        <div class="vt-fade"></div>
+        <div class="play-btn"><div class="play-tri"></div></div>
+        <div class="video-dur">0:18</div>
+        <div class="video-prompt-tag">"Something weird about you..."</div>
+        <div class="match-score">91% match</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:.4rem;">
+              <div class="card-name">Marcus T.</div>
+              <span class="card-age">30</span>
+            </div>
+            <div class="card-distance">📍 1.1 mi · Tempe, AZ</div>
+          </div>
+          <div class="card-intent-badge">Relationship</div>
+        </div>
+        <div class="card-tags">
+          <span class="ctag">adventurous</span>
+          <span class="ctag">deep talks</span>
+          <span class="ctag">weekend</span>
+        </div>
+        <div class="compat">
+          <div class="compat-label"><span>Compatibility</span><span>91%</span></div>
+          <div class="compat-bar"><div class="compat-fill" style="width:0%" data-width="91%"></div></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-pass" onclick="passCard(1)">Pass</button>
+          <button class="btn-connect" id="connect1" onclick="connectCard(1, 'Marcus')">✦ Connect</button>
+          <button class="btn-save" id="save1" onclick="saveCard(1)">🤍</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCH 3 -->
+    <div class="match-card" id="card2">
+      <div class="video-thumb vt-3" onclick="showToast('Video playback coming in v2 ✦')">
+        <div class="vt-deco vt-deco1"></div>
+        <div class="vt-deco vt-deco2"></div>
+        <div class="vt-fade"></div>
+        <div class="play-btn"><div class="play-tri"></div></div>
+        <div class="video-dur">0:29</div>
+        <div class="video-prompt-tag">"Tell me a story..."</div>
+        <div class="match-score">88% match</div>
+      </div>
+      <div class="card-body">
+        <div class="card-top-row">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:.4rem;">
+              <div class="card-name">Priya N.</div>
+              <span class="card-age">26</span>
+            </div>
+            <div class="card-distance">📍 4.8 mi · Scottsdale, AZ</div>
+          </div>
+          <div class="card-intent-badge">Relationship</div>
+        </div>
+        <div class="card-tags">
+          <span class="ctag">intellectual</span>
+          <span class="ctag">homebody</span>
+          <span class="ctag">flexible</span>
+          <span class="ctag">foodie</span>
+        </div>
+        <div class="compat">
+          <div class="compat-label"><span>Compatibility</span><span>88%</span></div>
+          <div class="compat-bar"><div class="compat-fill" style="width:0%" data-width="88%"></div></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-pass" onclick="passCard(2)">Pass</button>
+          <button class="btn-connect" id="connect2" onclick="connectCard(2, 'Priya')">✦ Connect</button>
+          <button class="btn-save" id="save2" onclick="saveCard(2)">🤍</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end matches-list -->
+
+  <!-- ALL DONE -->
+  <div class="all-done" id="allDone">
+    <div class="done-icon">✦</div>
+    <h2 class="done-title">You're all caught up,<br><em id="doneName">friend.</em></h2>
+    <p class="done-sub">You've seen today's matches. New ones drop tomorrow morning. Good things take time.</p>
+    <div class="done-time">🌙 Next matches in <span id="doneCountdown">13:47:22</span></div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-item active">
+    <div class="bnav-icon">💚</div>
+    <div class="bnav-label">Matches</div>
+  </div>
+  <div class="bnav-item" onclick="showToast('Messages coming soon ✦')">
+    <div class="bnav-icon">💬</div>
+    <div class="bnav-label">Messages</div>
+  </div>
+  <div class="bnav-item" onclick="showToast('Explore coming soon ✦')">
+    <div class="bnav-icon">🔍</div>
+    <div class="bnav-label">Explore</div>
+  </div>
+  <div class="bnav-item" onclick="window.location.href='onboarding.html'">
+    <div class="bnav-icon">👤</div>
+    <div class="bnav-label">Profile</div>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+
+// LOAD PROFILE NAME
+const profile=JSON.parse(localStorage.getItem('miru_profile')||'{}');
+const name=profile.name||'friend';
+document.getElementById('greetName').textContent=name;
+document.getElementById('doneName').textContent=name+'!';
+document.getElementById('navAvatar').textContent=(name[0]||'Y').toUpperCase();
+
+// COUNTDOWN TIMER
+function updateCountdown(){
+  const now=new Date();
+  const next=new Date();
+  next.setHours(9,0,0,0);
+  if(now>=next)next.setDate(next.getDate()+1);
+  const diff=next-now;
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  const str=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('countdown').textContent=str;
+  const dc=document.getElementById('doneCountdown');
+  if(dc)dc.textContent=str;
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+
+// COMPAT BARS — animate in on scroll
+const bars=document.querySelectorAll('.compat-fill');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.width=e.target.dataset.width;
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.5});
+bars.forEach(b=>io.observe(b));
+
+// STATE
+let passed=0;
+const cardStates={0:'idle',1:'idle',2:'idle'};
+
+// PASS
+function passCard(i){
+  const card=document.getElementById('card'+i);
+  card.classList.add('passed');
+  cardStates[i]='passed';
+  passed++;
+  showToast('Passed — no worries ✦');
+  checkAllDone();
+}
+
+// CONNECT
+function connectCard(i,name){
+  const btn=document.getElementById('connect'+i);
+  if(btn.classList.contains('connected')){showToast('Already connected with '+name+' ✦');return;}
+  btn.classList.add('connected');
+  btn.textContent='✓ Connected';
+  cardStates[i]='connected';
+  showToast('You connected with '+name+'! ✦');
+}
+
+// SAVE
+function saveCard(i){
+  const btn=document.getElementById('save'+i);
+  btn.classList.toggle('saved');
+  btn.textContent=btn.classList.contains('saved')?'💚':'🤍';
+  showToast(btn.classList.contains('saved')?'Saved ✦':'Removed from saved');
+}
+
+// CHECK ALL DONE
+function checkAllDone(){
+  const allActioned=Object.values(cardStates).every(s=>s!=='idle');
+  if(allActioned||passed===3){
+    setTimeout(()=>{
+      document.getElementById('matchesList').style.display='none';
+      document.getElementById('allDone').classList.add('show');
+    },600);
+  }
+}
+
+// TOAST
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
