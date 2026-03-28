@@ -418,7 +418,7 @@ html,body{
 
       <!-- CARD 1 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v1" onclick="toast('Video coming in v2 ✦')">
+        <div class="mcm-video mcm-v1" onclick="toast('Video playback coming soon')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Make me laugh..."</div>
@@ -426,7 +426,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Sofia R.</span><span class="mcm-age">27</span></div><div class="mcm-loc">📍 2.4 mi · Phoenix</div></div>
+            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">27</span></div><div class="mcm-loc">📍 2.4 mi · Phoenix</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">chill</span><span class="mtag">artsy</span><span class="mtag">tonight</span></div>
@@ -436,14 +436,14 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'Sofia')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
           </div>
         </div>
       </div>
 
       <!-- CARD 2 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v2" onclick="toast('Video coming in v2 ✦')">
+        <div class="mcm-video mcm-v2" onclick="toast('Video playback coming soon')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Something weird..."</div>
@@ -451,7 +451,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Marcus T.</span><span class="mcm-age">30</span></div><div class="mcm-loc">📍 1.1 mi · Tempe</div></div>
+            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">30</span></div><div class="mcm-loc">📍 1.1 mi · Tempe</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">adventurous</span><span class="mtag">deep talks</span></div>
@@ -461,14 +461,14 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'Marcus')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
           </div>
         </div>
       </div>
 
       <!-- CARD 3 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v3" onclick="toast('Video coming in v2 ✦')">
+        <div class="mcm-video mcm-v3" onclick="toast('Video playback coming soon')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Tell me a story..."</div>
@@ -476,7 +476,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Priya N.</span><span class="mcm-age">26</span></div><div class="mcm-loc">📍 4.8 mi · Scottsdale</div></div>
+            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">26</span></div><div class="mcm-loc">📍 4.8 mi · Scottsdale</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">intellectual</span><span class="mtag">foodie</span></div>
@@ -486,7 +486,7 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'Priya')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
           </div>
         </div>
       </div>
@@ -501,7 +501,7 @@ html,body{
       <div class="notif-item unread">
         <div class="notif-avatar nav-sofia">S</div>
         <div class="notif-content">
-          <div class="notif-title">Sofia R. liked you back ✦</div>
+          <div class="notif-title">Your Match liked you back ✦</div>
           <div class="notif-body">You matched! Send her a message before someone else does.</div>
           <div class="notif-time">2 minutes ago</div>
         </div>
@@ -510,7 +510,7 @@ html,body{
       <div class="notif-item unread">
         <div class="notif-avatar nav-marcus">M</div>
         <div class="notif-content">
-          <div class="notif-title">Marcus T. sent you a message</div>
+          <div class="notif-title">Your Match sent you a message</div>
           <div class="notif-body">"Hey! I watched your video like three times 😭"</div>
           <div class="notif-time">1 hour ago</div>
         </div>
@@ -527,7 +527,7 @@ html,body{
       <div class="notif-item">
         <div class="notif-avatar nav-priya">P</div>
         <div class="notif-content">
-          <div class="notif-title">Priya N. viewed your profile</div>
+          <div class="notif-title">Your Match viewed your profile</div>
           <div class="notif-body">She spent 2 minutes on your page. Maybe reach out?</div>
           <div class="notif-time">3 hours ago</div>
         </div>
@@ -584,7 +584,7 @@ const loadInterval=setInterval(()=>{
 },200);
 
 function launchApp(){
-  checkLogin();} async function checkLogin(){ const k=localStorage.getItem('sb-rlmcwbaiuowbkgfzdlme-auth-token'); if(!k){window.location.href='auth.html';return;} document.getElementById('splash').classList.add('hide');
+  document.getElementById('splash').classList.add('hide');
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     document.getElementById('appShell').classList.add('show');
@@ -655,4 +655,3 @@ function toast(msg){
 </script>
 </body>
 </html>
-
