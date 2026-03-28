@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#F8F6FF">
-<title>Miru</title>
+<title>Miru — Matches</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -19,26 +19,65 @@
   --sans:'DM Sans',sans-serif;
   --radius:16px;--radius-lg:24px;--radius-pill:999px;
   --shadow:0 2px 20px rgba(124,92,191,0.08);
+  --shadow-lg:0 8px 40px rgba(124,92,191,0.15);
 }
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;overflow-x:hidden;min-height:100vh;-webkit-tap-highlight-color:transparent;}
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(248,246,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(248,246,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
 .logo{display:flex;align-items:center;gap:6px;}
 .logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;}
 .logo-eye{width:18px;height:11px;border:2px solid #fff;border-radius:999px;display:flex;align-items:center;justify-content:center;}
 .logo-pupil{width:5px;height:5px;border-radius:50%;background:#fff;}
 .logo-word{font-family:var(--serif);font-size:20px;font-weight:700;font-style:italic;color:var(--text);}
-.nav-right{display:flex;align-items:center;gap:.6rem;}
-.nav-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;position:relative;}
-.nav-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--like);border:2px solid var(--bg);}
+.nav-right{display:flex;align-items:center;gap:.6rem;position:relative;}
+.nav-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;position:relative;transition:all .2s;}
+.nav-btn:hover{border-color:var(--purple-light);background:var(--purple-pale);}
+.nav-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--like);border:2px solid var(--bg);display:none;}
+.nav-badge.show{display:block;}
 .nav-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;border:2px solid var(--purple-light);cursor:pointer;}
+
+/* NOTIFICATION DROPDOWN */
+.notif-dropdown{
+  position:absolute;top:48px;right:0;width:320px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);
+  z-index:200;display:none;overflow:hidden;
+}
+.notif-dropdown.show{display:block;}
+.notif-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;border-bottom:1px solid var(--border);}
+.notif-title{font-size:14px;font-weight:600;color:var(--text);}
+.notif-mark-all{font-size:12px;color:var(--purple);cursor:pointer;font-weight:500;}
+.notif-list{max-height:340px;overflow-y:auto;}
+.notif-item{display:flex;align-items:flex-start;gap:.75rem;padding:.85rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:var(--surface2);}
+.notif-item.unread{background:var(--purple-pale);}
+.notif-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ni-match{background:#FFE8ED;}
+.ni-like{background:#FFE8ED;}
+.ni-msg{background:#EDE8FF;}
+.ni-super{background:#E8F0FF;}
+.ni-daily{background:#EDE8FF;}
+.notif-content{flex:1;min-width:0;}
+.notif-text{font-size:13px;color:var(--text);line-height:1.45;}
+.notif-text strong{font-weight:600;}
+.notif-time{font-size:11px;color:var(--text3);margin-top:3px;}
+.notif-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px;}
+.notif-empty{padding:2rem;text-align:center;font-size:14px;color:var(--text3);}
+.notif-footer{padding:.75rem 1rem;border-top:1px solid var(--border);text-align:center;}
+.notif-footer-btn{font-size:13px;color:var(--purple);font-weight:500;cursor:pointer;}
+
+/* MODE */
 .mode-wrap{padding:.75rem 1.25rem 0;}
 .mode-toggle{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;}
 .mode-pill{flex:1;padding:.5rem;border-radius:var(--radius-pill);text-align:center;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:var(--sans);}
 .mode-pill.active{background:var(--purple);color:#fff;font-weight:600;}
+
 main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 
-/* SWIPE COUNTER */
+/* SWIPE BAR */
 .swipe-bar{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:1rem;}
 .swipe-left{display:flex;flex-direction:column;gap:4px;flex:1;}
 .swipe-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
@@ -50,6 +89,7 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 .swipe-fill{height:100%;border-radius:2px;transition:width .3s ease;}
 .upgrade-btn{padding:.5rem 1rem;border-radius:var(--radius-pill);background:linear-gradient(135deg,var(--gold),#E8920A);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;border:none;cursor:pointer;box-shadow:0 2px 10px rgba(245,166,35,.3);white-space:nowrap;margin-left:.75rem;}
 
+/* DASH HEADER */
 .dash-header{margin-bottom:1rem;}
 .dash-greeting{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem;}
 .dash-title{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.15;}
@@ -59,6 +99,26 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 @keyframes cdPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 .cd-time{font-weight:600;color:var(--purple);}
 .swipe-hint{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.5rem;margin-bottom:.75rem;font-size:12px;color:var(--text3);}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:3rem 1rem;
+  background:var(--surface);border-radius:var(--radius-lg);
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.empty-icon{font-size:56px;margin-bottom:1rem;}
+.empty-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:.5rem;}
+.empty-title em{font-style:italic;color:var(--purple);}
+.empty-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;}
+.empty-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:13px;color:var(--purple);font-weight:500;}
+.empty-explore{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.75rem 1.5rem;border-radius:var(--radius-pill);
+  background:var(--purple);color:#fff;
+  font-family:var(--sans);font-size:14px;font-weight:600;
+  border:none;cursor:pointer;margin-top:1rem;
+  box-shadow:0 4px 16px rgba(124,92,191,.2);
+}
 
 /* PROFILE CARD */
 .profile-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.25rem;position:relative;touch-action:pan-y;user-select:none;}
@@ -102,9 +162,6 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 .g4{background:linear-gradient(145deg,#e6ffe6,#ccf0cc);}
 .g5{background:linear-gradient(145deg,#fff8e6,#ffe8cc);}
 .g6{background:linear-gradient(145deg,#f0e6ff,#e0ccff);}
-.g7{background:linear-gradient(145deg,#ffe6e6,#ffd0d0);}
-.g8{background:linear-gradient(145deg,#e6fff8,#ccf0e8);}
-.g9{background:linear-gradient(145deg,#f8e6ff,#f0ccff);}
 .grid-type{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:var(--radius-pill);font-size:9px;font-weight:600;background:rgba(255,255,255,.88);color:var(--text2);}
 .grid-type.vid{color:var(--purple);}
 .card-actions{display:flex;gap:.6rem;padding:.85rem 1.1rem 1.1rem;border-top:1px solid var(--border);}
@@ -153,14 +210,6 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 .success-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:2rem;max-width:300px;}
 .success-go{padding:.9rem 2.5rem;border-radius:var(--radius-pill);background:var(--purple);color:#fff;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;}
 
-.all-done{display:none;text-align:center;padding:4rem 1rem;}
-.all-done.show{display:block;}
-.done-emoji{font-size:52px;margin-bottom:1rem;}
-.done-title{font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:.75rem;}
-.done-title em{font-style:italic;color:var(--purple);}
-.done-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;}
-.done-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:13px;color:var(--purple);font-weight:500;}
-
 .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);padding:.6rem 1.25rem;border-radius:var(--radius-pill);font-size:13px;font-weight:500;z-index:999;background:var(--text);color:#fff;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.like-t{background:var(--like);}
@@ -179,13 +228,32 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 <body>
 <div class="toast" id="toast"></div>
 
+<!-- NAV -->
 <div class="nav">
   <div class="logo">
     <div class="logo-mark"><div class="logo-eye"><div class="logo-pupil"></div></div></div>
     <span class="logo-word">miru</span>
   </div>
   <div class="nav-right">
-    <div class="nav-btn" onclick="showPW('upgrade')">🔔<div class="nav-badge"></div></div>
+    <div class="nav-btn" id="bellBtn" onclick="toggleNotifs()">
+      🔔
+      <div class="nav-badge" id="notifBadge"></div>
+    </div>
+
+    <!-- NOTIFICATION DROPDOWN -->
+    <div class="notif-dropdown" id="notifDropdown">
+      <div class="notif-header">
+        <div class="notif-title">Notifications</div>
+        <div class="notif-mark-all" onclick="markAllRead()">Mark all read</div>
+      </div>
+      <div class="notif-list" id="notifList">
+        <!-- populated by JS -->
+      </div>
+      <div class="notif-footer">
+        <div class="notif-footer-btn" onclick="toggleNotifs()">Close</div>
+      </div>
+    </div>
+
     <div class="nav-avatar" id="navAv">Y</div>
   </div>
 </div>
@@ -198,8 +266,8 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 </div>
 
 <main>
-  <!-- SWIPE COUNTER BAR -->
-  <div class="swipe-bar">
+  <!-- SWIPE BAR -->
+  <div class="swipe-bar" style="margin-top:1rem;">
     <div class="swipe-left">
       <div class="swipe-label">Today's swipes</div>
       <div class="swipe-counts">
@@ -213,7 +281,7 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
 
   <div class="dash-header">
     <div class="dash-greeting">Good morning, <span id="greetName">friend</span> ✦</div>
-    <h1 class="dash-title">Your <em>3 matches</em><br>are waiting.</h1>
+    <h1 class="dash-title">Your <em>matches</em><br>are waiting.</h1>
   </div>
 
   <div class="countdown">
@@ -225,118 +293,28 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
     <span>👈 Pass</span><span>⚡ Swipe up = Super</span><span>👉 Like</span>
   </div>
 
+  <!-- MATCHES LIST — empty by default, populated by backend -->
   <div id="matchList">
-    <!-- CARD 1 -->
-    <div class="profile-card" id="card0">
-      <div class="swipe-like" id="like0">LIKE ❤️</div>
-      <div class="swipe-pass" id="pass0">PASS</div>
-      <div class="swipe-super" id="super0">SUPER ⚡</div>
-      <div class="card-hero" onclick="toast2('Video coming soon ✦','')">
-        <div class="hero-bg h1"></div><div class="hero-fade"></div>
-        <div class="hero-play"><div class="play-tri"></div></div>
-        <div class="hero-prompt">"Make me laugh..."</div>
-        <div class="hero-score">97% match</div>
-      </div>
-      <div class="card-info">
-        <div class="info-top">
-          <div><div><span class="info-name">Sofia R.</span><span class="info-age">27</span></div><div class="info-loc">📍 2.4 mi · Phoenix, AZ</div></div>
-          <div class="info-intent">Relationship</div>
-        </div>
-        <div class="card-bio">Graphic designer by day, chaotic baker by night. Will challenge you to a hot sauce contest and win. Dogs non-negotiable — mine is named Pretzel.</div>
-        <div class="card-tags"><span class="ctag">🛋️ chill</span><span class="ctag">🎨 artsy</span><span class="ctag">🐶 dog mom</span><span class="ctag">🕐 tonight</span></div>
-        <div class="compat-wrap"><div class="compat-row"><span>Compatibility</span><span>97%</span></div><div class="compat-track"><div class="compat-fill" data-w="97%" style="width:0"></div></div></div>
-      </div>
-      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">9 photos · 3 videos</div></div>
-      <div class="photo-grid">
-        <div class="grid-item"><div class="grid-bg g1"></div><div class="grid-type vid">▶ 0:22</div></div>
-        <div class="grid-item"><div class="grid-bg g2"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g4"></div><div class="grid-type vid">▶ 0:18</div></div>
-        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g6"></div><div class="grid-type">📷</div></div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-msg" onclick="window.location.href='messages.html'">💬 Message Sofia</button>
-        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Profile</button>
-      </div>
+
+    <!-- EMPTY STATE — shows when no matches yet -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">💜</div>
+      <h2 class="empty-title">Your matches are<br><em>on their way.</em></h2>
+      <p class="empty-sub">Complete your profile and your first 3 curated matches will drop tomorrow at 9am. In the meantime, explore on your own.</p>
+      <div class="empty-pill">🌙 First matches drop at 9am tomorrow</div>
+      <br>
+      <button class="empty-explore" onclick="window.location.href='explore.html'">
+        👆 Explore now
+      </button>
     </div>
 
-    <!-- CARD 2 -->
-    <div class="profile-card" id="card1">
-      <div class="swipe-like" id="like1">LIKE ❤️</div>
-      <div class="swipe-pass" id="pass1">PASS</div>
-      <div class="swipe-super" id="super1">SUPER ⚡</div>
-      <div class="card-hero" onclick="toast2('Video coming soon ✦','')">
-        <div class="hero-bg h2"></div><div class="hero-fade"></div>
-        <div class="hero-play"><div class="play-tri"></div></div>
-        <div class="hero-prompt">"Something weird..."</div>
-        <div class="hero-score">91% match</div>
-      </div>
-      <div class="card-info">
-        <div class="info-top">
-          <div><div><span class="info-name">Marcus T.</span><span class="info-age">30</span></div><div class="info-loc">📍 1.1 mi · Tempe, AZ</div></div>
-          <div class="info-intent">Relationship</div>
-        </div>
-        <div class="card-bio">Software engineer who actually goes outside. Hiked 14 peaks last year. Looking for someone to debate the best Coen Brothers film over coffee.</div>
-        <div class="card-tags"><span class="ctag">🏄 adventurous</span><span class="ctag">📚 deep talks</span><span class="ctag">☕ coffee</span><span class="ctag">🗓️ weekend</span></div>
-        <div class="compat-wrap"><div class="compat-row"><span>Compatibility</span><span>91%</span></div><div class="compat-track"><div class="compat-fill" data-w="91%" style="width:0"></div></div></div>
-      </div>
-      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">7 photos · 2 videos</div></div>
-      <div class="photo-grid">
-        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type vid">▶ 0:18</div></div>
-        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g7"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g1"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g4"></div><div class="grid-type vid">▶ 0:25</div></div>
-        <div class="grid-item"><div class="grid-bg g8"></div><div class="grid-type">📷</div></div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-msg" onclick="window.location.href='messages.html'">💬 Message Marcus</button>
-        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Profile</button>
-      </div>
-    </div>
-
-    <!-- CARD 3 -->
-    <div class="profile-card" id="card2">
-      <div class="swipe-like" id="like2">LIKE ❤️</div>
-      <div class="swipe-pass" id="pass2">PASS</div>
-      <div class="swipe-super" id="super2">SUPER ⚡</div>
-      <div class="card-hero" onclick="toast2('Video coming soon ✦','')">
-        <div class="hero-bg h3"></div><div class="hero-fade"></div>
-        <div class="hero-play"><div class="play-tri"></div></div>
-        <div class="hero-prompt">"Tell me a story..."</div>
-        <div class="hero-score">88% match</div>
-      </div>
-      <div class="card-info">
-        <div class="info-top">
-          <div><div><span class="info-name">Priya N.</span><span class="info-age">26</span></div><div class="info-loc">📍 4.8 mi · Scottsdale, AZ</div></div>
-          <div class="info-intent">Relationship</div>
-        </div>
-        <div class="card-bio">UX researcher who reads menus like novels. Will make you try the weird thing. Looking for someone who makes ordinary Tuesdays feel like a choice.</div>
-        <div class="card-tags"><span class="ctag">📚 intellectual</span><span class="ctag">🍜 foodie</span><span class="ctag">🏠 homebody</span><span class="ctag">🌿 flexible</span></div>
-        <div class="compat-wrap"><div class="compat-row"><span>Compatibility</span><span>88%</span></div><div class="compat-track"><div class="compat-fill" data-w="88%" style="width:0"></div></div></div>
-      </div>
-      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">11 photos · 3 videos</div></div>
-      <div class="photo-grid">
-        <div class="grid-item"><div class="grid-bg g6"></div><div class="grid-type vid">▶ 0:29</div></div>
-        <div class="grid-item"><div class="grid-bg g8"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g2"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g9"></div><div class="grid-type">📷</div></div>
-        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type vid">▶ 0:15</div></div>
-        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type">📷</div></div>
-      </div>
-      <div class="card-actions">
-        <button class="btn-msg" onclick="window.location.href='messages.html'">💬 Message Priya</button>
-        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Profile</button>
-      </div>
-    </div>
   </div>
 
-  <div class="all-done" id="allDone">
-    <div class="done-emoji">✨</div>
-    <h2 class="done-title">All caught up,<br><em id="doneName">friend.</em></h2>
-    <p class="done-sub">New matches drop tomorrow at 9am. Good things take time.</p>
-    <div class="done-pill">🌙 Next matches in <span id="doneTime">—</span></div>
+  <div class="all-done" id="allDone" style="display:none;text-align:center;padding:4rem 1rem;">
+    <div style="font-size:52px;margin-bottom:1rem;">✨</div>
+    <h2 style="font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:.75rem;">All caught up, <em style="font-style:italic;color:var(--purple);" id="doneName">friend.</em></h2>
+    <p style="font-size:14px;color:var(--text2);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;">New matches drop tomorrow at 9am.</p>
+    <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:13px;color:var(--purple);font-weight:500;">🌙 Next matches in <span id="doneTime">—</span></div>
   </div>
 </main>
 
@@ -353,7 +331,7 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
     <div class="sheet-handle"></div>
     <div class="pw-icon" id="pwIcon">😮</div>
     <h2 class="pw-title" id="pwTitle">You're out of<br><em>swipes today.</em></h2>
-    <p class="pw-sub" id="pwSub">You've used all 40 free swipes. Upgrade to keep going — or come back tomorrow.</p>
+    <p class="pw-sub" id="pwSub">You've used all 40 free swipes. Upgrade to keep going.</p>
     <div class="compare-table">
       <div class="cr hdr"><div></div><div class="cv">Free</div><div class="cp">Premium</div></div>
       <div class="cr"><div class="cf">Daily swipes</div><div class="cv">40</div><div class="cp">Unlimited</div></div>
@@ -381,15 +359,15 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
   </div>
 </div>
 
-<!-- SUCCESS -->
 <div class="success-screen" id="successScreen">
   <div class="success-icon">⭐</div>
   <h2 class="success-title">Welcome to<br><em>Miru Premium!</em></h2>
-  <p class="success-sub">Unlimited swipes, 10 super likes a day, and priority matching — all yours. Go find your person.</p>
+  <p class="success-sub">Unlimited swipes, 10 super likes, and priority matching — all yours.</p>
   <button class="success-go" onclick="document.getElementById('successScreen').classList.remove('show')">Let's go →</button>
 </div>
 
 <script>
+// SWIPE STATE
 const FREE_SWIPES=40,FREE_SUPERS=3,PREM_SUPERS=10;
 let S=JSON.parse(localStorage.getItem('miru_swipes')||'null')||{sw:FREE_SWIPES,su:FREE_SUPERS,premium:false,day:new Date().toDateString()};
 if(S.day!==new Date().toDateString()){S.sw=S.premium?9999:FREE_SWIPES;S.su=S.premium?PREM_SUPERS:FREE_SUPERS;S.day=new Date().toDateString();save();}
@@ -404,12 +382,14 @@ function updateBar(){
 }
 updateBar();
 
+// PROFILE
 const p=JSON.parse(localStorage.getItem('miru_profile')||'{}');
 const nm=p.name||'friend';
 document.getElementById('greetName').textContent=nm;
 document.getElementById('doneName').textContent=nm+'!';
 document.getElementById('navAv').textContent=(nm[0]||'Y').toUpperCase();
 
+// COUNTDOWN
 function updateCD(){
   const now=new Date(),next=new Date();next.setHours(9,0,0,0);if(now>=next)next.setDate(next.getDate()+1);
   const d=next-now,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
@@ -419,27 +399,78 @@ function updateCD(){
 }
 updateCD();setInterval(updateCD,1000);
 
-const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.style.width=x.target.dataset.w;io.unobserve(x.target);}});},{threshold:.5});
-document.querySelectorAll('.compat-fill').forEach(b=>io.observe(b));
+// NOTIFICATIONS
+const NOTIFS=[
+  {id:1,type:'daily',icon:'💜',text:'<strong>Your matches are ready!</strong> 3 new people picked just for you.',time:'9:00 AM',unread:true,niClass:'ni-daily'},
+  {id:2,type:'like',icon:'❤️',text:'<strong>Someone liked you!</strong> Upgrade to see who.',time:'2h ago',unread:true,niClass:'ni-like'},
+  {id:3,type:'super',icon:'⚡',text:'<strong>You got a Super Like!</strong> Someone really wants to connect.',time:'3h ago',unread:true,niClass:'ni-super'},
+  {id:4,type:'match',icon:'🎉',text:'<strong>New match!</strong> You and someone connected.',time:'Yesterday',unread:false,niClass:'ni-match'},
+  {id:5,type:'msg',icon:'💬',text:'<strong>New message</strong> waiting for you.',time:'Yesterday',unread:false,niClass:'ni-msg'},
+];
 
-let tt2;
-function toast2(msg,type){
-  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type?type+'-t':'')+' show';
-  clearTimeout(tt2);tt2=setTimeout(()=>t.classList.remove('show'),2000);
+let notifState=JSON.parse(localStorage.getItem('miru_notifs')||'null')||NOTIFS;
+
+function renderNotifs(){
+  const list=document.getElementById('notifList');
+  const unread=notifState.filter(n=>n.unread);
+  const badge=document.getElementById('notifBadge');
+  badge.classList.toggle('show',unread.length>0);
+  if(notifState.length===0){list.innerHTML='<div class="notif-empty">No notifications yet</div>';return;}
+  list.innerHTML=notifState.map(n=>`
+    <div class="notif-item ${n.unread?'unread':''}" onclick="readNotif(${n.id})">
+      <div class="notif-icon ${n.niClass}">${n.icon}</div>
+      <div class="notif-content">
+        <div class="notif-text">${n.text}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+      ${n.unread?'<div class="notif-unread-dot"></div>':''}
+    </div>
+  `).join('');
 }
 
+function toggleNotifs(){
+  const dd=document.getElementById('notifDropdown');
+  dd.classList.toggle('show');
+  if(dd.classList.contains('show'))renderNotifs();
+}
+
+function readNotif(id){
+  notifState=notifState.map(n=>n.id===id?{...n,unread:false}:n);
+  localStorage.setItem('miru_notifs',JSON.stringify(notifState));
+  renderNotifs();
+}
+
+function markAllRead(){
+  notifState=notifState.map(n=>({...n,unread:false}));
+  localStorage.setItem('miru_notifs',JSON.stringify(notifState));
+  renderNotifs();
+}
+
+// Close notifs when clicking outside
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('notifDropdown');
+  const bell=document.getElementById('bellBtn');
+  if(!dd.contains(e.target)&&!bell.contains(e.target)){dd.classList.remove('show');}
+});
+
+renderNotifs();
+
+// TOAST
+let tt;
+function toast2(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type?type+'-t':'')+' show';
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// PAYWALL
 function showPW(mode){
-  if(mode==='out_sw'){document.getElementById('pwIcon').textContent='😮';document.getElementById('pwTitle').innerHTML='Out of<br><em>swipes today.</em>';document.getElementById('pwSub').textContent='You\'ve used all 40 free swipes. Upgrade to keep going — or come back tomorrow.';}
-  else if(mode==='out_su'){document.getElementById('pwIcon').textContent='⚡';document.getElementById('pwTitle').innerHTML='Out of<br><em>super likes.</em>';document.getElementById('pwSub').textContent='You\'ve used your 3 free super likes. Get 10 per day with Premium for just $3.99/month.';}
-  else{document.getElementById('pwIcon').textContent='⭐';document.getElementById('pwTitle').innerHTML='Unlock<br><em>Miru Premium.</em>';document.getElementById('pwSub').textContent='Unlimited swipes, 10 super likes, priority matching — all for $3.99/month.';}
+  if(mode==='out_sw'){document.getElementById('pwIcon').textContent='😮';document.getElementById('pwTitle').innerHTML='Out of<br><em>swipes today.</em>';document.getElementById('pwSub').textContent='You\'ve used all 40 free swipes. Upgrade to keep going.';}
+  else if(mode==='out_su'){document.getElementById('pwIcon').textContent='⚡';document.getElementById('pwTitle').innerHTML='Out of<br><em>super likes.</em>';document.getElementById('pwSub').textContent='Get 10 super likes per day with Premium.';}
+  else{document.getElementById('pwIcon').textContent='⭐';document.getElementById('pwTitle').innerHTML='Unlock<br><em>Miru Premium.</em>';document.getElementById('pwSub').textContent='Unlimited swipes, 10 super likes, priority matching.';}
   document.getElementById('pwOverlay').classList.add('show');
 }
 function closePW(e){if(!e||e.target===document.getElementById('pwOverlay'))document.getElementById('pwOverlay').classList.remove('show');}
-function subscribe(){ window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00'; return;
-  document.getElementById('pwOverlay').classList.remove('show');
-  S.premium=true;S.sw=9999;S.su=PREM_SUPERS;save();updateBar();
-  setTimeout(()=>document.getElementById('successScreen').classList.add('show'),300);
-}
+function subscribe(){ window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00'; }
 
 function useSwipe(action){
   if(!S.premium){
@@ -451,7 +482,11 @@ function useSwipe(action){
   save();updateBar();return true;
 }
 
+// SWIPE SETUP — only runs if real match cards exist
 let actioned=0;
+const cards=document.querySelectorAll('.profile-card');
+const total=cards.length;
+
 function setupSwipe(card,idx){
   let sx=0,sy=0,cx=0,cy=0,drag=false;
   const L=document.getElementById('like'+idx),P=document.getElementById('pass'+idx),U=document.getElementById('super'+idx);
@@ -482,6 +517,7 @@ function setupSwipe(card,idx){
   document.addEventListener('mousemove',e=>{if(drag)move(e.clientX,e.clientY);});
   document.addEventListener('mouseup',end);
 }
+
 function dismiss(card,action){
   const tx=action==='like'?600:action==='pass'?-600:0,ty=action==='super'?-700:50,rot=action==='like'?25:action==='pass'?-25:0;
   card.style.transition='transform .4s ease,opacity .35s ease';
@@ -491,9 +527,16 @@ function dismiss(card,action){
   if(action==='like')toast2('❤️ Liked!','like');
   else if(action==='pass')toast2('Passed','pass');
   else toast2('⚡ Super liked!','super');
-  setTimeout(()=>{card.style.display='none';if(actioned>=3){document.getElementById('matchList').style.display='none';document.getElementById('allDone').classList.add('show');}},400);
+  setTimeout(()=>{
+    card.style.display='none';
+    if(actioned>=total&&total>0){
+      document.getElementById('matchList').style.display='none';
+      document.getElementById('allDone').style.display='block';
+    }
+  },400);
 }
-document.querySelectorAll('.profile-card').forEach((c,i)=>setupSwipe(c,i));
+
+cards.forEach((c,i)=>setupSwipe(c,i));
 </script>
 </body>
 </html>
