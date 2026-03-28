@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9B7FD4"/>
+      <stop offset="50%" style="stop-color:#7C5CBF"/>
+      <stop offset="100%" style="stop-color:#5A3D9A"/>
+    </linearGradient>
+    <linearGradient id="eyeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EDE8FF"/>
+      <stop offset="100%" style="stop-color:#C4B0F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="230" ry="230" fill="url(#bg)"/>
+  <ellipse cx="512" cy="420" rx="380" ry="280" fill="rgba(255,255,255,0.06)"/>
+  <path d="M 180 512 Q 512 280 844 512 Q 512 744 180 512 Z" fill="none" stroke="white" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="512" cy="512" r="140" fill="url(#eyeGlow)"/>
+  <circle cx="512" cy="512" r="80" fill="#7C5CBF"/>
+  <circle cx="548" cy="478" r="28" fill="rgba(255,255,255,0.7)"/>
+  <circle cx="476" cy="546" r="14" fill="rgba(255,255,255,0.35)"/>
+  <line x1="512" y1="268" x2="512" y2="312" stroke="white" stroke-width="28" stroke-linecap="round"/>
+  <line x1="400" y1="290" x2="416" y2="332" stroke="white" stroke-width="22" stroke-linecap="round"/>
+  <line x1="624" y1="290" x2="608" y2="332" stroke="white" stroke-width="22" stroke-linecap="round"/>
+  <text x="512" y="760" font-family="Georgia, serif" font-size="148" font-style="italic" font-weight="700" fill="white" text-anchor="middle" letter-spacing="-4">miru</text>
+  <circle cx="706" cy="730" r="20" fill="#C4B0F0"/>
+</svg>
