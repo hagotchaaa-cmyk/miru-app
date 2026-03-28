@@ -331,7 +331,7 @@ body{
 
 <!-- TOP NAV -->
 <div class="top-nav">
-  <a href="explore.html" class="back-btn">←</a>
+  <a href="app.html" class="back-btn">←</a>
   <div class="nav-name">Your Match</div>
   <div class="nav-more" onclick="showToast('Reported ✓')">⋯</div>
 </div>
@@ -341,7 +341,7 @@ body{
   <div class="hero-bg">
     <div class="hero-orb hero-orb1"></div>
     <div class="hero-orb hero-orb2"></div>
-    <div class="hero-play" onclick="showToast('Video playback coming in v2 ✦')">
+    <div class="hero-play" onclick="showToast('Video playback coming soon ✦')">
       <div class="play-tri"></div>
     </div>
     <div class="hero-dur">0:22</div>
@@ -629,7 +629,7 @@ function renderLb(){
   content.style.background=gradMap[d.bg]||'var(--forest2)';
   content.style.width='100%';content.style.height='100%';
   if(d.type==='video'){
-    content.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:rgba(124,92,191,.2);border:2px solid rgba(212,245,90,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="showToast('Video playback coming in v2 ✦')"><div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 19px;border-color:transparent transparent transparent var(--purple);margin-left:3px;"></div></div>`;
+    content.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:rgba(124,92,191,.2);border:2px solid rgba(212,245,90,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="showToast('Video playback coming soon ✦')"><div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 19px;border-color:transparent transparent transparent var(--purple);margin-left:3px;"></div></div>`;
   } else {
     content.innerHTML=`<div style="font-size:36px;opacity:.3;">📷</div>`;
   }
