@@ -271,5 +271,36 @@ function ago(ts){
   return Math.floor(h/24)+'d';
 }
 </script>
+
+<script id="navMenuScript">
+function toggleNavMenu(){
+  const m=document.getElementById("navMenu");
+  if(m)m.style.display=m.style.display==="none"?"block":"none";
+}
+document.addEventListener("click",function(e){
+  const av=document.getElementById("navAv");
+  const mn=document.getElementById("navMenu");
+  if(av&&mn&&!av.contains(e.target))mn.style.display="none";
+});
+async function navLogout(){
+  try{
+    const {createClient}=supabase;
+    const sb=createClient("https://rlmcwbaiuowbkgfzdlme.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8");
+    await sb.auth.signOut();
+  }catch(e){}
+  localStorage.clear();window.location.href="auth.html";
+}
+setTimeout(()=>{
+  try{
+    const p=JSON.parse(localStorage.getItem("miru_profile")||"{}");
+    const sw=JSON.parse(localStorage.getItem("miru_swipes")||"{}");
+    const n=p.name||"";
+    const av=document.getElementById("navAv");
+    const mn=document.getElementById("navMenuName");
+    if(av&&n){av.childNodes[0].textContent=n[0].toUpperCase();}
+    if(mn&&n)mn.textContent=n+"'s Account";
+  }catch(e){}
+},100);
+</script>
 </body>
 </html>
