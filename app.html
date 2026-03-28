@@ -185,7 +185,7 @@ main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
     <span class="logo-word">miru</span>
   </div>
   <div class="nav-right">
-    <div class="nav-btn">🔔<div class="nav-badge"></div></div>
+    <div class="nav-btn" onclick="showPW('upgrade')">🔔<div class="nav-badge"></div></div>
     <div class="nav-avatar" id="navAv">Y</div>
   </div>
 </div>
@@ -435,13 +435,10 @@ function showPW(mode){
   document.getElementById('pwOverlay').classList.add('show');
 }
 function closePW(e){if(!e||e.target===document.getElementById('pwOverlay'))document.getElementById('pwOverlay').classList.remove('show');}
-async function subscribe(){ document.getElementById('pwOverlay').classList.remove('show'); window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00'; }
-    else { S.premium=true;S.sw=9999;S.su=PREM_SUPERS;save();updateBar();
-    setTimeout(()=>document.getElementById('successScreen').classList.add('show'),300); }
-  } catch(e) {
-    S.premium=true;S.sw=9999;S.su=PREM_SUPERS;save();updateBar();
-    setTimeout(()=>document.getElementById('successScreen').classList.add('show'),300);
-  }
+function subscribe(){ window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00'; return;
+  document.getElementById('pwOverlay').classList.remove('show');
+  S.premium=true;S.sw=9999;S.su=PREM_SUPERS;save();updateBar();
+  setTimeout(()=>document.getElementById('successScreen').classList.add('show'),300);
 }
 
 function useSwipe(action){
