@@ -6,23 +6,23 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Miru">
-<meta name="theme-color" content="#F8F6FF">
+<meta name="theme-color" content="#0F1F12">
 <title>Miru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --forest:#F8F6FF;--forest2:#162A19;--forest3:#1E3B22;
+  --forest:#0F1F12;--forest2:#162A19;--forest3:#1E3B22;
   --moss:#2D5533;--sage:#5C8A5E;--mint:#A8C8A0;
-  --text:#1A1528;--purple:#7C5CBF;
+  --cream:#F5F0E4;--pop:#D4F55A;
   --serif:'Playfair Display',Georgia,serif;
   --sans:'Cabinet Grotesk',sans-serif;
 }
 
 html,body{
   height:100%;width:100%;overflow:hidden;
-  background:var(--surface);
+  background:var(--forest);
   font-family:var(--sans);
   -webkit-tap-highlight-color:transparent;
   -webkit-touch-callout:none;
@@ -32,7 +32,7 @@ html,body{
 /* ── SPLASH SCREEN ── */
 .splash{
   position:fixed;inset:0;z-index:1000;
-  background:var(--surface);
+  background:var(--forest);
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   transition:opacity .6s ease, transform .6s ease;
@@ -45,7 +45,7 @@ html,body{
 .splash-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
 .so1{width:400px;height:400px;background:rgba(45,85,51,.45);top:-100px;right:-80px;animation:orbPulse 4s ease-in-out infinite alternate;}
 .so2{width:300px;height:300px;background:rgba(30,59,34,.4);bottom:-60px;left:-60px;animation:orbPulse 5s ease-in-out infinite alternate;animation-delay:-2s;}
-.so3{width:200px;height:200px;background:rgba(124,92,191,.08);top:40%;left:20%;animation:orbPulse 6s ease-in-out infinite alternate;animation-delay:-1s;}
+.so3{width:200px;height:200px;background:rgba(212,245,90,.08);top:40%;left:20%;animation:orbPulse 6s ease-in-out infinite alternate;animation-delay:-1s;}
 @keyframes orbPulse{from{transform:scale(1);}to{transform:scale(1.15);}}
 
 /* Dot grid */
@@ -66,14 +66,14 @@ html,body{
   background:linear-gradient(145deg,var(--forest2),var(--forest3));
   border:1.5px solid rgba(92,138,94,.3);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 60px rgba(124,92,191,.12),0 20px 60px rgba(0,0,0,.4);
+  box-shadow:0 0 60px rgba(212,245,90,.15),0 20px 60px rgba(0,0,0,.4);
   animation:iconIn .8s cubic-bezier(.34,1.56,.64,1) .2s both;
 }
 @keyframes iconIn{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
 
 /* Eye icon made in CSS */
 .eye-outer{
-  width:52px;height:32px;border:2.5px solid var(--purple);
+  width:52px;height:32px;border:2.5px solid var(--pop);
   border-radius:999px;position:relative;
   display:flex;align-items:center;justify-content:center;
 }
@@ -82,13 +82,13 @@ html,body{
   width:0;height:0;
   border-left:12px solid transparent;
   border-right:12px solid transparent;
-  border-bottom:14px solid rgba(124,92,191,.12);
+  border-bottom:14px solid rgba(212,245,90,.15);
   top:-13px;
 }
 .eye-pupil{
   width:16px;height:16px;border-radius:50%;
-  background:var(--purple);
-  box-shadow:0 0 12px rgba(124,92,191,.6);
+  background:var(--pop);
+  box-shadow:0 0 12px rgba(212,245,90,.6);
 }
 .eye-shine{
   position:absolute;top:4px;left:14px;
@@ -103,16 +103,16 @@ html,body{
 @keyframes wordIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 .splash-name{
   font-family:var(--serif);font-size:52px;font-weight:700;font-style:italic;
-  color:var(--text);letter-spacing:-1px;line-height:1;
+  color:var(--cream);letter-spacing:-1px;line-height:1;
 }
 .splash-dot{
   display:inline-block;width:10px;height:10px;border-radius:50%;
-  background:var(--purple);margin-left:2px;margin-bottom:6px;
+  background:var(--pop);margin-left:2px;margin-bottom:6px;
   vertical-align:middle;
 }
 .splash-tagline{
   font-size:12px;letter-spacing:3px;text-transform:uppercase;
-  color:rgba(26,21,40,.35);
+  color:rgba(245,240,228,.35);
 }
 
 /* LOADER */
@@ -126,11 +126,11 @@ html,body{
   width:140px;height:2px;background:rgba(92,138,94,.2);border-radius:2px;overflow:hidden;
 }
 .loader-fill{
-  height:100%;width:0%;background:var(--purple);border-radius:2px;
+  height:100%;width:0%;background:var(--pop);border-radius:2px;
   transition:width .1s linear;
-  box-shadow:0 0 8px rgba(124,92,191,.5);
+  box-shadow:0 0 8px rgba(212,245,90,.5);
 }
-.loader-text{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(26,21,40,.3);}
+.loader-text{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,228,.3);}
 
 /* ── MAIN APP SHELL ── */
 .app-shell{
@@ -151,7 +151,7 @@ html,body{
   opacity:0;transform:translateX(20px);
   transition:opacity .35s ease, transform .35s ease;
   pointer-events:none;overflow:hidden;
-  background:var(--surface);
+  background:var(--forest);
 }
 .page.active{
   opacity:1;transform:translateX(0);pointer-events:all;
@@ -172,8 +172,8 @@ html,body{
   padding-top:max(1rem, env(safe-area-inset-top));
 }
 .nav-logo{display:flex;align-items:baseline;gap:4px;}
-.nav-logo-word{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--text);}
-.nav-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);margin-bottom:3px;}
+.nav-logo-word{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--cream);}
+.nav-logo-dot{width:6px;height:6px;border-radius:50%;background:var(--pop);margin-bottom:3px;}
 .nav-right{display:flex;align-items:center;gap:.65rem;}
 .nav-icon-btn{
   width:36px;height:36px;border-radius:50%;
@@ -187,7 +187,7 @@ html,body{
 .notif-badge{
   position:absolute;top:4px;right:4px;
   width:8px;height:8px;border-radius:50%;
-  background:var(--purple);border:2px solid var(--surface);
+  background:var(--pop);border:2px solid var(--forest);
 }
 
 /* ── MODE SWITCHER ── */
@@ -198,12 +198,12 @@ html,body{
 }
 .mode-pill{
   flex:1;padding:.55rem;border-radius:999px;text-align:center;
-  font-size:13px;font-weight:700;color:rgba(26,21,40,.4);
+  font-size:13px;font-weight:700;color:rgba(245,240,228,.4);
   cursor:pointer;transition:all .2s;border:none;background:transparent;
   font-family:var(--sans);letter-spacing:.3px;
   -webkit-tap-highlight-color:transparent;
 }
-.mode-pill.active{background:var(--purple);color:var(--surface);}
+.mode-pill.active{background:var(--pop);color:var(--forest);}
 .mode-pill:active{transform:scale(.97);}
 
 /* ── SCROLL AREA ── */
@@ -215,7 +215,7 @@ html,body{
 
 /* ── MATCH CARDS (home) ── */
 .home-header{margin-bottom:1.25rem;}
-.home-greeting{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(26,21,40,.35);margin-bottom:.3rem;}
+.home-greeting{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,228,.35);margin-bottom:.3rem;}
 .home-title{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.1;}
 .home-title em{font-style:italic;color:var(--mint);}
 
@@ -225,10 +225,10 @@ html,body{
   background:rgba(22,42,25,.6);border:1px solid rgba(92,138,94,.2);
   margin-bottom:1.25rem;width:fit-content;
 }
-.cd-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:cdPulse 1.5s ease-in-out infinite;}
+.cd-dot{width:7px;height:7px;border-radius:50%;background:var(--pop);animation:cdPulse 1.5s ease-in-out infinite;}
 @keyframes cdPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-.cd-txt{font-size:12px;color:rgba(26,21,40,.5);}
-.cd-txt b{color:var(--text);}
+.cd-txt{font-size:12px;color:rgba(245,240,228,.5);}
+.cd-txt b{color:var(--cream);}
 
 .match-card-mobile{
   border-radius:20px;overflow:hidden;
@@ -246,40 +246,40 @@ html,body{
   height:220px;display:flex;align-items:center;justify-content:center;
   position:relative;overflow:hidden;cursor:pointer;
 }
-.mcm-v1{background:linear-gradient(145deg,#ede6ff,#d8ccff);}
-.mcm-v2{background:linear-gradient(145deg,#F8F6FF,#1a3520);}
+.mcm-v1{background:linear-gradient(145deg,#112216,#2d5533);}
+.mcm-v2{background:linear-gradient(145deg,#0f1f12,#1a3520);}
 .mcm-v3{background:linear-gradient(145deg,#141f10,#234520);}
 .mcm-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(15,31,18,1) 0%,transparent 55%);}
 .mcm-play{
   width:48px;height:48px;border-radius:50%;
-  background:rgba(124,92,191,.9);
+  background:rgba(212,245,90,.9);
   display:flex;align-items:center;justify-content:center;
   position:relative;z-index:2;
-  box-shadow:0 0 25px rgba(124,92,191,.25);
+  box-shadow:0 0 25px rgba(212,245,90,.3);
 }
 .mcm-play:active{transform:scale(.92);}
-.ptri{width:0;height:0;border-style:solid;border-width:8px 0 8px 16px;border-color:transparent transparent transparent var(--surface);margin-left:3px;}
-.mcm-prompt{position:absolute;top:10px;left:10px;z-index:3;padding:4px 10px;border-radius:999px;font-family:var(--serif);font-size:11px;font-style:italic;background:rgba(0,0,0,.45);color:rgba(26,21,40,.7);border:1px solid rgba(255,255,255,.1);}
-.mcm-score{position:absolute;top:10px;right:10px;z-index:3;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(124,92,191,.12);border:1px solid rgba(124,92,191,.25);color:var(--purple);}
+.ptri{width:0;height:0;border-style:solid;border-width:8px 0 8px 16px;border-color:transparent transparent transparent var(--forest);margin-left:3px;}
+.mcm-prompt{position:absolute;top:10px;left:10px;z-index:3;padding:4px 10px;border-radius:999px;font-family:var(--serif);font-size:11px;font-style:italic;background:rgba(0,0,0,.45);color:rgba(245,240,228,.7);border:1px solid rgba(255,255,255,.1);}
+.mcm-score{position:absolute;top:10px;right:10px;z-index:3;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(212,245,90,.15);border:1px solid rgba(212,245,90,.3);color:var(--pop);}
 
 .mcm-body{padding:.9rem 1rem 1rem;}
 .mcm-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem;}
 .mcm-name{font-family:var(--serif);font-size:20px;font-weight:700;}
-.mcm-age{font-size:13px;color:rgba(26,21,40,.4);margin-left:.4rem;}
-.mcm-loc{font-size:11px;color:rgba(26,21,40,.35);margin-top:2px;}
-.mcm-intent{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(124,92,191,.08);border:1px solid rgba(124,92,191,.2);color:var(--purple);}
+.mcm-age{font-size:13px;color:rgba(245,240,228,.4);margin-left:.4rem;}
+.mcm-loc{font-size:11px;color:rgba(245,240,228,.35);margin-top:2px;}
+.mcm-intent{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(212,245,90,.1);border:1px solid rgba(212,245,90,.25);color:var(--pop);}
 .mcm-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0;}
 .mtag{padding:3px 9px;border-radius:999px;font-size:11px;background:rgba(92,138,94,.12);border:1px solid rgba(92,138,94,.2);color:var(--mint);}
 .mcm-compat{margin:.6rem 0;}
 .compat-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:.3rem;}
-.compat-row span:first-child{color:rgba(26,21,40,.35);letter-spacing:.5px;text-transform:uppercase;}
-.compat-row span:last-child{color:var(--purple);font-weight:700;}
+.compat-row span:first-child{color:rgba(245,240,228,.35);letter-spacing:.5px;text-transform:uppercase;}
+.compat-row span:last-child{color:var(--pop);font-weight:700;}
 .compat-track{height:3px;background:rgba(92,138,94,.15);border-radius:2px;overflow:hidden;}
-.compat-bar{height:100%;background:var(--purple);border-radius:2px;}
+.compat-bar{height:100%;background:var(--pop);border-radius:2px;}
 .mcm-actions{display:flex;gap:.5rem;margin-top:.85rem;}
-.mcm-pass{flex:1;padding:.7rem;border-radius:999px;border:1.5px solid rgba(92,138,94,.25);background:transparent;color:rgba(26,21,40,.45);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.mcm-pass{flex:1;padding:.7rem;border-radius:999px;border:1.5px solid rgba(92,138,94,.25);background:transparent;color:rgba(245,240,228,.45);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
 .mcm-pass:active{transform:scale(.97);}
-.mcm-connect{flex:2;padding:.7rem;border-radius:999px;border:none;background:var(--purple);color:var(--surface);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(124,92,191,.2);}
+.mcm-connect{flex:2;padding:.7rem;border-radius:999px;border:none;background:var(--pop);color:var(--forest);font-family:var(--sans);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(212,245,90,.2);}
 .mcm-connect:active{transform:scale(.97);}
 .mcm-connect.done{background:var(--forest3);color:var(--mint);border:1.5px solid var(--sage);box-shadow:none;}
 
@@ -291,21 +291,21 @@ html,body{
   background:rgba(22,42,25,.6);border:1px solid rgba(92,138,94,.2);
   animation:cardIn .4s ease both;
 }
-.notif-item.unread{border-color:rgba(124,92,191,.2);background:rgba(124,92,191,.04);}
+.notif-item.unread{border-color:rgba(212,245,90,.25);background:rgba(212,245,90,.04);}
 .notif-avatar{
   width:44px;height:44px;border-radius:50%;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
   font-family:var(--serif);font-size:17px;font-weight:700;
 }
-.nav-sofia{background:linear-gradient(135deg,#9B7FD4,#7C5CBF);color:var(--text);}
-.nav-marcus{background:linear-gradient(135deg,#7C5CBF,#5A3D9A);color:var(--text);}
-.nav-priya{background:linear-gradient(135deg,#C4B0F0,#9B7FD4);color:var(--text);}
-.nav-sys{background:rgba(124,92,191,.12);border:1px solid rgba(124,92,191,.25);color:var(--purple);font-size:20px;}
+.nav-sofia{background:linear-gradient(135deg,#1e4025,#2d5533);color:var(--cream);}
+.nav-marcus{background:linear-gradient(135deg,#0f2535,#1a3548);color:var(--cream);}
+.nav-priya{background:linear-gradient(135deg,#251520,#3b1f35);color:var(--cream);}
+.nav-sys{background:rgba(212,245,90,.15);border:1px solid rgba(212,245,90,.3);color:var(--pop);font-size:20px;}
 .notif-content{flex:1;}
-.notif-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
-.notif-body{font-size:13px;color:rgba(26,21,40,.5);line-height:1.5;}
-.notif-time{font-size:11px;color:rgba(26,21,40,.25);margin-top:4px;}
-.notif-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px;}
+.notif-title{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:3px;}
+.notif-body{font-size:13px;color:rgba(245,240,228,.5);line-height:1.5;}
+.notif-time{font-size:11px;color:rgba(245,240,228,.25);margin-top:4px;}
+.notif-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--pop);flex-shrink:0;margin-top:4px;}
 
 /* ── BOTTOM NAV ── */
 .bottom-tabs{
@@ -324,16 +324,16 @@ html,body{
   position:relative;
 }
 .btab:active{transform:scale(.9);}
-.btab-icon{font-size:22px;color:rgba(26,21,40,.25);transition:color .2s;}
-.btab-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(26,21,40,.25);transition:color .2s;}
-.btab.active .btab-icon,.btab.active .btab-label{color:var(--purple);}
+.btab-icon{font-size:22px;color:rgba(245,240,228,.25);transition:color .2s;}
+.btab-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,228,.25);transition:color .2s;}
+.btab.active .btab-icon,.btab.active .btab-label{color:var(--pop);}
 .btab-badge{
   position:absolute;top:0;right:calc(50% - 18px);
   width:16px;height:16px;border-radius:50%;
-  background:var(--purple);color:var(--surface);
+  background:var(--pop);color:var(--forest);
   font-size:9px;font-weight:800;
   display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--surface);
+  border:2px solid var(--forest);
 }
 
 /* ── TOAST ── */
@@ -393,7 +393,7 @@ html,body{
         🔔
         <div class="notif-badge" id="notifBadge"></div>
       </div>
-      <div class="nav-icon-btn" id="navAvatar" style="font-family:var(--serif);font-size:14px;font-weight:700;border:2px solid var(--purple);">Y</div>
+      <div class="nav-icon-btn" id="navAvatar" style="font-family:var(--serif);font-size:14px;font-weight:700;border:2px solid var(--pop);">Y</div>
     </div>
   </div>
 
@@ -418,7 +418,7 @@ html,body{
 
       <!-- CARD 1 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v1" onclick="toast('Video playback coming soon')">
+        <div class="mcm-video mcm-v1" onclick="toast('Video coming in v2 ✦')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Make me laugh..."</div>
@@ -426,7 +426,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">27</span></div><div class="mcm-loc">📍 2.4 mi · Phoenix</div></div>
+            <div><div><span class="mcm-name">Sofia R.</span><span class="mcm-age">27</span></div><div class="mcm-loc">📍 2.4 mi · Phoenix</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">chill</span><span class="mtag">artsy</span><span class="mtag">tonight</span></div>
@@ -436,14 +436,14 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'Sofia')">✦ Connect</button>
           </div>
         </div>
       </div>
 
       <!-- CARD 2 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v2" onclick="toast('Video playback coming soon')">
+        <div class="mcm-video mcm-v2" onclick="toast('Video coming in v2 ✦')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Something weird..."</div>
@@ -451,7 +451,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">30</span></div><div class="mcm-loc">📍 1.1 mi · Tempe</div></div>
+            <div><div><span class="mcm-name">Marcus T.</span><span class="mcm-age">30</span></div><div class="mcm-loc">📍 1.1 mi · Tempe</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">adventurous</span><span class="mtag">deep talks</span></div>
@@ -461,14 +461,14 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'Marcus')">✦ Connect</button>
           </div>
         </div>
       </div>
 
       <!-- CARD 3 -->
       <div class="match-card-mobile">
-        <div class="mcm-video mcm-v3" onclick="toast('Video playback coming soon')">
+        <div class="mcm-video mcm-v3" onclick="toast('Video coming in v2 ✦')">
           <div class="mcm-fade"></div>
           <div class="mcm-play"><div class="ptri"></div></div>
           <div class="mcm-prompt">"Tell me a story..."</div>
@@ -476,7 +476,7 @@ html,body{
         </div>
         <div class="mcm-body">
           <div class="mcm-top">
-            <div><div><span class="mcm-name">Your Match</span><span class="mcm-age">26</span></div><div class="mcm-loc">📍 4.8 mi · Scottsdale</div></div>
+            <div><div><span class="mcm-name">Priya N.</span><span class="mcm-age">26</span></div><div class="mcm-loc">📍 4.8 mi · Scottsdale</div></div>
             <div class="mcm-intent">Relationship</div>
           </div>
           <div class="mcm-tags"><span class="mtag">intellectual</span><span class="mtag">foodie</span></div>
@@ -486,7 +486,7 @@ html,body{
           </div>
           <div class="mcm-actions">
             <button class="mcm-pass" onclick="passCard(this)">Pass</button>
-            <button class="mcm-connect" onclick="connectCard(this,'them')">✦ Connect</button>
+            <button class="mcm-connect" onclick="connectCard(this,'Priya')">✦ Connect</button>
           </div>
         </div>
       </div>
@@ -501,7 +501,7 @@ html,body{
       <div class="notif-item unread">
         <div class="notif-avatar nav-sofia">S</div>
         <div class="notif-content">
-          <div class="notif-title">Your Match liked you back ✦</div>
+          <div class="notif-title">Sofia R. liked you back ✦</div>
           <div class="notif-body">You matched! Send her a message before someone else does.</div>
           <div class="notif-time">2 minutes ago</div>
         </div>
@@ -510,7 +510,7 @@ html,body{
       <div class="notif-item unread">
         <div class="notif-avatar nav-marcus">M</div>
         <div class="notif-content">
-          <div class="notif-title">Your Match sent you a message</div>
+          <div class="notif-title">Marcus T. sent you a message</div>
           <div class="notif-body">"Hey! I watched your video like three times 😭"</div>
           <div class="notif-time">1 hour ago</div>
         </div>
@@ -527,7 +527,7 @@ html,body{
       <div class="notif-item">
         <div class="notif-avatar nav-priya">P</div>
         <div class="notif-content">
-          <div class="notif-title">Your Match viewed your profile</div>
+          <div class="notif-title">Priya N. viewed your profile</div>
           <div class="notif-body">She spent 2 minutes on your page. Maybe reach out?</div>
           <div class="notif-time">3 hours ago</div>
         </div>
@@ -655,4 +655,3 @@ function toast(msg){
 </script>
 </body>
 </html>
-
