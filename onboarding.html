@@ -350,7 +350,7 @@ async function finish(){
   const bio=document.getElementById('bio').value.trim();
   const minAge=parseInt(document.getElementById('minSlider').value);
   const maxAge=parseInt(document.getElementById('maxSlider').value);
-  const vibes=[...document.querySelectorAll('#vibeGroup .pill.active')].map(p=>p.textContent.trim().replace(/^\S+\s/,''));
+  const vibes=[...document.querySelectorAll('#vibeGroup .pill.active')].map(p=>p.textContent.trim().replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]\s*/u,''));
 
   const btn=document.querySelector('#step5 .next-btn');
   btn.disabled=true;btn.textContent='Saving...';
@@ -359,7 +359,7 @@ async function finish(){
     id:session.user.id,
     name,age,gender,city,bio,
     intent:selectedIntent,
-    vibes,
+    vibes:JSON.stringify(vibes),
     availability:selectedTime,
     min_age:minAge,
     max_age:maxAge,
@@ -379,4 +379,3 @@ async function finish(){
 </script>
 </body>
 </html>
-
