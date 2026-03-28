@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0D0A1A">
+<meta name="theme-color" content="#F8F6FF">
 <title>Miru — Let's get you set up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --void:#0D0A1A;--deep:#130F2A;--dusk:#1C1640;
+  --bg:#F8F6FF;--surface:#FFFFFF;--surface2:#F0ECFF;
   --twilight:#2A2255;--violet:#4A3F8A;
   --lavender:#8B7EC8;--lilac:#C4B8F0;--mist:#E8E4FA;
   --white:#FFFFFF;--pop:#FFFFFF;--pop-dim:rgba(255,255,255,0.08);
@@ -28,7 +28,7 @@
 
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
 body{
-  background:var(--void);color:var(--mist);
+  background:var(--bg);color:var(--text2);
   font-family:var(--sans);font-size:var(--text-md);
   overflow-x:hidden;min-height:100vh;
   -webkit-tap-highlight-color:transparent;
@@ -52,7 +52,7 @@ nav{
   position:sticky;top:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 1.5rem;
-  background:rgba(13,10,26,.92);backdrop-filter:blur(12px);
+  background:rgba(248,246,255,.92);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border-light);
   min-height:var(--tap-min);
 }
@@ -120,7 +120,7 @@ main{max-width:600px;margin:0 auto;padding:2rem 1.5rem 6rem;position:relative;z-
 
 /* SELECT */
 select.input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7EC8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
-select.input option{background:var(--deep);color:#fff;}
+select.input option{background:var(--surface);color:#fff;}
 
 /* ERROR MSG */
 .field-error{font-size:var(--text-xs);color:rgba(255,150,150,.8);margin-top:.3rem;display:none;}
@@ -140,7 +140,7 @@ select.input option{background:var(--deep);color:#fff;}
   display:flex;align-items:center;
 }
 .pill:hover{border-color:var(--violet);color:var(--lilac);}
-.pill.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);font-weight:700;}
+.pill.active{border-color:var(--lilac);color:var(--bg);background:var(--lilac);font-weight:700;}
 .pill:active{transform:scale(.96);}
 
 /* TIME CARDS */
@@ -188,7 +188,7 @@ select.input option{background:var(--deep);color:#fff;}
 }
 .range-thumb{
   position:absolute;width:24px;height:24px;border-radius:50%;
-  background:var(--lilac);border:3px solid var(--void);
+  background:var(--lilac);border:3px solid var(--bg);
   box-shadow:0 0 12px rgba(196,184,240,.5);
   top:50%;transform:translate(-50%,-50%);
   pointer-events:none;transition:box-shadow .2s;
@@ -203,7 +203,7 @@ select.input option{background:var(--deep);color:#fff;}
   font-family:var(--sans);min-height:36px;
 }
 .age-preset:hover{border-color:var(--violet);color:var(--lilac);}
-.age-preset.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);}
+.age-preset.active{border-color:var(--lilac);color:var(--bg);background:var(--lilac);}
 
 /* MEDIA SECTION */
 .media-tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
@@ -214,7 +214,7 @@ select.input option{background:var(--deep);color:#fff;}
   background:rgba(28,22,64,.5);cursor:pointer;transition:all .2s;
   font-family:var(--sans);min-height:var(--tap-min);
 }
-.mtab.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);}
+.mtab.active{border-color:var(--lilac);color:var(--bg);background:var(--lilac);}
 .mtab:active{transform:scale(.97);}
 
 .media-panel{display:none;}
@@ -235,7 +235,7 @@ select.input option{background:var(--deep);color:#fff;}
 .pi-text .pi-title{font-size:var(--text-md);font-weight:700;color:#fff;}
 .pi-text .pi-sub{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:2px;}
 .pi-check{margin-left:auto;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .2s;}
-.prompt-item.active .pi-check{background:var(--lilac);border-color:var(--lilac);color:var(--void);}
+.prompt-item.active .pi-check{background:var(--lilac);border-color:var(--lilac);color:var(--bg);}
 
 /* RECORDER */
 .recorder-box{
@@ -291,7 +291,7 @@ select.input option{background:var(--deep);color:#fff;}
 .preview-card{
   border-radius:var(--radius-lg);overflow:hidden;
   border:1.5px solid var(--border);
-  background:var(--deep);margin-bottom:1.25rem;
+  background:var(--surface);margin-bottom:1.25rem;
 }
 .preview-hero{
   height:140px;
@@ -319,7 +319,7 @@ select.input option{background:var(--deep);color:#fff;}
   display:flex;align-items:center;justify-content:center;gap:.6rem;
   width:100%;min-height:56px;padding:1rem 1.5rem;
   border-radius:var(--radius-pill);
-  background:#fff;color:var(--void);
+  background:#fff;color:var(--bg);
   font-family:var(--sans);font-size:var(--text-md);font-weight:800;
   border:none;cursor:pointer;transition:all .25s;
   margin-top:1.5rem;
@@ -350,7 +350,7 @@ select.input option{background:var(--deep);color:#fff;}
 .success-btn{
   display:inline-flex;align-items:center;gap:.6rem;
   padding:1rem 2.5rem;border-radius:var(--radius-pill);
-  background:#fff;color:var(--void);
+  background:#fff;color:var(--bg);
   font-family:var(--sans);font-size:var(--text-md);font-weight:800;
   border:none;cursor:pointer;transition:all .25s;
   box-shadow:0 0 50px rgba(255,255,255,.2);
