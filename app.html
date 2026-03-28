@@ -555,5 +555,5 @@ function showToast(msg){
   toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
 }
 </script>
-</body>
+<script>function toggleNavMenu(){var m=document.getElementById("navMenu");if(m)m.style.display=m.style.display==="none"?"block":"none";}document.addEventListener("click",function(e){var m=document.getElementById("navMenu");var a=document.getElementById("navAv");if(m&&a&&!a.contains(e.target))m.style.display="none";});async function navLogout(){try{const {createClient}=supabase;const sb=createClient("https://rlmcwbaiuowbkgfzdlme.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8");await sb.auth.signOut();}catch(e){}localStorage.clear();window.location.href="auth.html";}</script></body>
 </html>
