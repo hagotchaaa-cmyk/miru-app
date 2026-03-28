@@ -699,5 +699,37 @@ app.listen(PORT, () => {
   ╚══════════════════════════════════╝
   `);
 });
+// ── STRIPE ──────────────────────────────────────────
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+app.post('/api/subscribe', requireAuth, async (req, res) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
+      success_url: `${process.env.FRONTEND_URL}/app.html?premium=true`,
+      cancel_url:  `${process.env.FRONTEND_URL}/app.html?premium=false`,
+      metadata: { user_id: req.user.id },
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  if (event.type === 'checkout.session.completed') {
+    const userId = event.data.object.metadata.user_id;
+    await supabase.from('profiles').update({ ai_mode: true }).eq('id', userId);
+  }
+  res.json({ received: true });
+});
 module.exports = { app, scoreMatch, runMatchingForUser };
