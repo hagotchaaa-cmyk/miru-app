@@ -584,7 +584,7 @@ const loadInterval=setInterval(()=>{
 },200);
 
 function launchApp(){
-  document.getElementById('splash').classList.add('hide');
+  checkLogin();} async function checkLogin(){ const k=localStorage.getItem('sb-rlmcwbaiuowbkgfzdlme-auth-token'); if(!k){window.location.href='auth.html';return;} document.getElementById('splash').classList.add('hide');
   setTimeout(()=>{
     document.getElementById('splash').style.display='none';
     document.getElementById('appShell').classList.add('show');
@@ -655,3 +655,4 @@ function toast(msg){
 </script>
 </body>
 </html>
+
