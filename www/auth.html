@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F8F6FF">
+<title>Miru — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F8F6FF;--surface:#FFFFFF;--surface2:#F0ECFF;
+  --border:#E4DEFF;--purple:#7C5CBF;--purple-mid:#9B7FD4;
+  --purple-light:#C4B0F0;--purple-pale:#EDE8FF;
+  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
+  --like:#FF5E7A;--serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --radius:16px;--radius-lg:24px;--radius-pill:999px;
+  --shadow:0 2px 20px rgba(124,92,191,0.08);
+  --shadow-lg:0 8px 40px rgba(124,92,191,0.15);
+}
+html,body{min-height:100%;background:var(--bg);font-family:var(--sans);color:var(--text);}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem;}
+
+/* BG DECORATION */
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.orb1{width:400px;height:400px;background:rgba(124,92,191,.08);top:-100px;right:-100px;}
+.orb2{width:300px;height:300px;background:rgba(196,176,240,.1);bottom:-60px;left:-60px;}
+
+/* CARD */
+.auth-card{
+  width:100%;max-width:420px;
+  background:var(--surface);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+  padding:2rem;
+  position:relative;z-index:1;
+  animation:fadeUp .5s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+
+/* LOGO */
+.auth-logo{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1.75rem;}
+.logo-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;}
+.logo-eye{width:22px;height:13px;border:2.5px solid #fff;border-radius:999px;display:flex;align-items:center;justify-content:center;}
+.logo-pupil{width:6px;height:6px;border-radius:50%;background:#fff;}
+.logo-word{font-family:var(--serif);font-size:26px;font-weight:700;font-style:italic;color:var(--text);}
+
+/* TABS */
+.auth-tabs{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;margin-bottom:1.75rem;}
+.auth-tab{flex:1;padding:.55rem;border-radius:var(--radius-pill);text-align:center;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:var(--sans);}
+.auth-tab.active{background:var(--purple);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(124,92,191,.3);}
+
+/* HEADING */
+.auth-heading{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.2;margin-bottom:.4rem;}
+.auth-heading em{font-style:italic;color:var(--purple);}
+.auth-sub{font-size:14px;color:var(--text2);margin-bottom:1.5rem;line-height:1.5;}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;}
+.field label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:500;}
+.field input{
+  width:100%;padding:.85rem 1rem;
+  border-radius:var(--radius);
+  background:var(--surface2);
+  border:1.5px solid var(--border);
+  color:var(--text);font-family:var(--sans);font-size:15px;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+}
+.field input::placeholder{color:var(--text3);}
+.field input:focus{border-color:var(--purple-light);box-shadow:0 0 0 3px rgba(124,92,191,.1);}
+.field input.error{border-color:var(--like);}
+
+/* PASSWORD TOGGLE */
+.pass-wrap{position:relative;}
+.pass-wrap input{padding-right:3rem;}
+.pass-toggle{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;color:var(--text3);background:none;border:none;padding:0;}
+
+/* AGE CHECK */
+.age-row{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:var(--radius);background:var(--surface2);border:1.5px solid var(--border);margin-bottom:1rem;cursor:pointer;}
+.age-checkbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.age-checkbox.checked{background:var(--purple);border-color:var(--purple);}
+.age-checkbox.checked::after{content:'✓';color:#fff;font-size:12px;font-weight:700;}
+.age-label{font-size:13px;color:var(--text2);line-height:1.4;}
+
+/* SUBMIT BTN */
+.auth-btn{
+  width:100%;padding:1rem;border-radius:var(--radius-pill);
+  background:var(--purple);color:#fff;
+  font-family:var(--sans);font-size:15px;font-weight:700;
+  border:none;cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 16px rgba(124,92,191,.25);
+  margin-top:.5rem;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  min-height:52px;
+}
+.auth-btn:hover{background:#6a4daa;transform:translateY(-1px);}
+.auth-btn:active{transform:scale(.98);}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;}
+.div-line{flex:1;height:1px;background:var(--border);}
+.div-text{font-size:12px;color:var(--text3);}
+
+/* GOOGLE BTN */
+.google-btn{
+  width:100%;padding:.85rem;border-radius:var(--radius-pill);
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--text);font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.65rem;
+}
+.google-btn:hover{border-color:var(--purple-light);background:var(--purple-pale);}
+.google-icon{font-size:18px;}
+
+/* ERROR MSG */
+.error-msg{
+  padding:.75rem 1rem;border-radius:var(--radius);
+  background:#FFF0F3;border:1px solid #FFD0DA;
+  color:#CC3355;font-size:13px;line-height:1.5;
+  margin-bottom:1rem;display:none;
+}
+.error-msg.show{display:block;}
+
+/* SUCCESS MSG */
+.success-msg{
+  padding:.75rem 1rem;border-radius:var(--radius);
+  background:var(--purple-pale);border:1px solid var(--border);
+  color:var(--purple);font-size:13px;line-height:1.5;
+  margin-bottom:1rem;display:none;text-align:center;
+}
+.success-msg.show{display:block;}
+
+/* TERMS */
+.terms-text{font-size:12px;color:var(--text3);text-align:center;margin-top:1.25rem;line-height:1.6;}
+.terms-text a{color:var(--purple);text-decoration:none;}
+
+/* SPINNER */
+.spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* FORGOT PASSWORD */
+.forgot-link{font-size:13px;color:var(--purple);cursor:pointer;text-align:right;margin-top:-.5rem;margin-bottom:1rem;display:block;}
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+
+<div class="auth-card">
+  <!-- LOGO -->
+  <div class="auth-logo">
+    <div class="logo-mark"><div class="logo-eye"><div class="logo-pupil"></div></div></div>
+    <span class="logo-word">miru</span>
+  </div>
+
+  <!-- TABS -->
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign in</button>
+    <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Create account</button>
+  </div>
+
+  <!-- ERROR / SUCCESS -->
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="success-msg" id="successMsg"></div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
+    <h2 class="auth-heading">Welcome back to<br><em>miru.</em></h2>
+    <p class="auth-sub">Sign in to see your matches.</p>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+        <button class="pass-toggle" onclick="togglePass('loginPassword',this)">👁</button>
+      </div>
+    </div>
+
+    <span class="forgot-link" onclick="forgotPassword()">Forgot password?</span>
+
+    <button class="auth-btn" id="loginBtn" onclick="login()">
+      Sign in
+    </button>
+
+    <div class="divider"><div class="div-line"></div><div class="div-text">or</div><div class="div-line"></div></div>
+
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <span class="google-icon">🔵</span> Continue with Google
+    </button>
+
+    <div class="terms-text">
+      By signing in you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div id="signupForm" style="display:none;">
+    <h2 class="auth-heading">Join<br><em>miru.</em></h2>
+    <p class="auth-sub">Find someone real. Takes 2 minutes.</p>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label>Password</label>
+      <div class="pass-wrap">
+        <input type="password" id="signupPassword" placeholder="Min 8 characters" autocomplete="new-password">
+        <button class="pass-toggle" onclick="togglePass('signupPassword',this)">👁</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Confirm password</label>
+      <div class="pass-wrap">
+        <input type="password" id="signupConfirm" placeholder="Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')signup()">
+        <button class="pass-toggle" onclick="togglePass('signupConfirm',this)">👁</button>
+      </div>
+    </div>
+
+    <!-- AGE VERIFICATION -->
+    <div class="age-row" onclick="toggleAge()">
+      <div class="age-checkbox" id="ageCheck"></div>
+      <div class="age-label">I confirm I am <strong>18 years of age or older</strong></div>
+    </div>
+
+    <button class="auth-btn" id="signupBtn" onclick="signup()">
+      Create account
+    </button>
+
+    <div class="divider"><div class="div-line"></div><div class="div-text">or</div><div class="div-line"></div></div>
+
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <span class="google-icon">🔵</span> Continue with Google
+    </button>
+
+    <div class="terms-text">
+      By creating an account you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// SUPABASE
+const { createClient } = supabase;
+const sb = createClient(
+  'https://rlmcwbaiuowbkgfzdlme.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'  // publishable key — safe for frontend
+);
+
+// Check if already logged in
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location.href = 'onboarding.html';
+});
+
+// TAB SWITCH
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('tabLogin').classList.toggle('active', isLogin);
+  document.getElementById('tabSignup').classList.toggle('active', !isLogin);
+  clearMessages();
+}
+
+// PASSWORD TOGGLE
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  btn.textContent = isPass ? '🙈' : '👁';
+}
+
+// AGE CHECK
+let ageConfirmed = false;
+function toggleAge() {
+  ageConfirmed = !ageConfirmed;
+  document.getElementById('ageCheck').classList.toggle('checked', ageConfirmed);
+}
+
+// MESSAGES
+function showError(msg) {
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('errorMsg').classList.add('show');
+  document.getElementById('successMsg').classList.remove('show');
+}
+function showSuccess(msg) {
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successMsg').classList.add('show');
+  document.getElementById('errorMsg').classList.remove('show');
+}
+function clearMessages() {
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('successMsg').classList.remove('show');
+}
+
+// LOADING STATE
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? '<div class="spinner"></div>'
+    : btn.id === 'loginBtn' ? 'Sign in' : 'Create account';
+}
+
+// LOGIN
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showError('Please fill in all fields.'); return; }
+  clearMessages();
+  setLoading('loginBtn', true);
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  setLoading('loginBtn', false);
+  if (error) { showError(error.message); return; }
+  // Save session and redirect
+  window.location.href = 'app.html';
+}
+
+// SIGNUP
+async function signup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  if (!email || !password || !confirm) { showError('Please fill in all fields.'); return; }
+  if (password.length < 8) { showError('Password must be at least 8 characters.'); return; }
+  if (password !== confirm) { showError('Passwords do not match.'); return; }
+  if (!ageConfirmed) { showError('You must confirm you are 18 or older to use Miru.'); return; }
+  clearMessages();
+  setLoading('signupBtn', true);
+  const { data, error } = await sb.auth.signUp({ email, password });
+  setLoading('signupBtn', false);
+  if (error) { showError(error.message); return; }
+  showSuccess('✦ Account created! Check your email to confirm, then come back and sign in.');
+  setTimeout(() => switchTab('login'), 3000);
+}
+
+// GOOGLE
+async function signInWithGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/onboarding.html' }
+  });
+  if (error) showError(error.message);
+}
+
+// FORGOT PASSWORD
+async function forgotPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { showError('Enter your email above first.'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/auth.html'
+  });
+  if (error) { showError(error.message); return; }
+  showSuccess('✦ Password reset email sent! Check your inbox.');
+}
+</script>
+</body>
+</html>
+
+
+
+

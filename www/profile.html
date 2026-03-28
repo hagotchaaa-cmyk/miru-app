@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miru — Sofia's Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --forest:#0F1F12;--forest2:#162A19;--forest3:#1E3B22;
+  --moss:#2D5533;--sage:#5C8A5E;--mint:#A8C8A0;
+  --cream:#F5F0E4;--cream2:#EDE6D2;
+  --pop:#D4F55A;--pop-dim:rgba(212,245,90,0.1);
+  --border:rgba(92,138,94,0.25);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Cabinet Grotesk',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--forest);color:var(--cream);
+  font-family:var(--sans);overflow-x:hidden;
+  min-height:100vh;cursor:none;
+}
+
+/* CURSOR */
+.cursor{position:fixed;width:12px;height:12px;background:var(--pop);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;}
+.cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(168,200,160,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* BG */
+.bg-blob{position:fixed;border-radius:50%;filter:blur(110px);pointer-events:none;z-index:0;}
+.bg1{width:500px;height:500px;background:rgba(45,85,51,.2);top:-100px;right:-100px;}
+.bg2{width:350px;height:350px;background:rgba(30,59,34,.25);bottom:-80px;left:-80px;}
+
+/* NAV */
+.top-nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:1rem;
+  padding:1rem 1.25rem;
+  background:rgba(15,31,18,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.back-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(22,42,25,.7);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:18px;color:var(--cream);
+  text-decoration:none;transition:border-color .2s;flex-shrink:0;
+}
+.back-btn:hover{border-color:var(--sage);}
+.nav-name{font-family:var(--serif);font-size:18px;font-weight:700;flex:1;}
+.nav-more{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(22,42,25,.7);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:20px;letter-spacing:1px;
+  transition:border-color .2s;
+}
+.nav-more:hover{border-color:var(--sage);}
+
+/* HERO SECTION */
+.profile-hero{
+  position:relative;height:380px;overflow:hidden;
+  display:flex;align-items:flex-end;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(145deg,#112216 0%,#1e4025 50%,#2d5533 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(70px);}
+.hero-orb1{width:300px;height:300px;background:rgba(45,85,51,.5);top:-60px;right:-40px;}
+.hero-orb2{width:200px;height:200px;background:rgba(92,138,94,.3);bottom:40px;left:-30px;}
+.hero-play{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(212,245,90,.15);border:2px solid rgba(212,245,90,.5);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:2;cursor:pointer;
+  transition:all .2s;backdrop-filter:blur(6px);
+  box-shadow:0 0 40px rgba(212,245,90,.2);
+}
+.hero-play:hover{background:rgba(212,245,90,.25);transform:scale(1.05);}
+.play-tri{width:0;height:0;border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent var(--pop);margin-left:4px;}
+.hero-prompt{
+  position:absolute;top:1rem;left:1rem;z-index:3;
+  padding:5px 12px;border-radius:999px;
+  font-family:var(--serif);font-size:12px;font-style:italic;
+  background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);
+  color:rgba(245,240,228,.75);backdrop-filter:blur(6px);
+}
+.hero-dur{
+  position:absolute;bottom:80px;right:1rem;z-index:3;
+  font-size:11px;color:rgba(245,240,228,.5);
+  background:rgba(0,0,0,.35);padding:2px 8px;border-radius:999px;
+}
+.hero-fade{
+  position:absolute;bottom:0;left:0;right:0;height:200px;
+  background:linear-gradient(to top,var(--forest) 0%,transparent 100%);
+  z-index:2;
+}
+
+/* PROFILE INFO */
+.profile-info{
+  position:relative;z-index:3;
+  padding:0 1.25rem 1.25rem;width:100%;
+}
+.info-row{display:flex;align-items:flex-end;justify-content:space-between;}
+.info-left{}
+.profile-name-big{font-family:var(--serif);font-size:32px;font-weight:700;line-height:1;}
+.profile-age-loc{font-size:13px;color:rgba(245,240,228,.45);margin-top:4px;letter-spacing:.3px;}
+.match-badge{
+  padding:8px 14px;border-radius:999px;
+  background:rgba(212,245,90,.12);border:1.5px solid rgba(212,245,90,.35);
+  text-align:center;
+}
+.match-pct{font-size:22px;font-weight:800;color:var(--pop);line-height:1;}
+.match-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(212,245,90,.6);}
+
+/* STICKY ACTION BAR */
+.action-bar{
+  position:sticky;top:65px;z-index:99;
+  display:flex;gap:.65rem;padding:.85rem 1.25rem;
+  background:rgba(15,31,18,.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.btn-msg{
+  flex:2;padding:.8rem;border-radius:999px;
+  background:var(--pop);color:var(--forest);
+  font-family:var(--sans);font-size:14px;font-weight:800;
+  border:none;cursor:pointer;transition:all .2s;
+  box-shadow:0 0 30px rgba(212,245,90,.2);
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.btn-msg:hover{transform:translateY(-1px);box-shadow:0 0 50px rgba(212,245,90,.35);}
+.btn-like{
+  flex:1;padding:.8rem;border-radius:999px;
+  background:rgba(22,42,25,.7);border:1.5px solid var(--border);
+  color:var(--cream);font-family:var(--sans);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.btn-like:hover{border-color:rgba(212,245,90,.4);color:var(--pop);}
+.btn-like.liked{border-color:var(--pop);color:var(--pop);background:var(--pop-dim);}
+.btn-pass{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:rgba(22,42,25,.7);border:1.5px solid var(--border);
+  color:rgba(245,240,228,.4);font-family:var(--sans);font-size:18px;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.btn-pass:hover{border-color:rgba(255,80,80,.4);color:rgba(255,120,120,.7);}
+
+/* SECTIONS */
+.section{padding:1.5rem 1.25rem 0;position:relative;z-index:1;}
+.section-label{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(245,240,228,.35);margin-bottom:.85rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:1.5rem;}
+.stat-card{
+  padding:.85rem .75rem;border-radius:14px;text-align:center;
+  background:rgba(22,42,25,.6);border:1px solid var(--border);
+}
+.stat-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--pop);}
+.stat-lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,228,.35);margin-top:3px;}
+
+/* INTENT + VIBE TAGS */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.tag{
+  padding:5px 12px;border-radius:999px;font-size:12px;font-weight:500;
+  background:rgba(92,138,94,.12);border:1.5px solid rgba(92,138,94,.25);color:var(--mint);
+}
+.tag.intent{background:rgba(212,245,90,.1);border-color:rgba(212,245,90,.3);color:var(--pop);font-weight:700;}
+.tag.avail{background:rgba(168,200,160,.08);border-color:rgba(168,200,160,.2);color:var(--mint);}
+
+/* BIO */
+.bio-text{
+  font-size:15px;color:rgba(245,240,228,.7);
+  line-height:1.75;margin-bottom:1.5rem;
+}
+.bio-text em{color:var(--cream);font-style:italic;}
+
+/* MUTUAL INTERESTS */
+.mutual-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.mutual-tag{
+  display:flex;align-items:center;gap:.4rem;
+  padding:5px 12px;border-radius:999px;font-size:12px;
+  background:rgba(212,245,90,.06);border:1px solid rgba(212,245,90,.2);
+  color:var(--pop);
+}
+.mutual-dot{width:5px;height:5px;border-radius:50%;background:var(--pop);}
+
+/* PROMPTS */
+.prompt-cards{display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.5rem;}
+.prompt-card{
+  padding:1.1rem 1.25rem;border-radius:16px;
+  background:rgba(22,42,25,.6);border:1.5px solid var(--border);
+}
+.prompt-q{
+  font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--pop);margin-bottom:.5rem;
+}
+.prompt-a{
+  font-family:var(--serif);font-size:17px;font-style:italic;
+  color:var(--cream);line-height:1.5;
+}
+
+/* MEDIA GRID */
+.media-tabs{display:flex;gap:.5rem;margin-bottom:.85rem;}
+.mtab{
+  padding:.4rem 1rem;border-radius:999px;font-size:12px;font-weight:700;
+  border:1.5px solid var(--border);color:rgba(245,240,228,.4);
+  background:transparent;cursor:pointer;transition:all .2s;font-family:var(--sans);
+}
+.mtab.active{border-color:var(--pop);color:var(--forest);background:var(--pop);}
+
+.media-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin:0 -1.25rem;margin-bottom:1.5rem;
+}
+.media-item{
+  aspect-ratio:1;position:relative;overflow:hidden;
+  background:rgba(22,42,25,.8);cursor:pointer;
+}
+.media-item:hover .media-overlay{opacity:1;}
+.media-bg{width:100%;height:100%;object-fit:cover;}
+.media-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.media-type-badge{
+  position:absolute;top:6px;left:6px;
+  padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+}
+.media-type-badge.video{color:var(--pop);border:1px solid rgba(212,245,90,.3);}
+.media-type-badge.photo{color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.2);}
+
+/* Gradient placeholders for media */
+.mg-1{background:linear-gradient(145deg,#1a3020,#2d5533);}
+.mg-2{background:linear-gradient(145deg,#0f2535,#1a3548);}
+.mg-3{background:linear-gradient(145deg,#251520,#3b1f35);}
+.mg-4{background:linear-gradient(145deg,#1a2a10,#2d4520);}
+.mg-5{background:linear-gradient(145deg,#251a10,#3b2a15);}
+.mg-6{background:linear-gradient(145deg,#101a25,#152535);}
+.mg-7{background:linear-gradient(145deg,#201020,#352035);}
+.mg-8{background:linear-gradient(145deg,#101f12,#1e3b22);}
+.mg-9{background:linear-gradient(145deg,#1a1510,#2a2015);}
+
+.media-inner-play{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(212,245,90,.8);
+  display:flex;align-items:center;justify-content:center;
+}
+.mini-tri{width:0;height:0;border-style:solid;border-width:6px 0 6px 11px;border-color:transparent transparent transparent var(--forest);margin-left:2px;}
+
+/* LIGHTBOX */
+.lightbox{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.92);backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.lightbox.show{opacity:1;pointer-events:all;}
+.lb-inner{
+  width:90%;max-width:420px;
+  border-radius:20px;overflow:hidden;
+  background:var(--forest2);border:1px solid var(--border);
+}
+.lb-media{
+  height:480px;display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.lb-close{
+  position:absolute;top:12px;right:12px;z-index:2;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--cream);
+}
+.lb-info{padding:1rem 1.25rem;}
+.lb-caption{font-family:var(--serif);font-size:15px;font-style:italic;color:rgba(245,240,228,.7);}
+.lb-nav{display:flex;justify-content:space-between;margin-top:.75rem;}
+.lb-nav-btn{
+  padding:.5rem 1.25rem;border-radius:999px;
+  background:rgba(22,42,25,.7);border:1px solid var(--border);
+  color:var(--mint);font-family:var(--sans);font-size:13px;
+  cursor:pointer;transition:all .2s;
+}
+.lb-nav-btn:hover{border-color:var(--sage);}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-around;align-items:center;
+  padding:.75rem 1rem 1.25rem;
+  background:rgba(15,31,18,.95);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:.25rem .75rem;border-radius:12px;}
+.bnav-icon{font-size:20px;color:rgba(245,240,228,.3);}
+.bnav-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(245,240,228,.3);}
+.bnav-item.active .bnav-icon,.bnav-item.active .bnav-label{color:var(--pop);}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);padding:.6rem 1.25rem;border-radius:999px;font-size:13px;font-weight:500;z-index:400;opacity:0;transition:all .3s;white-space:nowrap;background:rgba(22,42,25,.9);border:1px solid var(--sage);color:var(--mint);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.spacer{height:100px;}
+
+@media(max-width:480px){
+  .profile-name-big{font-size:26px;}
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+<div class="bg-blob bg1"></div>
+<div class="bg-blob bg2"></div>
+<div class="toast" id="toast"></div>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <a href="explore.html" class="back-btn">←</a>
+  <div class="nav-name">Sofia R.</div>
+  <div class="nav-more" onclick="showToast('Reported ✓')">⋯</div>
+</div>
+
+<!-- HERO VIDEO -->
+<div class="profile-hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb1"></div>
+    <div class="hero-orb hero-orb2"></div>
+    <div class="hero-play" onclick="showToast('Video playback coming in v2 ✦')">
+      <div class="play-tri"></div>
+    </div>
+    <div class="hero-dur">0:22</div>
+  </div>
+  <div class="hero-prompt">"Make me laugh..."</div>
+  <div class="hero-fade"></div>
+  <div class="profile-info">
+    <div class="info-row">
+      <div class="info-left">
+        <div class="profile-name-big">Sofia R.</div>
+        <div class="profile-age-loc">27 · 2.4 mi · Phoenix, AZ</div>
+      </div>
+      <div class="match-badge">
+        <div class="match-pct">97%</div>
+        <div class="match-lbl">match</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY ACTIONS -->
+<div class="action-bar">
+  <button class="btn-msg" onclick="window.location.href='messages.html'">
+    💬 Send a message
+  </button>
+  <button class="btn-like" id="likeBtn" onclick="toggleLike()">
+    🤍 Like
+  </button>
+  <button class="btn-pass" onclick="showToast('Passed on Sofia')">✕</button>
+</div>
+
+<!-- STATS -->
+<div class="section">
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val">9</div>
+      <div class="stat-lbl">Photos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">3</div>
+      <div class="stat-lbl">Videos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">97%</div>
+      <div class="stat-lbl">Match</div>
+    </div>
+  </div>
+</div>
+
+<!-- INTENT + VIBE -->
+<div class="section">
+  <div class="section-label">Intent & vibe</div>
+  <div class="tags-wrap">
+    <span class="tag intent">💍 Relationship</span>
+    <span class="tag">🛋️ Chill</span>
+    <span class="tag">🎨 Artsy</span>
+    <span class="tag">🐶 Dog mom</span>
+    <span class="tag">🌿 Outdoorsy</span>
+    <span class="tag avail">🕐 Available tonight</span>
+    <span class="tag">☕ Coffee first</span>
+  </div>
+</div>
+
+<!-- BIO -->
+<div class="section">
+  <div class="section-label">About Sofia</div>
+  <div class="bio-text">
+    Graphic designer by day, <em>chaotic baker by night.</em> I will absolutely challenge you to a hot sauce contest and I will win — ask anyone.<br><br>
+    I'm looking for someone who laughs at the same weird things I do and actually wants to make plans, not just talk about making plans. Dogs are non-negotiable. Mine is named Pretzel and he will love you more than I do, initially.
+  </div>
+</div>
+
+<!-- MUTUAL INTERESTS -->
+<div class="section">
+  <div class="section-label">Mutual interests</div>
+  <div class="mutual-grid">
+    <div class="mutual-tag"><div class="mutual-dot"></div>Hiking</div>
+    <div class="mutual-tag"><div class="mutual-dot"></div>Design</div>
+    <div class="mutual-tag"><div class="mutual-dot"></div>Coffee</div>
+    <div class="mutual-tag"><div class="mutual-dot"></div>Dogs</div>
+    <div class="mutual-tag"><div class="mutual-dot"></div>Cooking</div>
+    <div class="mutual-tag"><div class="mutual-dot"></div>Art</div>
+  </div>
+</div>
+
+<!-- PROMPTS -->
+<div class="section">
+  <div class="section-label">Personality prompts</div>
+  <div class="prompt-cards">
+    <div class="prompt-card">
+      <div class="prompt-q">✦ Make me laugh</div>
+      <div class="prompt-a">"I once walked out of Trader Joe's with someone else's cart. Didn't notice until I was at my car. The cart had a rotisserie chicken and a dream I was never meant to have."</div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-q">✦ Something weird about me</div>
+      <div class="prompt-a">"I name all my houseplants after minor TV characters and I talk to them when I'm stressed. Steve from accounting is thriving, by the way."</div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-q">✦ What I'm actually looking for</div>
+      <div class="prompt-a">"Someone who makes ordinary Tuesday evenings feel like a choice, not a fallback. Also must tolerate Pretzel sleeping between us."</div>
+    </div>
+  </div>
+</div>
+
+<!-- MEDIA GRID -->
+<div class="section">
+  <div class="section-label">Photos & videos</div>
+  <div class="media-tabs">
+    <button class="mtab active" onclick="switchTab(this,'all')">All (12)</button>
+    <button class="mtab" onclick="switchTab(this,'videos')">Videos (3)</button>
+    <button class="mtab" onclick="switchTab(this,'photos')">Photos (9)</button>
+  </div>
+  <div class="media-grid" id="mediaGrid">
+
+    <!-- VIDEO 1 -->
+    <div class="media-item mg-1" onclick="openLightbox(0)">
+      <div class="media-type-badge video">▶ 0:22</div>
+      <div class="media-overlay"><div class="media-inner-play"><div class="mini-tri"></div></div></div>
+    </div>
+
+    <!-- PHOTO 1 -->
+    <div class="media-item mg-2" onclick="openLightbox(1)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 2 -->
+    <div class="media-item mg-3" onclick="openLightbox(2)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- VIDEO 2 -->
+    <div class="media-item mg-4" onclick="openLightbox(3)">
+      <div class="media-type-badge video">▶ 0:18</div>
+      <div class="media-overlay"><div class="media-inner-play"><div class="mini-tri"></div></div></div>
+    </div>
+
+    <!-- PHOTO 3 -->
+    <div class="media-item mg-5" onclick="openLightbox(4)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 4 -->
+    <div class="media-item mg-6" onclick="openLightbox(5)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 5 -->
+    <div class="media-item mg-7" onclick="openLightbox(6)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- VIDEO 3 -->
+    <div class="media-item mg-8" onclick="openLightbox(7)">
+      <div class="media-type-badge video">▶ 0:29</div>
+      <div class="media-overlay"><div class="media-inner-play"><div class="mini-tri"></div></div></div>
+    </div>
+
+    <!-- PHOTO 6 -->
+    <div class="media-item mg-9" onclick="openLightbox(8)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 7 -->
+    <div class="media-item mg-1" onclick="openLightbox(9)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 8 -->
+    <div class="media-item mg-3" onclick="openLightbox(10)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+    <!-- PHOTO 9 -->
+    <div class="media-item mg-5" onclick="openLightbox(11)">
+      <div class="media-type-badge photo">📷</div>
+      <div class="media-overlay"><div style="font-size:20px;">🔍</div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="spacer"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lb-inner" id="lbInner">
+    <div class="lb-media" id="lbMedia">
+      <div class="lb-close" onclick="closeLightbox()">✕</div>
+      <div id="lbContent" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+    </div>
+    <div class="lb-info">
+      <div class="lb-caption" id="lbCaption">"Make me laugh..." — 0:22</div>
+      <div class="lb-nav">
+        <button class="lb-nav-btn" onclick="lbPrev()">← Prev</button>
+        <button class="lb-nav-btn" onclick="lbNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-item" onclick="window.location.href='app.html'">
+    <div class="bnav-icon">💚</div>
+    <div class="bnav-label">Matches</div>
+  </div>
+  <div class="bnav-item" onclick="window.location.href='messages.html'">
+    <div class="bnav-icon">💬</div>
+    <div class="bnav-label">Messages</div>
+  </div>
+  <div class="bnav-item active" onclick="window.location.href='explore.html'">
+    <div class="bnav-icon">🔍</div>
+    <div class="bnav-label">Explore</div>
+  </div>
+  <div class="bnav-item" onclick="window.location.href='onboarding.html'">
+    <div class="bnav-icon">👤</div>
+    <div class="bnav-label">Profile</div>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+
+// LIKE
+function toggleLike(){
+  const btn=document.getElementById('likeBtn');
+  btn.classList.toggle('liked');
+  btn.textContent=btn.classList.contains('liked')?'💚 Liked':'🤍 Like';
+  showToast(btn.classList.contains('liked')?'Liked Sofia ✦':'Removed like');
+}
+
+// MEDIA TABS
+const allItems=document.querySelectorAll('.media-item');
+function switchTab(el,type){
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  allItems.forEach((item,i)=>{
+    const isVideo=item.querySelector('.video')!==null;
+    if(type==='all')item.style.display='block';
+    else if(type==='videos')item.style.display=isVideo?'block':'none';
+    else item.style.display=!isVideo?'block':'none';
+  });
+}
+
+// LIGHTBOX
+const mediaData=[
+  {type:'video',caption:'"Make me laugh..." — 0:22',bg:'mg-1'},
+  {type:'photo',caption:'Phoenix Farmers Market 🌿',bg:'mg-2'},
+  {type:'photo',caption:'Pretzel at the park 🐶',bg:'mg-3'},
+  {type:'video',caption:'"Something weird about me..." — 0:18',bg:'mg-4'},
+  {type:'photo',caption:'Sunday baking chaos ☕',bg:'mg-5'},
+  {type:'photo',caption:'Art gallery opening night',bg:'mg-6'},
+  {type:'photo',caption:'Hiking South Mountain 🏔️',bg:'mg-7'},
+  {type:'video',caption:'"Tell me a story..." — 0:29',bg:'mg-8'},
+  {type:'photo',caption:'My favorite coffee spot',bg:'mg-9'},
+  {type:'photo',caption:'Pretzel's first birthday 🎂',bg:'mg-1'},
+  {type:'photo',caption:'Desert sunset last weekend',bg:'mg-3'},
+  {type:'photo',caption:'New mural I found downtown',bg:'mg-5'},
+];
+
+let currentLb=0;
+
+function openLightbox(i){
+  currentLb=i;
+  renderLb();
+  document.getElementById('lightbox').classList.add('show');
+}
+
+function renderLb(){
+  const d=mediaData[currentLb];
+  const content=document.getElementById('lbContent');
+  const gradMap={'mg-1':'linear-gradient(145deg,#1a3020,#2d5533)','mg-2':'linear-gradient(145deg,#0f2535,#1a3548)','mg-3':'linear-gradient(145deg,#251520,#3b1f35)','mg-4':'linear-gradient(145deg,#1a2a10,#2d4520)','mg-5':'linear-gradient(145deg,#251a10,#3b2a15)','mg-6':'linear-gradient(145deg,#101a25,#152535)','mg-7':'linear-gradient(145deg,#201020,#352035)','mg-8':'linear-gradient(145deg,#101f12,#1e3b22)','mg-9':'linear-gradient(145deg,#1a1510,#2a2015)'};
+  content.style.background=gradMap[d.bg]||'var(--forest2)';
+  content.style.width='100%';content.style.height='100%';
+  if(d.type==='video'){
+    content.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:rgba(212,245,90,.2);border:2px solid rgba(212,245,90,.5);display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="showToast('Video playback coming in v2 ✦')"><div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 19px;border-color:transparent transparent transparent var(--pop);margin-left:3px;"></div></div>`;
+  } else {
+    content.innerHTML=`<div style="font-size:36px;opacity:.3;">📷</div>`;
+  }
+  document.getElementById('lbCaption').textContent=d.caption;
+}
+
+function closeLightbox(e){
+  if(!e||e.target===document.getElementById('lightbox'))
+    document.getElementById('lightbox').classList.remove('show');
+}
+function lbPrev(){currentLb=(currentLb-1+mediaData.length)%mediaData.length;renderLb();}
+function lbNext(){currentLb=(currentLb+1)%mediaData.length;renderLb();}
+
+// KEYBOARD NAV in lightbox
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('show'))return;
+  if(e.key==='ArrowRight')lbNext();
+  if(e.key==='ArrowLeft')lbPrev();
+  if(e.key==='Escape')document.getElementById('lightbox').classList.remove('show');
+});
+
+// TOAST
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
