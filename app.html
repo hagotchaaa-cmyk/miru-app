@@ -435,15 +435,7 @@ function showPW(mode){
   document.getElementById('pwOverlay').classList.add('show');
 }
 function closePW(e){if(!e||e.target===document.getElementById('pwOverlay'))document.getElementById('pwOverlay').classList.remove('show');}
-async function subscribe(){
-  document.getElementById('pwOverlay').classList.remove('show');
-  try {
-    const res = await fetch('https://miru-backend-ljo3.onrender.com/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await res.json();
-    if(data.url) { window.location.href = data.url; }
+async function subscribe(){ document.getElementById('pwOverlay').classList.remove('show'); window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00'; }
     else { S.premium=true;S.sw=9999;S.su=PREM_SUPERS;save();updateBar();
     setTimeout(()=>document.getElementById('successScreen').classList.add('show'),300); }
   } catch(e) {
