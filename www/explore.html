@@ -2,471 +2,721 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F8F6FF">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miru — Explore</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#F8F6FF;--surface:#fff;--border:#E4DEFF;
-  --purple:#7C5CBF;--purple-mid:#9B7FD4;--purple-pale:#EDE8FF;
-  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
-  --like:#FF5E7A;--pass:#A99DC0;--super:#5B8CFF;
-  --serif:'Playfair Display',serif;--sans:'DM Sans',sans-serif;
-  --radius:20px;--radius-pill:999px;
+  --forest:#0F1F12;--forest2:#162A19;--forest3:#1E3B22;
+  --moss:#2D5533;--sage:#5C8A5E;--mint:#A8C8A0;
+  --cream:#F5F0E4;--pop:#D4F55A;
+  --border:rgba(92,138,94,0.25);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Cabinet Grotesk',sans-serif;
 }
-html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);font-family:var(--sans);color:var(--text);}
 
-/* Nav */
-.nav{
+html,body{height:100%;overflow:hidden;background:#000;}
+body{font-family:var(--sans);color:var(--cream);cursor:none;}
+
+/* CURSOR */
+.cursor{position:fixed;width:12px;height:12px;background:var(--pop);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;}
+.cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(168,200,160,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* NAV OVERLAY */
+.nav-overlay{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 1.25rem;
-  background:rgba(248,246,255,.95);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
+  background:linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,transparent 100%);
 }
-.logo{display:flex;align-items:center;gap:6px;}
-.logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;}
-.logo-eye{width:18px;height:11px;border:2px solid #fff;border-radius:999px;display:flex;align-items:center;justify-content:center;}
-.logo-pupil{width:5px;height:5px;border-radius:50%;background:#fff;}
-.logo-word{font-family:var(--serif);font-size:20px;font-weight:700;font-style:italic;color:var(--text);}
-.nav-avatar{
-  width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(135deg,var(--purple),var(--purple-mid));
+.logo{display:flex;align-items:baseline;gap:4px;}
+.logo-word{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--cream);}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--pop);margin-bottom:3px;}
+.nav-mode{
+  display:flex;gap:0;background:rgba(0,0,0,0.5);
+  border:1px solid rgba(255,255,255,0.15);border-radius:999px;padding:3px;
+  backdrop-filter:blur(8px);
+}
+.mode-btn{
+  padding:.4rem 1rem;border-radius:999px;font-size:12px;font-weight:700;
+  color:rgba(255,255,255,0.45);cursor:pointer;border:none;background:transparent;
+  font-family:var(--sans);transition:all .2s;letter-spacing:.5px;
+}
+.mode-btn.active{background:var(--pop);color:var(--forest);}
+.nav-back{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;
-  cursor:pointer;position:relative;border:2px solid var(--purple-pale);
+  cursor:pointer;font-size:18px;backdrop-filter:blur(8px);
+  text-decoration:none;color:var(--cream);
 }
-.menu-dd{
-  display:none;position:fixed;top:60px;right:12px;width:210px;
-  background:#fff;border:1px solid var(--border);border-radius:var(--radius);
-  box-shadow:0 8px 40px rgba(124,92,191,.15);z-index:9999;overflow:hidden;
-}
-.menu-dd.show{display:block;}
-.mi{padding:.8rem 1rem;font-size:14px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem;}
-.mi:last-child{border-bottom:none;}
-.mi.red{color:#CC3355;}
 
-/* Card stack */
-.card-stage{
-  position:fixed;top:64px;left:0;right:0;bottom:64px;
-  display:flex;align-items:center;justify-content:center;
-  padding:1rem;
+/* FEED CONTAINER */
+.feed{
+  height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;
+  scrollbar-width:none;
 }
+.feed::-webkit-scrollbar{display:none;}
+
+/* CARD */
 .card{
-  position:absolute;
-  width:calc(100% - 2rem);max-width:400px;
-  height:calc(100% - 0rem);
-  border-radius:var(--radius);overflow:hidden;
-  background:#fff;border:1px solid var(--border);
-  box-shadow:0 8px 40px rgba(124,92,191,.1);
-  touch-action:none;user-select:none;
-  cursor:grab;
-  transition:box-shadow .2s;
+  height:100vh;width:100%;
+  scroll-snap-align:start;
+  position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;
 }
-.card:active{cursor:grabbing;}
-.card.animated{transition:transform .45s cubic-bezier(.25,.46,.45,.94),opacity .45s;}
+
+/* VIDEO BG */
 .card-bg{
-  width:100%;height:60%;
+  position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
-  font-size:64px;position:relative;overflow:hidden;
+  overflow:hidden;
 }
-.bg-orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:.5;}
-.card-info{padding:1.25rem;}
-.card-name{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--text);margin-bottom:.2rem;}
-.card-meta{font-size:13px;color:var(--text3);margin-bottom:.65rem;}
-.card-bio{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:.75rem;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.card-tags{display:flex;flex-wrap:wrap;gap:.35rem;}
-.tag{
-  padding:.3rem .75rem;border-radius:var(--radius-pill);
-  background:var(--purple-pale);border:1px solid var(--border);
-  font-size:11px;color:var(--purple);font-weight:500;
-}
-/* Swipe labels */
-.swipe-label{
-  position:absolute;top:1.25rem;left:1.25rem;
-  padding:.4rem 1rem;border-radius:var(--radius-pill);
-  font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
-  opacity:0;transition:opacity .15s;pointer-events:none;border:3px solid;
-}
-.label-like{color:var(--like);border-color:var(--like);right:1.25rem;left:auto;}
-.label-pass{color:var(--pass);border-color:var(--pass);}
-.label-super{color:var(--super);border-color:var(--super);top:auto;bottom:4rem;left:50%;transform:translateX(-50%);}
-
-/* Action buttons */
-.actions{
-  position:fixed;bottom:72px;left:0;right:0;z-index:50;
-  display:flex;align-items:center;justify-content:center;gap:1.25rem;
-  padding:.75rem 1.25rem;
-}
-.act-btn{
+.card-bg-inner{
+  width:100%;height:100%;
   display:flex;align-items:center;justify-content:center;
-  border-radius:50%;border:none;cursor:pointer;
-  box-shadow:0 4px 20px rgba(0,0,0,.1);transition:transform .15s;
+  position:relative;
 }
-.act-btn:active{transform:scale(.9);}
-.act-pass{width:56px;height:56px;background:#fff;border:1.5px solid var(--border);font-size:22px;}
-.act-super{width:52px;height:52px;background:#fff;border:1.5px solid #DBE8FF;font-size:20px;}
-.act-like{width:64px;height:64px;background:linear-gradient(135deg,#FF7A9A,var(--like));font-size:26px;}
+/* Animated gradient simulating video */
+.bg-a{background:linear-gradient(160deg,#0a1a0c 0%,#1a3820 40%,#2d5533 100%);}
+.bg-b{background:linear-gradient(160deg,#0a0f1a 0%,#102040 40%,#1a3555 100%);}
+.bg-c{background:linear-gradient(160deg,#1a0a10 0%,#3a1525 40%,#55203a 100%);}
+.bg-d{background:linear-gradient(160deg,#0f1a0a 0%,#253a10 40%,#3a5515 100%);}
+.bg-e{background:linear-gradient(160deg,#1a100a 0%,#402a10 40%,#553520 100%);}
 
-/* Empty state */
-.empty{
-  text-align:center;padding:2rem;
-  position:fixed;top:64px;left:0;right:0;bottom:64px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  display:none;
-}
-.empty.show{display:flex;}
-.empty-icon{font-size:56px;margin-bottom:1rem;}
-.empty-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--text);margin-bottom:.5rem;}
-.empty-title em{font-style:italic;color:var(--purple);}
-.empty-sub{font-size:14px;color:var(--text3);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;}
-.empty-btn{
-  padding:.8rem 2rem;border-radius:var(--radius-pill);
-  background:var(--purple);color:#fff;
-  font-family:var(--sans);font-size:14px;font-weight:600;border:none;cursor:pointer;
-}
+/* Floating orbs in bg */
+.orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbFloat 6s ease-in-out infinite alternate;}
+@keyframes orbFloat{from{transform:translate(0,0) scale(1);}to{transform:translate(20px,30px) scale(1.1);}}
 
-/* Match popup */
-.match-overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(26,21,40,.7);backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:center;padding:1.5rem;
-  display:none;
+/* Play indicator */
+.play-indicator{
+  position:absolute;z-index:2;
+  width:70px;height:70px;border-radius:50%;
+  background:rgba(212,245,90,0.15);border:2px solid rgba(212,245,90,0.4);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+  animation:playPulse 2s ease-in-out infinite;
 }
-.match-overlay.show{display:flex;}
-.match-card{
-  background:#fff;border-radius:24px;padding:2.5rem 2rem;
-  text-align:center;width:100%;max-width:360px;
-  box-shadow:0 16px 60px rgba(124,92,191,.2);
-}
-.match-icon{font-size:52px;margin-bottom:1rem;}
-.match-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--text);margin-bottom:.4rem;}
-.match-title em{font-style:italic;color:var(--purple);}
-.match-sub{font-size:14px;color:var(--text3);line-height:1.6;margin-bottom:1.75rem;}
-.match-msg{
-  width:100%;padding:1rem;border-radius:var(--radius-pill);
-  background:var(--purple);color:#fff;
-  font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;
-  margin-bottom:.65rem;
-}
-.match-later{
-  width:100%;padding:.75rem;border-radius:var(--radius-pill);
-  border:1px solid var(--border);background:transparent;
-  color:var(--text3);font-family:var(--sans);font-size:14px;cursor:pointer;
+@keyframes playPulse{0%,100%{transform:scale(1);opacity:.8;}50%{transform:scale(1.05);opacity:1;}}
+.play-tri{width:0;height:0;border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent var(--pop);margin-left:4px;}
+
+/* Video duration */
+.vid-dur{
+  position:absolute;bottom:12px;right:12px;z-index:3;
+  font-size:11px;color:rgba(255,255,255,0.6);
+  background:rgba(0,0,0,0.4);padding:2px 8px;border-radius:999px;
+  backdrop-filter:blur(4px);
 }
 
-/* Toast */
+/* GRADIENT OVERLAYS */
+.grad-bottom{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.4) 40%,transparent 70%);
+  z-index:1;
+}
+.grad-top{
+  position:absolute;top:0;left:0;right:0;height:180px;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,transparent 100%);
+  z-index:1;
+}
+
+/* PROMPT TAG */
+.prompt-tag{
+  position:absolute;top:80px;left:1rem;z-index:3;
+  padding:5px 12px;border-radius:999px;
+  background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.15);
+  font-family:var(--serif);font-size:12px;font-style:italic;
+  color:rgba(255,255,255,0.75);backdrop-filter:blur(6px);
+}
+
+/* CARD CONTENT */
+.card-content{
+  position:relative;z-index:2;
+  padding:0 1rem 1.5rem;width:100%;
+}
+
+/* PROFILE ROW */
+.profile-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:.85rem;}
+.profile-left{}
+.profile-name{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,0.5);}
+.profile-age{font-size:16px;color:rgba(255,255,255,0.6);margin-left:.4rem;}
+.profile-loc{font-size:12px;color:rgba(255,255,255,0.45);margin-top:4px;letter-spacing:.5px;}
+.profile-match{
+  padding:6px 12px;border-radius:999px;
+  background:rgba(212,245,90,0.15);border:1.5px solid rgba(212,245,90,0.4);
+  font-size:12px;font-weight:700;color:var(--pop);
+  backdrop-filter:blur(4px);
+}
+
+/* TAGS */
+.card-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.85rem;}
+.ctag{
+  padding:4px 10px;border-radius:999px;font-size:11px;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.75);backdrop-filter:blur(4px);
+}
+.ctag.intent{background:rgba(212,245,90,0.12);border-color:rgba(212,245,90,0.3);color:var(--pop);}
+
+/* BIO */
+.card-bio{
+  font-size:14px;color:rgba(255,255,255,0.6);
+  line-height:1.55;margin-bottom:1rem;
+  max-width:320px;
+}
+
+/* ACTION BUTTONS */
+.actions{display:flex;align-items:center;justify-content:center;gap:1.25rem;padding:.5rem 0 .5rem;}
+.action-btn{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  cursor:pointer;transition:transform .2s;
+}
+.action-btn:hover{transform:scale(1.08);}
+.action-btn:active{transform:scale(.94);}
+.btn-circle{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;border:2px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(8px);transition:all .2s;
+}
+.btn-pass-c{background:rgba(255,80,80,0.15);border-color:rgba(255,100,100,0.35);}
+.btn-pass-c:hover{background:rgba(255,80,80,0.3);border-color:rgba(255,100,100,0.6);}
+.btn-super-c{background:rgba(80,150,255,0.15);border-color:rgba(100,160,255,0.35);width:48px;height:48px;font-size:18px;}
+.btn-super-c:hover{background:rgba(80,150,255,0.3);}
+.btn-like-c{background:rgba(212,245,90,0.15);border-color:rgba(212,245,90,0.4);}
+.btn-like-c:hover{background:rgba(212,245,90,0.3);border-color:rgba(212,245,90,0.7);}
+.btn-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+
+/* SIDE ACTIONS */
+.side-actions{
+  position:absolute;right:1rem;bottom:180px;z-index:3;
+  display:flex;flex-direction:column;gap:1.25rem;align-items:center;
+}
+.side-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;transition:transform .2s;
+}
+.side-btn:hover{transform:scale(1.1);}
+.side-icon{font-size:26px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
+.side-count{font-size:11px;color:rgba(255,255,255,0.5);}
+
+/* SCROLL HINT */
+.scroll-hint-card{
+  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:3;display:flex;flex-direction:column;align-items:center;gap:4px;
+  animation:bounceUp 1.5s ease-in-out infinite;
+  opacity:.5;
+}
+@keyframes bounceUp{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}}
+.sh-text{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+.sh-arrow{font-size:16px;color:rgba(255,255,255,0.4);}
+
+/* MATCH POPUP */
+.match-popup{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.match-popup.show{opacity:1;pointer-events:all;}
+.match-popup-inner{
+  text-align:center;padding:2.5rem 2rem;
+  max-width:340px;
+}
+.match-pop-icon{font-size:60px;margin-bottom:1rem;animation:popBounce .5s ease both;}
+@keyframes popBounce{from{transform:scale(0);}to{transform:scale(1);}}
+.match-pop-title{font-family:var(--serif);font-size:40px;font-weight:700;font-style:italic;color:var(--pop);margin-bottom:.5rem;}
+.match-pop-sub{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:2rem;line-height:1.6;}
+.match-pop-btns{display:flex;flex-direction:column;gap:.75rem;}
+.pop-btn-msg{
+  padding:.9rem 2rem;border-radius:999px;
+  background:var(--pop);color:var(--forest);
+  font-family:var(--sans);font-size:14px;font-weight:800;
+  border:none;cursor:pointer;transition:all .2s;
+}
+.pop-btn-msg:hover{transform:translateY(-2px);}
+.pop-btn-skip{
+  padding:.75rem 2rem;border-radius:999px;
+  background:transparent;border:1px solid rgba(255,255,255,0.2);
+  color:rgba(255,255,255,0.5);font-family:var(--sans);font-size:14px;
+  cursor:pointer;transition:all .2s;
+}
+.pop-btn-skip:hover{border-color:rgba(255,255,255,0.4);color:rgba(255,255,255,0.7);}
+
+/* TOAST */
 .toast{
-  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);
-  padding:.6rem 1.25rem;border-radius:var(--radius-pill);
-  font-size:13px;font-weight:500;z-index:999;
-  background:var(--text);color:#fff;opacity:0;
-  transition:all .3s;white-space:nowrap;pointer-events:none;
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-10px);
+  padding:.6rem 1.25rem;border-radius:999px;
+  font-size:13px;font-weight:500;z-index:400;
+  opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;
 }
+.toast.like{background:rgba(212,245,90,0.2);border:1px solid rgba(212,245,90,0.4);color:var(--pop);}
+.toast.pass{background:rgba(255,80,80,0.15);border:1px solid rgba(255,100,100,0.3);color:#ff9090;}
+.toast.super{background:rgba(80,150,255,0.15);border:1px solid rgba(100,160,255,0.3);color:#90c0ff;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* Bottom nav */
+/* BOTTOM NAV */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:100;
   display:flex;justify-content:space-around;align-items:center;
-  padding:.75rem 0 1.25rem;
-  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
-  border-top:1px solid var(--border);
+  padding:.65rem 1rem 1.1rem;
+  background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 100%);
 }
-.bnav{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.25rem .75rem;}
-.bnav:active{transform:scale(.9);}
-.bnav-icon{font-size:21px;color:var(--text3);}
-.bnav-label{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
-.bnav.active .bnav-icon,.bnav.active .bnav-label{color:var(--purple);}
-
-/* Loader */
-.loader-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:50;}
-.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.2rem .6rem;border-radius:10px;}
+.bnav-icon{font-size:20px;color:rgba(255,255,255,0.3);}
+.bnav-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+.bnav-item.active .bnav-icon,.bnav-item.active .bnav-label{color:var(--pop);}
 </style>
 </head>
 <body>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
 
+<!-- NAV -->
+<div class="nav-overlay">
+  <a href="app.html" class="nav-back">←</a>
+  <div class="logo"><span class="logo-word">miru</span><div class="logo-dot"></div></div>
+  <div class="nav-mode">
+    <button class="mode-btn" onclick="window.location.href='app.html'">AI picks</button>
+    <button class="mode-btn active">Explore</button>
+  </div>
+</div>
+
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- Nav -->
-<div class="nav">
-  <div class="logo">
-    <div class="logo-mark"><div class="logo-eye"><div class="logo-pupil"></div></div></div>
-    <span class="logo-word">miru</span>
+<!-- FEED -->
+<div class="feed" id="feed">
+
+  <!-- CARD 1 -->
+  <div class="card" id="card0">
+    <div class="card-bg">
+      <div class="card-bg-inner bg-a">
+        <div class="orb" style="width:300px;height:300px;background:rgba(45,85,51,0.5);top:-50px;right:-50px;"></div>
+        <div class="orb" style="width:200px;height:200px;background:rgba(92,138,94,0.3);bottom:100px;left:-30px;animation-delay:-3s;"></div>
+        <div class="play-indicator"><div class="play-tri"></div></div>
+        <div class="vid-dur">0:22</div>
+      </div>
+    </div>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="prompt-tag">"Make me laugh..."</div>
+    <div class="side-actions">
+      <div class="side-btn" onclick="likeCard(0,'Sofia')">
+        <div class="side-icon">❤️</div>
+        <div class="side-count">142</div>
+      </div>
+      <div class="side-btn" onclick="superCard(0,'Sofia')">
+        <div class="side-icon">⚡</div>
+        <div class="side-count">Super</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">💬</div>
+        <div class="side-count">Chat</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">↗️</div>
+        <div class="side-count">Share</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="profile-row">
+        <div class="profile-left">
+          <div><span class="profile-name">Sofia R.</span><span class="profile-age">27</span></div>
+          <div class="profile-loc">📍 2.4 mi · Phoenix, AZ</div>
+        </div>
+        <div class="profile-match">97% match</div>
+      </div>
+      <div class="card-tags">
+        <span class="ctag intent">Relationship</span>
+        <span class="ctag">chill</span>
+        <span class="ctag">artsy</span>
+        <span class="ctag">dog mom</span>
+        <span class="ctag">tonight</span>
+      </div>
+      <div class="card-bio">Graphic designer by day, chaotic baker by night. I will absolutely challenge you to a hot sauce contest and I will win.</div>
+      <div class="actions">
+        <div class="action-btn" onclick="passCard(0,'Sofia')">
+          <div class="btn-circle btn-pass-c">✕</div>
+          <div class="btn-label">Pass</div>
+        </div>
+        <div class="action-btn" onclick="superCard(0,'Sofia')">
+          <div class="btn-circle btn-super-c">⚡</div>
+          <div class="btn-label">Super</div>
+        </div>
+        <div class="action-btn" onclick="likeCard(0,'Sofia')">
+          <div class="btn-circle btn-like-c">❤️</div>
+          <div class="btn-label">Like</div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="nav-avatar" id="navAv" onclick="toggleMenu()">
-    <div class="menu-dd" id="menuDd">
-      <div class="mi" onclick="location.href='profile.html'">👤 My Profile</div>
-      <div class="mi" onclick="location.href='onboarding.html'">✏️ Edit Profile</div>
-      <div class="mi" onclick="location.href='video.html'">🎥 Add Video</div>
-      <div class="mi" onclick="location.href='messages.html'">💬 Messages</div>
-      <div class="mi" onclick="location.href='app.html'">🤖 AI Matches</div>
-      <div class="mi" onclick="location.href='privacy.html'">🔒 Privacy</div>
-      <div class="mi" onclick="location.href='terms.html'">📄 Terms</div>
-      <div class="mi" onclick="navLogout()">🚪 Sign Out</div>
-      <div class="mi red" onclick="location.href='delete-account.html'">🗑️ Delete Account</div>
+
+  <!-- CARD 2 -->
+  <div class="card" id="card1">
+    <div class="card-bg">
+      <div class="card-bg-inner bg-b">
+        <div class="orb" style="width:350px;height:350px;background:rgba(20,60,100,0.5);top:-80px;left:-60px;"></div>
+        <div class="orb" style="width:180px;height:180px;background:rgba(40,90,140,0.35);bottom:80px;right:-20px;animation-delay:-4s;"></div>
+        <div class="play-indicator"><div class="play-tri"></div></div>
+        <div class="vid-dur">0:18</div>
+      </div>
+    </div>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="prompt-tag">"Something weird about you..."</div>
+    <div class="side-actions">
+      <div class="side-btn" onclick="likeCard(1,'Marcus')">
+        <div class="side-icon">❤️</div>
+        <div class="side-count">98</div>
+      </div>
+      <div class="side-btn" onclick="superCard(1,'Marcus')">
+        <div class="side-icon">⚡</div>
+        <div class="side-count">Super</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">💬</div>
+        <div class="side-count">Chat</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">↗️</div>
+        <div class="side-count">Share</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="profile-row">
+        <div class="profile-left">
+          <div><span class="profile-name">Marcus T.</span><span class="profile-age">30</span></div>
+          <div class="profile-loc">📍 1.1 mi · Tempe, AZ</div>
+        </div>
+        <div class="profile-match">91% match</div>
+      </div>
+      <div class="card-tags">
+        <span class="ctag intent">Relationship</span>
+        <span class="ctag">adventurous</span>
+        <span class="ctag">deep talks</span>
+        <span class="ctag">weekend</span>
+      </div>
+      <div class="card-bio">Software engineer who actually goes outside. Hiked 14 peaks last year. Looking for someone to debate the best Coen Brothers film with.</div>
+      <div class="actions">
+        <div class="action-btn" onclick="passCard(1,'Marcus')">
+          <div class="btn-circle btn-pass-c">✕</div>
+          <div class="btn-label">Pass</div>
+        </div>
+        <div class="action-btn" onclick="superCard(1,'Marcus')">
+          <div class="btn-circle btn-super-c">⚡</div>
+          <div class="btn-label">Super</div>
+        </div>
+        <div class="action-btn" onclick="likeCard(1,'Marcus')">
+          <div class="btn-circle btn-like-c">❤️</div>
+          <div class="btn-label">Like</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3 -->
+  <div class="card" id="card2">
+    <div class="card-bg">
+      <div class="card-bg-inner bg-c">
+        <div class="orb" style="width:300px;height:300px;background:rgba(100,20,60,0.5);top:-60px;right:-40px;"></div>
+        <div class="orb" style="width:200px;height:200px;background:rgba(80,15,45,0.35);bottom:60px;left:-20px;animation-delay:-2s;"></div>
+        <div class="play-indicator"><div class="play-tri"></div></div>
+        <div class="vid-dur">0:29</div>
+      </div>
+    </div>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="prompt-tag">"Tell me a story..."</div>
+    <div class="side-actions">
+      <div class="side-btn" onclick="likeCard(2,'Priya')">
+        <div class="side-icon">❤️</div>
+        <div class="side-count">211</div>
+      </div>
+      <div class="side-btn" onclick="superCard(2,'Priya')">
+        <div class="side-icon">⚡</div>
+        <div class="side-count">Super</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">💬</div>
+        <div class="side-count">Chat</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">↗️</div>
+        <div class="side-count">Share</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="profile-row">
+        <div class="profile-left">
+          <div><span class="profile-name">Priya N.</span><span class="profile-age">26</span></div>
+          <div class="profile-loc">📍 4.8 mi · Scottsdale, AZ</div>
+        </div>
+        <div class="profile-match">88% match</div>
+      </div>
+      <div class="card-tags">
+        <span class="ctag intent">Relationship</span>
+        <span class="ctag">intellectual</span>
+        <span class="ctag">foodie</span>
+        <span class="ctag">flexible</span>
+      </div>
+      <div class="card-bio">UX researcher. I read menus the way other people read novels. Will absolutely make you try the weird thing on the menu.</div>
+      <div class="actions">
+        <div class="action-btn" onclick="passCard(2,'Priya')">
+          <div class="btn-circle btn-pass-c">✕</div>
+          <div class="btn-label">Pass</div>
+        </div>
+        <div class="action-btn" onclick="superCard(2,'Priya')">
+          <div class="btn-circle btn-super-c">⚡</div>
+          <div class="btn-label">Super</div>
+        </div>
+        <div class="action-btn" onclick="likeCard(2,'Priya')">
+          <div class="btn-circle btn-like-c">❤️</div>
+          <div class="btn-label">Like</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 4 -->
+  <div class="card" id="card3">
+    <div class="card-bg">
+      <div class="card-bg-inner bg-d">
+        <div class="orb" style="width:280px;height:280px;background:rgba(40,80,20,0.5);top:-40px;left:-40px;"></div>
+        <div class="orb" style="width:220px;height:220px;background:rgba(60,100,15,0.35);bottom:80px;right:-30px;animation-delay:-5s;"></div>
+        <div class="play-indicator"><div class="play-tri"></div></div>
+        <div class="vid-dur">0:25</div>
+      </div>
+    </div>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="prompt-tag">"What are you passionate about..."</div>
+    <div class="side-actions">
+      <div class="side-btn" onclick="likeCard(3,'Jordan')">
+        <div class="side-icon">❤️</div>
+        <div class="side-count">76</div>
+      </div>
+      <div class="side-btn" onclick="superCard(3,'Jordan')">
+        <div class="side-icon">⚡</div>
+        <div class="side-count">Super</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">💬</div>
+        <div class="side-count">Chat</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">↗️</div>
+        <div class="side-count">Share</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="profile-row">
+        <div class="profile-left">
+          <div><span class="profile-name">Jordan K.</span><span class="profile-age">28</span></div>
+          <div class="profile-loc">📍 3.2 mi · Chandler, AZ</div>
+        </div>
+        <div class="profile-match">85% match</div>
+      </div>
+      <div class="card-tags">
+        <span class="ctag intent">Something fun</span>
+        <span class="ctag">outdoorsy</span>
+        <span class="ctag">spontaneous</span>
+        <span class="ctag">tonight</span>
+      </div>
+      <div class="card-bio">Landscape photographer and part-time sunrise chaser. If you're down for a 4am hike I'm already your favorite person.</div>
+      <div class="actions">
+        <div class="action-btn" onclick="passCard(3,'Jordan')">
+          <div class="btn-circle btn-pass-c">✕</div>
+          <div class="btn-label">Pass</div>
+        </div>
+        <div class="action-btn" onclick="superCard(3,'Jordan')">
+          <div class="btn-circle btn-super-c">⚡</div>
+          <div class="btn-label">Super</div>
+        </div>
+        <div class="action-btn" onclick="likeCard(3,'Jordan')">
+          <div class="btn-circle btn-like-c">❤️</div>
+          <div class="btn-label">Like</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 5 -->
+  <div class="card" id="card4">
+    <div class="card-bg">
+      <div class="card-bg-inner bg-e">
+        <div class="orb" style="width:320px;height:320px;background:rgba(100,60,20,0.45);top:-60px;right:-50px;"></div>
+        <div class="orb" style="width:180px;height:180px;background:rgba(80,40,10,0.35);bottom:60px;left:-20px;animation-delay:-7s;"></div>
+        <div class="play-indicator"><div class="play-tri"></div></div>
+        <div class="vid-dur">0:30</div>
+      </div>
+    </div>
+    <div class="grad-top"></div>
+    <div class="grad-bottom"></div>
+    <div class="prompt-tag">"Make me laugh..."</div>
+    <div class="side-actions">
+      <div class="side-btn" onclick="likeCard(4,'Aisha')">
+        <div class="side-icon">❤️</div>
+        <div class="side-count">189</div>
+      </div>
+      <div class="side-btn" onclick="superCard(4,'Aisha')">
+        <div class="side-icon">⚡</div>
+        <div class="side-count">Super</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">💬</div>
+        <div class="side-count">Chat</div>
+      </div>
+      <div class="side-btn">
+        <div class="side-icon">↗️</div>
+        <div class="side-count">Share</div>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="profile-row">
+        <div class="profile-left">
+          <div><span class="profile-name">Aisha M.</span><span class="profile-age">25</span></div>
+          <div class="profile-loc">📍 5.6 mi · Mesa, AZ</div>
+        </div>
+        <div class="profile-match">82% match</div>
+      </div>
+      <div class="card-tags">
+        <span class="ctag intent">Relationship</span>
+        <span class="ctag">warm</span>
+        <span class="ctag">artsy</span>
+        <span class="ctag">weekend</span>
+      </div>
+      <div class="card-bio">Children's book illustrator. I laugh at my own jokes before I finish telling them. Looking for someone who finds that charming not annoying.</div>
+      <div class="actions">
+        <div class="action-btn" onclick="passCard(4,'Aisha')">
+          <div class="btn-circle btn-pass-c">✕</div>
+          <div class="btn-label">Pass</div>
+        </div>
+        <div class="action-btn" onclick="superCard(4,'Aisha')">
+          <div class="btn-circle btn-super-c">⚡</div>
+          <div class="btn-label">Super</div>
+        </div>
+        <div class="action-btn" onclick="likeCard(4,'Aisha')">
+          <div class="btn-circle btn-like-c">❤️</div>
+          <div class="btn-label">Like</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end feed -->
+
+<!-- MATCH POPUP -->
+<div class="match-popup" id="matchPopup">
+  <div class="match-popup-inner">
+    <div class="match-pop-icon">✦</div>
+    <div class="match-pop-title">It's a match!</div>
+    <div class="match-pop-sub">You and <span id="matchName">Sofia</span> both liked each other. Don't leave them waiting.</div>
+    <div class="match-pop-btns">
+      <button class="pop-btn-msg" onclick="window.location.href='messages.html'">Send a message</button>
+      <button class="pop-btn-skip" onclick="closeMatch()">Keep exploring</button>
     </div>
   </div>
 </div>
 
-<!-- Card stage -->
-<div class="card-stage" id="cardStage"></div>
-
-<!-- Action buttons -->
-<div class="actions" id="actions" style="display:none;">
-  <button class="act-btn act-pass" onclick="swipe('pass')" title="Pass">✕</button>
-  <button class="act-btn act-super" onclick="swipe('super')" title="Super Like">⚡</button>
-  <button class="act-btn act-like" onclick="swipe('like')" title="Like">❤️</button>
-</div>
-
-<!-- Empty state -->
-<div class="empty" id="empty">
-  <div class="empty-icon">💜</div>
-  <h2 class="empty-title">Be among<br><em>the first.</em></h2>
-  <p class="empty-sub">Once more people join Miru, their profiles will appear here. Share your link and get your first matches faster.</p>
-  <button class="empty-btn" onclick="location.href='app.html'">← Back to matches</button>
-</div>
-
-<!-- Loader -->
-<div class="loader-wrap" id="loader">
-  <div class="spinner"></div>
-</div>
-
-<!-- Match popup -->
-<div class="match-overlay" id="matchOverlay">
-  <div class="match-card">
-    <div class="match-icon">💜</div>
-    <h2 class="match-title">It's a<br><em>match!</em></h2>
-    <p class="match-sub" id="matchSub">You and <strong id="matchName">them</strong> liked each other!</p>
-    <button class="match-msg" onclick="location.href='messages.html'">💬 Send a message</button>
-    <button class="match-later" onclick="closeMatch()">Maybe later</button>
-  </div>
-</div>
-
-<!-- Bottom nav -->
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <div class="bnav" onclick="location.href='app.html'"><div class="bnav-icon">💜</div><div class="bnav-label">Matches</div></div>
-  <div class="bnav" onclick="location.href='messages.html'"><div class="bnav-icon">💬</div><div class="bnav-label">Messages</div></div>
-  <div class="bnav active"><div class="bnav-icon">🔍</div><div class="bnav-label">Explore</div></div>
-  <div class="bnav" onclick="location.href='profile.html'"><div class="bnav-icon">👤</div><div class="bnav-label">Profile</div></div>
+  <div class="bnav-item" onclick="window.location.href='app.html'">
+    <div class="bnav-icon">💚</div>
+    <div class="bnav-label">Matches</div>
+  </div>
+  <div class="bnav-item" onclick="window.location.href='messages.html'">
+    <div class="bnav-icon">💬</div>
+    <div class="bnav-label">Messages</div>
+  </div>
+  <div class="bnav-item active">
+    <div class="bnav-icon">🔍</div>
+    <div class="bnav-label">Explore</div>
+  </div>
+  <div class="bnav-item" onclick="window.location.href='onboarding.html'">
+    <div class="bnav-icon">👤</div>
+    <div class="bnav-label">Profile</div>
+  </div>
 </div>
 
 <script>
-const {createClient}=supabase;
-const sb=createClient(
-  'https://rlmcwbaiuowbkgfzdlme.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'
-);
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
 
-const GRADIENTS=[
-  ['#EDE8FF','#D8CCFF'],['#FFE8F0','#FFD0E4'],['#E8F0FF','#D0E4FF'],
-  ['#FFF0E0','#FFE0C0'],['#E0FFE8','#C0FFD0'],['#FFF8E0','#FFE8C0']
-];
-
-let profiles=[];
-let currentIdx=0;
-let session=null;
-let isDragging=false;
-let startX=0,startY=0,currentX=0,currentY=0;
-
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
-
-function toggleMenu(){document.getElementById('menuDd').classList.toggle('show');}
-document.addEventListener('click',e=>{
-  const av=document.getElementById('navAv');
-  if(av&&!av.contains(e.target))document.getElementById('menuDd').classList.remove('show');
+// KEYBOARD SWIPE
+document.addEventListener('keydown',e=>{
+  const visible=getVisibleCard();
+  if(!visible)return;
+  const names=['Sofia','Marcus','Priya','Jordan','Aisha'];
+  const idx=parseInt(visible.id.replace('card',''));
+  if(e.key==='ArrowRight'||e.key==='l')likeCard(idx,names[idx]);
+  if(e.key==='ArrowLeft'||e.key==='j')passCard(idx,names[idx]);
+  if(e.key==='ArrowUp'||e.key==='k')superCard(idx,names[idx]);
 });
 
-async function navLogout(){
-  try{await sb.auth.signOut();}catch(e){}
-  localStorage.clear();window.location.href='auth.html';
-}
-
-async function loadProfiles(){
-  const {data:{session:s}}=await sb.auth.getSession();
-  if(!s){window.location.href='auth.html';return;}
-  session=s;
-
-  // Set avatar initial
-  const {data:p}=await sb.from('profiles').select('name').eq('id',s.user.id).single();
-  if(p?.name) document.getElementById('navAv').childNodes[0].textContent=(p.name[0]||'?').toUpperCase();
-
-  // Load other profiles (not current user)
-  const {data:users}=await sb.from('profiles')
-    .select('id,name,age,city,bio,intent,vibes')
-    .neq('id',s.user.id)
-    .not('name','is',null)
-    .limit(20);
-
-  document.getElementById('loader').style.display='none';
-
-  if(!users||users.length===0){
-    document.getElementById('empty').classList.add('show');
-    return;
+function getVisibleCard(){
+  const feed=document.getElementById('feed');
+  const cards=document.querySelectorAll('.card');
+  for(const card of cards){
+    const rect=card.getBoundingClientRect();
+    if(rect.top>=0&&rect.top<window.innerHeight/2)return card;
   }
-
-  profiles=users;
-  renderCards();
-  document.getElementById('actions').style.display='flex';
+  return cards[0];
 }
 
-function renderCards(){
-  const stage=document.getElementById('cardStage');
-  stage.innerHTML='';
-  if(currentIdx>=profiles.length){
-    document.getElementById('actions').style.display='none';
-    document.getElementById('empty').classList.add('show');
-    return;
-  }
-  // Show up to 3 stacked cards
-  for(let i=Math.min(currentIdx+2,profiles.length-1);i>=currentIdx;i--){
-    const p=profiles[i];
-    const card=buildCard(p,i,i===currentIdx);
-    stage.appendChild(card);
-  }
-  if(currentIdx<profiles.length) setupDrag(stage.lastChild);
+// ACTIONS
+let toastTimer;
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+type+' show';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
 }
 
-function buildCard(p,i,isTop){
-  const g=GRADIENTS[i%GRADIENTS.length];
-  const offset=(i-currentIdx)*6;
-  const scale=1-(i-currentIdx)*0.04;
-  const card=document.createElement('div');
-  card.className='card';
-  card.id='card-'+i;
-  card.style.transform=`translateY(${offset}px) scale(${scale})`;
-  card.style.zIndex=100-(i-currentIdx);
-  const vibes=(p.vibes||'').split(',').filter(Boolean).slice(0,3);
-  const intent=p.intent||'';
-  const tags=[...(intent?[intent]:[]),...vibes].filter(Boolean);
-  card.innerHTML=`
-    <div class="card-bg" style="background:linear-gradient(145deg,${g[0]},${g[1]});">
-      <div class="bg-orb" style="width:200px;height:200px;background:radial-gradient(${g[1]},transparent);top:-40px;right:-40px;"></div>
-      <div style="font-size:64px;position:relative;z-index:1;">${getEmoji(p)}</div>
-      ${isTop?`
-        <div class="swipe-label label-like" id="labelLike">LIKE ❤️</div>
-        <div class="swipe-label label-pass" id="labelPass">PASS</div>
-        <div class="swipe-label label-super" id="labelSuper">SUPER ⚡</div>
-      `:''}
-    </div>
-    <div class="card-info">
-      <div class="card-name">${p.name||'Someone new'}${p.age?', '+p.age:''}</div>
-      <div class="card-meta">${p.city?'📍 '+p.city:''}</div>
-      ${p.bio?`<div class="card-bio">${p.bio}</div>`:''}
-      <div class="card-tags">${tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-    </div>
-  `;
-  return card;
-}
-
-function getEmoji(p){
-  const arr=['✨','🌟','💫','🎭','🌺','🎨','🌊','🎵'];
-  const n=(p.name||'x').charCodeAt(0);
-  return arr[n%arr.length];
-}
-
-function setupDrag(card){
-  card.addEventListener('pointerdown',onDown,{passive:true});
-}
-
-function onDown(e){
-  isDragging=true;
-  startX=e.clientX;startY=e.clientY;
-  currentX=0;currentY=0;
-  document.addEventListener('pointermove',onMove,{passive:true});
-  document.addEventListener('pointerup',onUp,{passive:true});
-}
-
-function onMove(e){
-  if(!isDragging)return;
-  currentX=e.clientX-startX;
-  currentY=e.clientY-startY;
-  const card=document.getElementById('card-'+currentIdx);
-  if(!card)return;
-  const rot=currentX*0.08;
-  card.style.transform=`translate(${currentX}px,${currentY}px) rotate(${rot}deg)`;
-  card.style.transition='none';
-  const likeLabel=document.getElementById('labelLike');
-  const passLabel=document.getElementById('labelPass');
-  const superLabel=document.getElementById('labelSuper');
-  if(likeLabel) likeLabel.style.opacity=Math.max(0,currentX/80);
-  if(passLabel) passLabel.style.opacity=Math.max(0,-currentX/80);
-  if(superLabel) superLabel.style.opacity=Math.max(0,-currentY/80);
-}
-
-function onUp(e){
-  if(!isDragging)return;
-  isDragging=false;
-  document.removeEventListener('pointermove',onMove);
-  document.removeEventListener('pointerup',onUp);
-  if(currentX>80) swipe('like');
-  else if(currentX<-80) swipe('pass');
-  else if(currentY<-80) swipe('super');
-  else {
-    const card=document.getElementById('card-'+currentIdx);
-    if(card){card.style.transition='transform .3s ease';card.style.transform=`translateY(0) scale(1)`;}
-    const likeLabel=document.getElementById('labelLike');
-    const passLabel=document.getElementById('labelPass');
-    const superLabel=document.getElementById('labelSuper');
-    if(likeLabel) likeLabel.style.opacity=0;
-    if(passLabel) passLabel.style.opacity=0;
-    if(superLabel) superLabel.style.opacity=0;
+function likeCard(i,name){
+  showToast('❤️ Liked '+name,'like');
+  // 40% chance of instant match
+  if(Math.random()<0.4){
+    setTimeout(()=>showMatch(name),600);
+  } else {
+    scrollNext(i);
   }
 }
 
-function swipe(dir){
-  const card=document.getElementById('card-'+currentIdx);
-  if(!card) return;
-  let tx=0,ty=0;
-  if(dir==='like'){tx=600;toast('❤️ Liked!');}
-  else if(dir==='pass'){tx=-600;toast('Passed');}
-  else if(dir==='super'){ty=-800;toast('⚡ Super Like!');}
-  card.style.transition='transform .45s ease,opacity .45s';
-  card.style.transform=`translate(${tx}px,${ty}px) rotate(${tx*0.05}deg)`;
-  card.style.opacity='0';
-  // Record action in Supabase
-  if(session){
-    const target=profiles[currentIdx];
-    sb.from('user_actions').insert({user_id:session.user.id,target_id:target.id,action:dir}).then();
-    if(dir==='like'||dir==='super'){
-      // Check for mutual like
-      sb.from('user_actions')
-        .select('id').eq('user_id',target.id).eq('target_id',session.user.id).in('action',['like','super'])
-        .then(({data})=>{
-          if(data&&data.length>0) showMatch(target.name);
-        });
-    }
+function passCard(i,name){
+  showToast('Passed on '+name,'pass');
+  scrollNext(i);
+}
+
+function superCard(i,name){
+  showToast('⚡ Super connected with '+name+'!','super');
+  setTimeout(()=>showMatch(name),600);
+}
+
+function scrollNext(i){
+  const next=document.getElementById('card'+(i+1));
+  if(next){
+    next.scrollIntoView({behavior:'smooth'});
   }
-  setTimeout(()=>{
-    currentIdx++;
-    renderCards();
-  },450);
 }
 
 function showMatch(name){
-  document.getElementById('matchName').textContent=name||'them';
-  document.getElementById('matchOverlay').classList.add('show');
+  document.getElementById('matchName').textContent=name;
+  document.getElementById('matchPopup').classList.add('show');
 }
-function closeMatch(){document.getElementById('matchOverlay').classList.remove('show');}
 
-// Keyboard shortcuts
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key==='l')swipe('like');
-  if(e.key==='ArrowLeft'||e.key==='j')swipe('pass');
-  if(e.key==='ArrowUp'||e.key==='k')swipe('super');
-});
+function closeMatch(){
+  document.getElementById('matchPopup').classList.remove('show');
+}
 
-loadProfiles();
+// TOUCH SWIPE
+let touchStartY=0;
+document.getElementById('feed').addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY;},{passive:true});
 </script>
 </body>
 </html>
