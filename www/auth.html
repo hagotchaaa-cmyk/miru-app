@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#F8F6FF">
-<title>Miru — Sign in</title>
+<title>Miru Ã¢â‚¬â€ Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -85,7 +85,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .age-row{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:var(--radius);background:var(--surface2);border:1.5px solid var(--border);margin-bottom:1rem;cursor:pointer;}
 .age-checkbox{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
 .age-checkbox.checked{background:var(--purple);border-color:var(--purple);}
-.age-checkbox.checked::after{content:'✓';color:#fff;font-size:12px;font-weight:700;}
+.age-checkbox.checked::after{content:'Ã¢Å“â€œ';color:#fff;font-size:12px;font-weight:700;}
 .age-label{font-size:13px;color:var(--text2);line-height:1.4;}
 
 /* SUBMIT BTN */
@@ -184,8 +184,8 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
     <div class="field">
       <label>Password</label>
       <div class="pass-wrap">
-        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
-        <button class="pass-toggle" onclick="togglePass('loginPassword',this)">👁</button>
+        <input type="password" id="loginPassword" placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
+        <button class="pass-toggle" onclick="togglePass('loginPassword',this)">Ã°Å¸â€˜Â</button>
       </div>
     </div>
 
@@ -198,7 +198,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
     <div class="divider"><div class="div-line"></div><div class="div-text">or</div><div class="div-line"></div></div>
 
     <button class="google-btn" onclick="signInWithGoogle()">
-      <span class="google-icon">🔵</span> Continue with Google
+      <span class="google-icon">Ã°Å¸â€Âµ</span> Continue with Google
     </button>
 
     <div class="terms-text">
@@ -220,7 +220,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
       <label>Password</label>
       <div class="pass-wrap">
         <input type="password" id="signupPassword" placeholder="Min 8 characters" autocomplete="new-password">
-        <button class="pass-toggle" onclick="togglePass('signupPassword',this)">👁</button>
+        <button class="pass-toggle" onclick="togglePass('signupPassword',this)">Ã°Å¸â€˜Â</button>
       </div>
     </div>
 
@@ -228,7 +228,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
       <label>Confirm password</label>
       <div class="pass-wrap">
         <input type="password" id="signupConfirm" placeholder="Repeat password" autocomplete="new-password" onkeydown="if(event.key==='Enter')signup()">
-        <button class="pass-toggle" onclick="togglePass('signupConfirm',this)">👁</button>
+        <button class="pass-toggle" onclick="togglePass('signupConfirm',this)">Ã°Å¸â€˜Â</button>
       </div>
     </div>
 
@@ -245,7 +245,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
     <div class="divider"><div class="div-line"></div><div class="div-text">or</div><div class="div-line"></div></div>
 
     <button class="google-btn" onclick="signInWithGoogle()">
-      <span class="google-icon">🔵</span> Continue with Google
+      <span class="google-icon">Ã°Å¸â€Âµ</span> Continue with Google
     </button>
 
     <div class="terms-text">
@@ -259,7 +259,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 const { createClient } = supabase;
 const sb = createClient(
   'https://rlmcwbaiuowbkgfzdlme.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'  // publishable key — safe for frontend
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'  // publishable key Ã¢â‚¬â€ safe for frontend
 );
 
 // Check if already logged in
@@ -282,7 +282,7 @@ function togglePass(id, btn) {
   const input = document.getElementById(id);
   const isPass = input.type === 'password';
   input.type = isPass ? 'text' : 'password';
-  btn.textContent = isPass ? '🙈' : '👁';
+  btn.textContent = isPass ? 'Ã°Å¸â„¢Ë†' : 'Ã°Å¸â€˜Â';
 }
 
 // AGE CHECK
@@ -328,7 +328,7 @@ async function login() {
   setLoading('loginBtn', false);
   if (error) { showError(error.message); return; }
   // Save session and redirect
-  window.location.href = 'app.html';
+  localStorage.setItem('miru_profile',JSON.stringify({name:data.user.email.split('@')[0]}));window.location.href='app.html';
 }
 
 // SIGNUP
@@ -345,7 +345,7 @@ async function signup() {
   const { data, error } = await sb.auth.signUp({ email, password });
   setLoading('signupBtn', false);
   if (error) { showError(error.message); return; }
-  showSuccess('✦ Account created! Check your email to confirm, then come back and sign in.');
+  showSuccess('Ã¢Å“Â¦ Account created! Check your email to confirm, then come back and sign in.');
   setTimeout(() => switchTab('login'), 3000);
 }
 
@@ -366,7 +366,7 @@ async function forgotPassword() {
     redirectTo: window.location.origin + '/auth.html'
   });
   if (error) { showError(error.message); return; }
-  showSuccess('✦ Password reset email sent! Check your inbox.');
+  showSuccess('Ã¢Å“Â¦ Password reset email sent! Check your inbox.');
 }
 </script>
 </body>
