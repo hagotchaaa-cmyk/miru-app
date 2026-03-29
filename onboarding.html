@@ -3,378 +3,863 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F8F6FF">
-<title>Miru ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Set up your profile</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0D0A1A">
+<title>Miru — Let's get you set up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#F8F6FF;--surface:#FFFFFF;--surface2:#F0ECFF;
-  --border:#E4DEFF;--purple:#7C5CBF;--purple-mid:#9B7FD4;
-  --purple-light:#C4B0F0;--purple-pale:#EDE8FF;
-  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
-  --like:#FF5E7A;
+  --void:#0D0A1A;--deep:#130F2A;--dusk:#1C1640;
+  --twilight:#2A2255;--violet:#4A3F8A;
+  --lavender:#8B7EC8;--lilac:#C4B8F0;--mist:#E8E4FA;
+  --white:#FFFFFF;--pop:#FFFFFF;--pop-dim:rgba(255,255,255,0.08);
+  --border:rgba(74,63,138,0.35);--border-light:rgba(74,63,138,0.2);
+  --danger:rgba(255,100,100,0.15);--danger-border:rgba(255,120,120,0.3);
   --serif:'Playfair Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;
-  --radius:16px;--radius-pill:999px;
-  --shadow:0 2px 20px rgba(124,92,191,0.08);
+  --sans:'Cabinet Grotesk',sans-serif;
+  /* Accessibility */
+  --text-lg:18px;--text-md:15px;--text-sm:13px;--text-xs:11px;
+  --tap-min:48px; /* minimum tap target */
+  --radius:16px;--radius-lg:22px;--radius-pill:999px;
 }
-*{color:var(--text);}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);font-family:var(--sans);font-size:15px;min-height:100vh;overflow-x:hidden;}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  background:var(--void);color:var(--mist);
+  font-family:var(--sans);font-size:var(--text-md);
+  overflow-x:hidden;min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  cursor:none;
+}
+
+/* CURSOR */
+.cursor{position:fixed;width:12px;height:12px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+.cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(196,184,240,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+
+/* BG */
+.bg-blob{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;animation:drift 12s ease-in-out infinite alternate;}
+.bg1{width:500px;height:500px;background:rgba(100,70,200,.3);top:-120px;right:-100px;}
+.bg2{width:400px;height:400px;background:rgba(60,40,140,.25);bottom:-80px;left:-80px;animation-delay:-5s;}
+@keyframes drift{from{transform:translate(0,0) scale(1);}to{transform:translate(30px,40px) scale(1.1);}}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(248,246,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
-.logo{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--purple);}
-.step-count{font-size:13px;color:var(--text2);font-weight:500;}
-.step-count span{color:var(--purple);font-weight:700;}
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.5rem;
+  background:rgba(13,10,26,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border-light);
+  min-height:var(--tap-min);
+}
+.logo{display:flex;align-items:baseline;gap:4px;}
+.logo-word{font-family:var(--serif);font-size:24px;font-weight:700;font-style:italic;color:#fff;}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--lilac);margin-bottom:3px;box-shadow:0 0 8px rgba(196,184,240,.7);}
+.nav-step{font-size:var(--text-xs);color:rgba(232,228,250,.4);letter-spacing:1px;}
+.nav-step span{color:var(--lilac);font-weight:700;}
 
-/* PROGRESS BAR */
-.progress{height:3px;background:var(--border);}
-.progress-fill{height:100%;background:var(--purple);border-radius:0 2px 2px 0;transition:width .4s ease;}
+/* PROGRESS */
+.progress-wrap{
+  position:sticky;top:60px;z-index:99;
+  height:3px;background:rgba(74,63,138,.2);
+}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--lavender),var(--lilac));border-radius:0 2px 2px 0;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(196,184,240,.4);}
 
 /* MAIN */
-main{max-width:480px;margin:0 auto;padding:1.5rem 1.25rem 6rem;}
+main{max-width:600px;margin:0 auto;padding:2rem 1.5rem 6rem;position:relative;z-index:1;}
 
-/* STEP */
-.step{display:none;animation:fadeIn .35s ease;}
-.step.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+/* STEP BLOCKS */
+.step-block{
+  margin-bottom:2rem;
+  opacity:0;transform:translateY(24px);
+  transition:opacity .5s ease,transform .5s ease;
+  pointer-events:none;
+}
+.step-block.visible{opacity:1;transform:none;pointer-events:all;}
+.step-block.locked{opacity:.2;transform:translateY(10px);pointer-events:none;}
 
-.step-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
-.step-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);}
-.step-title{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1.1;margin-bottom:.4rem;color:var(--text);}
-.step-title em{font-style:italic;color:var(--purple);}
-.step-sub{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:1.75rem;}
+.step-num{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:var(--text-xs);letter-spacing:2px;text-transform:uppercase;
+  color:var(--lilac);margin-bottom:.6rem;
+}
+.step-num-dot{width:6px;height:6px;border-radius:50%;background:var(--lilac);}
+.step-title{
+  font-family:var(--serif);font-size:clamp(26px,5vw,36px);
+  font-weight:700;line-height:1.1;letter-spacing:-.5px;margin-bottom:.5rem;
+}
+.step-title em{font-style:italic;color:var(--lilac);}
+.step-sub{font-size:var(--text-md);color:rgba(232,228,250,.5);line-height:1.65;}
+
+.divider{height:1px;background:var(--border-light);margin:2rem 0;}
 
 /* FIELDS */
-.field{margin-bottom:1.1rem;}
-.field-label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text2);font-weight:600;margin-bottom:.4rem;display:block;}
-.field-input{width:100%;padding:.9rem 1rem;border-radius:var(--radius);background:#FFFFFF;border:1.5px solid var(--border);font-family:var(--sans);font-size:15px;color:var(--text);outline:none;-webkit-appearance:none;transition:border-color .2s;}
-.field-input:focus{border-color:var(--purple-light);}
-.field-input::placeholder{color:var(--text3);}
-select.field-input{cursor:pointer;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:.85rem;}
+.field-row.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:.5rem;}
+.field label{font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,250,.45);}
+
+/* INPUT — big tap target */
+.input{
+  width:100%;
+  min-height:var(--tap-min);
+  padding:.85rem 1.1rem;border-radius:var(--radius);
+  background:rgba(28,22,64,.6);
+  border:1.5px solid var(--border);
+  color:#fff;font-family:var(--sans);font-size:var(--text-md);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+}
+.input::placeholder{color:rgba(232,228,250,.2);}
+.input:focus{border-color:var(--lavender);box-shadow:0 0 0 3px rgba(139,126,200,.2);}
+.input.error{border-color:rgba(255,100,100,.5);box-shadow:0 0 0 3px rgba(255,100,100,.1);}
+
+/* SELECT */
+select.input{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7EC8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;}
+select.input option{background:var(--deep);color:#fff;}
+
+/* ERROR MSG */
+.field-error{font-size:var(--text-xs);color:rgba(255,150,150,.8);margin-top:.3rem;display:none;}
+.field-error.show{display:block;}
 
 /* PILLS */
-.pill-group{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.5rem;}
-.pill{padding:.65rem 1.1rem;border-radius:var(--radius-pill);border:1.5px solid var(--border);background:#FFFFFF;font-size:14px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:var(--sans);user-select:none;}
-.pill:active{transform:scale(.97);}
-.pill.active{border-color:var(--purple);background:var(--purple-pale);color:var(--purple);font-weight:600;}
-.pill.single.active{border-color:var(--purple);background:var(--purple);color:#FFFFFF;font-weight:600;}
+.pill-grid{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.85rem;}
+.pill{
+  padding:.55rem 1.1rem;border-radius:var(--radius-pill);
+  font-size:var(--text-sm);font-weight:500;
+  border:1.5px solid var(--border);
+  color:rgba(232,228,250,.5);
+  background:rgba(28,22,64,.5);
+  cursor:pointer;transition:all .18s;
+  user-select:none;
+  min-height:var(--tap-min);
+  display:flex;align-items:center;
+}
+.pill:hover{border-color:var(--violet);color:var(--lilac);}
+.pill.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);font-weight:700;}
+.pill:active{transform:scale(.96);}
 
 /* TIME CARDS */
-.time-cards{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.5rem;}
-.time-card{padding:.9rem 1.1rem;border-radius:var(--radius);border:1.5px solid var(--border);background:#FFFFFF;cursor:pointer;transition:all .2s;}
-.time-card:active{transform:scale(.98);}
-.time-card.active{border-color:var(--purple);background:var(--purple-pale);}
-.tc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.tc-sub{font-size:12px;color:var(--text3);}
-.time-card.active .tc-title{color:var(--purple);}
+.time-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem;}
+.time-card{
+  padding:1rem 1.1rem;border-radius:var(--radius);
+  border:1.5px solid var(--border);
+  background:rgba(28,22,64,.5);
+  cursor:pointer;transition:all .2s;
+  min-height:var(--tap-min);
+}
+.time-card:hover{border-color:var(--violet);}
+.time-card.active{border-color:var(--lilac);background:rgba(196,184,240,.08);}
+.time-card:active{transform:scale(.97);}
+.tc-main{font-size:var(--text-md);font-weight:700;color:#fff;}
+.tc-sub{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:3px;}
 
-/* AGE SLIDER */
-.slider-display{text-align:center;margin:1rem 0;}
-.slider-nums{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--text);}
-.slider-label{font-size:11px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-top:4px;}
-.slider-wrap{margin-bottom:1rem;}
-.slider-row-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem;font-weight:600;}
-input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;margin-bottom:1.25rem;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--purple);cursor:pointer;box-shadow:0 2px 8px rgba(124,92,191,.3);}
-.presets{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;}
-.preset{padding:.4rem .85rem;border-radius:var(--radius-pill);border:1.5px solid var(--border);background:#FFFFFF;font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:var(--sans);}
-.preset.active{border-color:var(--purple);background:var(--purple-pale);color:var(--purple);font-weight:600;}
+/* AGE RANGE SLIDER */
+.age-range-wrap{margin-bottom:1.25rem;}
+.age-display{
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+  margin-bottom:1.25rem;
+}
+.age-val{
+  font-family:var(--serif);font-size:42px;font-weight:700;font-style:italic;
+  color:var(--lilac);line-height:1;min-width:60px;text-align:center;
+}
+.age-sep{font-size:var(--text-md);color:rgba(232,228,250,.3);}
+.age-label{font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,250,.3);text-align:center;margin-top:.3rem;}
 
-/* NEXT BUTTON */
-.next-btn{width:100%;padding:1rem;border-radius:var(--radius-pill);background:var(--purple);color:#FFFFFF;font-family:var(--sans);font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(124,92,191,.25);margin-top:.5rem;}
-.next-btn:hover{background:#6a4daa;transform:translateY(-1px);}
+.slider-wrap{position:relative;padding:.5rem 0;margin-bottom:.5rem;}
+.range-track{
+  height:4px;background:rgba(74,63,138,.4);border-radius:2px;
+  position:relative;margin:0 10px;
+}
+.range-fill{
+  position:absolute;height:100%;background:linear-gradient(to right,var(--lavender),var(--lilac));
+  border-radius:2px;box-shadow:0 0 8px rgba(196,184,240,.4);
+}
+.range-input{
+  position:absolute;width:calc(100% + 20px);left:-10px;
+  height:4px;top:0;opacity:0;cursor:pointer;
+  -webkit-appearance:none;pointer-events:all;
+  min-height:auto;
+}
+.range-thumb{
+  position:absolute;width:24px;height:24px;border-radius:50%;
+  background:var(--lilac);border:3px solid var(--void);
+  box-shadow:0 0 12px rgba(196,184,240,.5);
+  top:50%;transform:translate(-50%,-50%);
+  pointer-events:none;transition:box-shadow .2s;
+}
+
+.age-presets{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;}
+.age-preset{
+  padding:.4rem .9rem;border-radius:var(--radius-pill);
+  font-size:var(--text-xs);font-weight:700;letter-spacing:.5px;
+  border:1px solid var(--border);color:rgba(232,228,250,.4);
+  background:transparent;cursor:pointer;transition:all .18s;
+  font-family:var(--sans);min-height:36px;
+}
+.age-preset:hover{border-color:var(--violet);color:var(--lilac);}
+.age-preset.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);}
+
+/* MEDIA SECTION */
+.media-tabs{display:flex;gap:.5rem;margin-bottom:1rem;}
+.mtab{
+  flex:1;padding:.75rem;border-radius:var(--radius);
+  font-size:var(--text-sm);font-weight:700;text-align:center;
+  border:1.5px solid var(--border);color:rgba(232,228,250,.4);
+  background:rgba(28,22,64,.5);cursor:pointer;transition:all .2s;
+  font-family:var(--sans);min-height:var(--tap-min);
+}
+.mtab.active{border-color:var(--lilac);color:var(--void);background:var(--lilac);}
+.mtab:active{transform:scale(.97);}
+
+.media-panel{display:none;}
+.media-panel.active{display:block;}
+
+/* PROMPTS */
+.prompt-list{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem;}
+.prompt-item{
+  display:flex;align-items:center;gap:1rem;
+  padding:.9rem 1rem;border-radius:var(--radius);
+  border:1.5px solid var(--border);background:rgba(28,22,64,.5);
+  cursor:pointer;transition:all .2s;min-height:var(--tap-min);
+}
+.prompt-item:hover{border-color:var(--violet);}
+.prompt-item.active{border-color:var(--lilac);background:rgba(196,184,240,.07);}
+.prompt-item:active{transform:scale(.98);}
+.pi-icon{width:40px;height:40px;border-radius:12px;background:rgba(196,184,240,.1);border:1px solid rgba(196,184,240,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pi-text .pi-title{font-size:var(--text-md);font-weight:700;color:#fff;}
+.pi-text .pi-sub{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:2px;}
+.pi-check{margin-left:auto;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .2s;}
+.prompt-item.active .pi-check{background:var(--lilac);border-color:var(--lilac);color:var(--void);}
+
+/* RECORDER */
+.recorder-box{
+  border-radius:var(--radius-lg);
+  border:1.5px dashed rgba(74,63,138,.4);
+  background:rgba(28,22,64,.3);
+  padding:2rem 1.5rem;text-align:center;
+}
+.rec-prompt{font-family:var(--serif);font-size:var(--text-lg);font-style:italic;color:rgba(232,228,250,.65);margin-bottom:1.5rem;min-height:28px;}
+.rec-btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:.9rem 2rem;border-radius:var(--radius-pill);
+  background:rgba(196,184,240,.1);border:1.5px solid rgba(196,184,240,.3);
+  color:var(--lilac);font-family:var(--sans);font-size:var(--text-sm);font-weight:700;
+  cursor:pointer;transition:all .2s;min-height:var(--tap-min);
+}
+.rec-btn:hover{background:rgba(196,184,240,.18);}
+.rec-btn.recording{background:rgba(255,80,80,.12);border-color:rgba(255,120,120,.35);color:#ff9090;animation:recPulse 1s ease-in-out infinite;}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,80,80,.3);}50%{box-shadow:0 0 0 8px rgba(255,80,80,0);}}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:currentColor;}
+.rec-timer{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:.75rem;}
+.rec-done{display:none;margin-top:1rem;padding:1rem;border-radius:var(--radius);background:rgba(196,184,240,.06);border:1px solid rgba(196,184,240,.2);}
+.rec-done.show{display:block;}
+.rec-done-text{font-size:var(--text-sm);font-weight:700;color:var(--lilac);}
+.rec-done-sub{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:3px;}
+
+/* PHOTO DROP */
+.photo-drop{
+  border:1.5px dashed rgba(74,63,138,.4);border-radius:var(--radius-lg);
+  background:rgba(28,22,64,.3);padding:3rem 1.5rem;
+  text-align:center;cursor:pointer;transition:all .2s;
+  min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.photo-drop:hover{border-color:var(--violet);background:rgba(28,22,64,.5);}
+.photo-drop.has-photo{border-color:var(--lilac);border-style:solid;}
+.drop-icon{font-size:36px;margin-bottom:.75rem;}
+.drop-label{font-size:var(--text-md);font-weight:700;color:#fff;margin-bottom:.3rem;}
+.drop-sub{font-size:var(--text-xs);color:rgba(232,228,250,.35);}
+.photo-av{display:none;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--twilight),var(--violet));margin:0 auto .75rem;align-items:center;justify-content:center;font-family:var(--serif);font-size:30px;font-weight:700;color:#fff;border:2px solid var(--lilac);}
+.photo-av.show{display:flex;}
+#fileInput{display:none;}
+
+/* SKIP PANEL */
+.skip-box{
+  padding:2rem;text-align:center;border:1.5px dashed rgba(74,63,138,.25);
+  border-radius:var(--radius-lg);background:rgba(28,22,64,.2);
+}
+
+/* OPTIONAL */
+.optional-tag{display:inline-block;padding:2px 10px;border-radius:var(--radius-pill);font-size:10px;letter-spacing:1px;text-transform:uppercase;background:rgba(139,126,200,.12);border:1px solid rgba(139,126,200,.25);color:var(--lavender);margin-left:.6rem;vertical-align:middle;}
+
+/* PROFILE PREVIEW CARD */
+.preview-card{
+  border-radius:var(--radius-lg);overflow:hidden;
+  border:1.5px solid var(--border);
+  background:var(--deep);margin-bottom:1.25rem;
+}
+.preview-hero{
+  height:140px;
+  background:linear-gradient(145deg,#1a1035,#2d1f5a);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.preview-hero-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(19,15,42,.95) 0%,transparent 55%);}
+.preview-avatar{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--twilight),var(--violet));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:26px;font-weight:700;color:#fff;
+  border:2px solid var(--lilac);position:relative;z-index:1;
+  box-shadow:0 0 20px rgba(196,184,240,.3);
+}
+.preview-body{padding:1rem 1.1rem;}
+.preview-name{font-family:var(--serif);font-size:20px;font-weight:700;color:#fff;}
+.preview-detail{font-size:var(--text-xs);color:rgba(232,228,250,.35);margin-top:3px;letter-spacing:.3px;}
+.preview-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem;}
+.p-tag{padding:3px 10px;border-radius:var(--radius-pill);font-size:var(--text-xs);background:rgba(196,184,240,.08);border:1px solid rgba(196,184,240,.2);color:var(--lilac);}
+
+/* NEXT BTN — big accessible tap target */
+.next-btn{
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
+  width:100%;min-height:56px;padding:1rem 1.5rem;
+  border-radius:var(--radius-pill);
+  background:#fff;color:var(--void);
+  font-family:var(--sans);font-size:var(--text-md);font-weight:800;
+  border:none;cursor:pointer;transition:all .25s;
+  margin-top:1.5rem;
+  box-shadow:0 0 40px rgba(255,255,255,.15);
+}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(255,255,255,.25);}
+.next-btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none;}
 .next-btn:active{transform:scale(.98);}
-.next-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.next-arrow{font-size:18px;transition:transform .2s;}
+.next-btn:hover .next-arrow{transform:translateX(4px);}
 
-/* ERROR */
-.error-msg{padding:.75rem 1rem;border-radius:var(--radius);background:#FFF0F3;border:1px solid #FFD0DA;color:#CC3355;font-size:13px;margin-bottom:1rem;display:none;}
-.error-msg.show{display:block;}
+/* INFO TOOLTIP */
+.tooltip{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-size:var(--text-xs);color:rgba(232,228,250,.35);
+  margin-top:.5rem;
+}
+.tooltip-icon{width:16px;height:16px;border-radius:50%;background:rgba(139,126,200,.2);border:1px solid rgba(139,126,200,.3);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--lavender);flex-shrink:0;}
 
 /* SUCCESS */
-.success-screen{display:none;text-align:center;padding:3rem 1rem;}
+.success-screen{display:none;text-align:center;padding:4rem 1rem;animation:fadeUp .7s ease both;}
 .success-screen.show{display:block;}
-.success-icon{font-size:56px;margin-bottom:1rem;}
-.success-title{font-family:var(--serif);font-size:28px;font-weight:700;margin-bottom:.5rem;color:var(--text);}
-.success-title em{font-style:italic;color:var(--purple);}
-.success-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:2rem;}
-.success-btn{display:inline-block;padding:1rem 2.5rem;border-radius:var(--radius-pill);background:var(--purple);color:#FFFFFF;font-family:var(--sans);font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(124,92,191,.25);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+.success-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 1.5rem;box-shadow:0 0 60px rgba(139,126,200,.4);}
+.success-title{font-family:var(--serif);font-size:clamp(30px,6vw,50px);font-weight:700;line-height:1.1;margin-bottom:1rem;}
+.success-title em{font-style:italic;color:var(--lilac);}
+.success-sub{font-size:var(--text-md);color:rgba(232,228,250,.5);line-height:1.7;max-width:400px;margin:0 auto 2.5rem;}
+.success-btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  padding:1rem 2.5rem;border-radius:var(--radius-pill);
+  background:#fff;color:var(--void);
+  font-family:var(--sans);font-size:var(--text-md);font-weight:800;
+  border:none;cursor:pointer;transition:all .25s;
+  box-shadow:0 0 50px rgba(255,255,255,.2);
+  text-decoration:none;min-height:56px;
+}
+.success-btn:hover{transform:translateY(-2px);box-shadow:0 0 70px rgba(255,255,255,.3);}
+.success-tags{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;}
+.s-tag{padding:.4rem 1rem;border-radius:var(--radius-pill);font-size:var(--text-sm);background:rgba(196,184,240,.08);border:1px solid rgba(196,184,240,.2);color:var(--lilac);}
+
+/* WHAT'S NEXT BOX */
+.next-box{
+  padding:1.1rem 1.25rem;border-radius:var(--radius);
+  background:rgba(196,184,240,.05);border:1.5px solid rgba(196,184,240,.15);
+  margin-bottom:1.25rem;
+}
+.next-box-label{font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:var(--lilac);margin-bottom:.5rem;}
+.next-box p{font-size:var(--text-sm);color:rgba(232,228,250,.55);line-height:1.75;}
+.next-box p strong{color:#fff;}
+
+@media(max-width:480px){
+  .field-row{grid-template-columns:1fr;}
+  .time-grid{grid-template-columns:1fr;}
+  main{padding:1.5rem 1rem 5rem;}
+}
 </style>
 </head>
 <body>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+<div class="bg-blob bg1"></div>
+<div class="bg-blob bg2"></div>
 
-<div class="nav">
-  <div class="logo">miru.</div>
-  <div class="step-count">Step <span id="stepNum">1</span> of 5</div>
-</div>
-<div class="progress"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+<nav>
+  <div class="logo"><span class="logo-word">miru</span><div class="logo-dot"></div></div>
+  <div class="nav-step">Step <span id="navStep">1</span> of 5</div>
+</nav>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
 
 <main>
-  <div class="error-msg" id="errorMsg"></div>
 
-  <!-- STEP 1 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Basic Info -->
-  <div class="step active" id="step1">
-    <div class="step-label"><div class="step-dot"></div> Step 1 of 5</div>
-    <h2 class="step-title">Hey, tell us<br><em>who you are.</em></h2>
-    <p class="step-sub">Just the basics. Takes 30 seconds.</p>
+<!-- ── STEP 1: BASICS ── -->
+<div class="step-block visible" id="block1">
+  <div class="step-num"><div class="step-num-dot"></div>Step 1 of 5</div>
+  <h2 class="step-title">Hey, tell us<br><em>who you are.</em></h2>
+  <p class="step-sub">Just the basics. Takes 30 seconds.</p>
 
-    <div class="field">
-      <label class="field-label">First name</label>
-      <input class="field-input" id="name" type="text" placeholder="What do people call you?">
+  <div style="margin-top:1.5rem;">
+    <div class="field-row full">
+      <div class="field">
+        <label for="fname">First name</label>
+        <input class="input" type="text" id="fname" placeholder="What do people call you?" oninput="checkStep1()" autocomplete="given-name">
+        <div class="field-error" id="err-name">Please enter your name</div>
+      </div>
     </div>
     <div class="field-row">
       <div class="field">
-        <label class="field-label">Your age</label>
-        <input class="field-input" id="age" type="number" placeholder="eg. 26" min="18" max="99">
+        <label for="age">Your age</label>
+        <input class="input" type="number" id="age" placeholder="eg. 26" min="18" max="99" oninput="checkStep1()" autocomplete="bday-year">
+        <div class="field-error" id="err-age">Must be 18 or older</div>
       </div>
       <div class="field">
-        <label class="field-label">I am a</label>
-        <select class="field-input" id="gender">
+        <label for="gender">I am a</label>
+        <select class="input" id="gender" onchange="checkStep1()">
           <option value="">Select...</option>
-          <option value="man">Man</option>
-          <option value="woman">Woman</option>
-          <option value="nonbinary">Non-binary</option>
-          <option value="other">Other</option>
+          <option>Man</option>
+          <option>Woman</option>
+          <option>Non-binary</option>
+          <option>Prefer not to say</option>
         </select>
       </div>
     </div>
-    <div class="field">
-      <label class="field-label">Your city</label>
-      <input class="field-input" id="city" type="text" placeholder="eg. Phoenix, AZ">
+    <div class="field-row full">
+      <div class="field">
+        <label for="city">Your city</label>
+        <input class="input" type="text" id="city" placeholder="eg. Phoenix, AZ" oninput="checkStep1()" autocomplete="address-level2">
+      </div>
     </div>
-
-    <button class="next-btn" onclick="step1Next()">Looks good ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢</button>
   </div>
 
-  <!-- STEP 2 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Age Range -->
-  <div class="step" id="step2">
-    <div class="step-label"><div class="step-dot"></div> Step 2 of 5</div>
-    <h2 class="step-title">Who do you<br><em>want to meet?</em></h2>
-    <p class="step-sub">Set the age range you're open to. You can change this anytime.</p>
+  <button class="next-btn" id="btn1" disabled onclick="unlockStep(2)">
+    Looks good <span class="next-arrow">→</span>
+  </button>
+</div>
 
-    <div class="slider-display">
-      <div class="slider-nums"><span id="minAge">22</span> ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ <span id="maxAge">35</span></div>
-      <div class="slider-label">Age range</div>
-    </div>
+<div class="divider" id="div1" style="opacity:0;transition:opacity .4s;"></div>
 
-    <div class="slider-wrap">
-      <div class="slider-row-label">Minimum age</div>
-      <input type="range" id="minSlider" min="18" max="60" value="22" oninput="updateAge()">
-      <div class="slider-row-label">Maximum age</div>
-      <input type="range" id="maxSlider" min="18" max="80" value="35" oninput="updateAge()">
-    </div>
+<!-- ── STEP 2: AGE PREFERENCE ── -->
+<div class="step-block locked" id="block2">
+  <div class="step-num"><div class="step-num-dot"></div>Step 2 of 5</div>
+  <h2 class="step-title">Who do you<br><em>want to meet?</em></h2>
+  <p class="step-sub">Set the age range you're open to. You can change this anytime.</p>
 
-    <div class="presets">
-      <div class="preset" onclick="setPreset(18,25,this)">18 &ndash; 25</div>
-      <div class="preset active" onclick="setPreset(22,35,this)">22 &ndash; 35</div>
-      <div class="preset" onclick="setPreset(25,40,this)">25 &ndash; 40</div>
-      <div class="preset" onclick="setPreset(30,50,this)">30 &ndash; 50</div>
-      <div class="preset" onclick="setPreset(18,99,this)">Any age</div>
-    </div>
+  <div style="margin-top:1.75rem;">
 
-    <button class="next-btn" onclick="goStep(3)">Set my range &#8594;</button>
-  </div>
-
-  <!-- STEP 3 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Intent & Vibe -->
-  <div class="step" id="step3">
-    <div class="step-label"><div class="step-dot"></div> Step 3 of 5</div>
-    <h2 class="step-title">What are you<br><em>actually here for?</em></h2>
-    <p class="step-sub">We match you with people who want the same thing.</p>
-
-    <label class="field-label">Your intent ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â pick one</label>
-    <div class="pill-group" id="intentGroup">
-      <div class="pill single" onclick="selectIntent(this)">A real relationship</div><div class="pill single" onclick="selectIntent(this)">Something fun</div><div class="pill single" onclick="selectIntent(this)">Friends &amp; networking</div><div class="pill single" onclick="selectIntent(this)">Still figuring it out</div>
-    </div>
-
-    <label class="field-label">Your vibe ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â pick all that fit</label>
-    <div class="pill-group" id="vibeGroup">
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂºÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Chill</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¾ Adventurous</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¨ Creative</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¥ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ Social</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ Outdoorsy</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ Intellectual</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â° Spontaneous</div>
-      <div class="pill" onclick="this.classList.toggle('active')">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â  Homebody</div>
-    </div>
-
-    <button class="next-btn" id="btn3" onclick="step3Next()">That's me ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢</button>
-  </div>
-
-  <!-- STEP 4 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Availability -->
-  <div class="step" id="step4">
-    <div class="step-label"><div class="step-dot"></div> Step 4 of 5</div>
-    <h2 class="step-title">When are<br><em>you free?</em></h2>
-    <p class="step-sub">This helps us match you with people available when you are.</p>
-
-    <div class="time-cards" id="timeCards">
-      <div class="time-card" onclick="selectTime(this)">
-        <div class="tc-title">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Tonight</div>
-        <div class="tc-sub">Open right now</div>
+    <!-- AGE DISPLAY -->
+    <div class="age-display">
+      <div>
+        <div class="age-val" id="minAgeVal">22</div>
+        <div class="age-label">Min age</div>
       </div>
-      <div class="time-card" onclick="selectTime(this)">
-        <div class="tc-title">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â This weekend</div>
-        <div class="tc-sub">Sat or Sun</div>
-      </div>
-      <div class="time-card" onclick="selectTime(this)">
-        <div class="tc-title">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿ Flexible</div>
-        <div class="tc-sub">Open to whenever</div>
-      </div>
-      <div class="time-card" onclick="selectTime(this)">
-        <div class="tc-title">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦ No rush</div>
-        <div class="tc-sub">Just browsing for now</div>
+      <div class="age-sep">—</div>
+      <div>
+        <div class="age-val" id="maxAgeVal">35</div>
+        <div class="age-label">Max age</div>
       </div>
     </div>
 
-    <button class="next-btn" id="btn4" onclick="goStep(5)" disabled>Almost there ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢</button>
-  </div>
-
-  <!-- STEP 5 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â Bio -->
-  <div class="step" id="step5">
-    <div class="step-label"><div class="step-dot"></div> Step 5 of 5</div>
-    <h2 class="step-title">Last thing ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â<br><em>say something real.</em></h2>
-    <p class="step-sub">Write a short bio. Be yourself ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â that's the whole point.</p>
-
-    <div class="field">
-      <label class="field-label">Your bio</label>
-      <textarea class="field-input" id="bio" rows="4" placeholder="Tell people something real about you..." style="resize:none;line-height:1.6;"></textarea>
+    <!-- MIN AGE SLIDER -->
+    <div style="margin-bottom:1.25rem;">
+      <div class="field"><label>Minimum age</label></div>
+      <div class="slider-wrap">
+        <div class="range-track" id="minTrack">
+          <div class="range-fill" id="minFill" style="left:0;width:20%"></div>
+          <div class="range-thumb" id="minThumb" style="left:20%"></div>
+        </div>
+        <input type="range" class="range-input" id="minSlider" min="18" max="65" value="22" oninput="updateSliders()">
+      </div>
     </div>
 
-    <button class="next-btn" onclick="finish()">Take me to Miru ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</button>
+    <!-- MAX AGE SLIDER -->
+    <div style="margin-bottom:1.25rem;">
+      <div class="field"><label>Maximum age</label></div>
+      <div class="slider-wrap">
+        <div class="range-track" id="maxTrack">
+          <div class="range-fill" id="maxFill" style="left:0;width:50%"></div>
+          <div class="range-thumb" id="maxThumb" style="left:50%"></div>
+        </div>
+        <input type="range" class="range-input" id="maxSlider" min="18" max="80" value="35" oninput="updateSliders()">
+      </div>
+    </div>
+
+    <!-- PRESETS -->
+    <div class="field"><label>Quick presets</label></div>
+    <div class="age-presets">
+      <button class="age-preset" onclick="setAgePreset(18,25,this)">18 – 25</button>
+      <button class="age-preset active" onclick="setAgePreset(22,35,this)">22 – 35</button>
+      <button class="age-preset" onclick="setAgePreset(25,40,this)">25 – 40</button>
+      <button class="age-preset" onclick="setAgePreset(30,50,this)">30 – 50</button>
+      <button class="age-preset" onclick="setAgePreset(18,99,this)">Any age</button>
+    </div>
+
+    <div class="tooltip">
+      <div class="tooltip-icon">i</div>
+      We only show you people within this range. Your matches will also see you.
+    </div>
   </div>
 
-  <!-- SUCCESS -->
-  <div class="success-screen" id="successScreen">
-    <div class="success-icon">ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦</div>
-    <h2 class="success-title">You're all set,<br><em>welcome to Miru.</em></h2>
-    <p class="success-sub">Your profile is live. Your first matches drop at 9am tomorrow. In the meantime, explore.</p>
-    <a href="app.html" class="success-btn">Open Miru ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢</a>
+  <button class="next-btn" onclick="unlockStep(3)">
+    Set my range <span class="next-arrow">→</span>
+  </button>
+</div>
+
+<div class="divider" id="div2" style="opacity:0;transition:opacity .4s;"></div>
+
+<!-- ── STEP 3: INTENT + VIBE ── -->
+<div class="step-block locked" id="block3">
+  <div class="step-num"><div class="step-num-dot"></div>Step 3 of 5</div>
+  <h2 class="step-title">What are you<br><em>actually here for?</em></h2>
+  <p class="step-sub">We match you with people who want the same thing. No guessing.</p>
+
+  <div style="margin-top:1.5rem;">
+    <div class="field"><label>Your intent — pick one</label></div>
+    <div class="pill-grid" id="intentPills">
+      <div class="pill" onclick="selectIntent(this)">💍 A real relationship</div>
+      <div class="pill" onclick="selectIntent(this)">✨ Something fun</div>
+      <div class="pill" onclick="selectIntent(this)">🤝 Friends & networking</div>
+      <div class="pill" onclick="selectIntent(this)">🌱 Still figuring it out</div>
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <div class="field"><label>Your vibe — pick all that fit</label></div>
+      <div class="pill-grid">
+        <div class="pill" onclick="this.classList.toggle('active')">🛋️ Chill</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🏄 Adventurous</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🎨 Creative</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🥂 Social</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🌿 Outdoorsy</div>
+        <div class="pill" onclick="this.classList.toggle('active')">📚 Intellectual</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🎉 Spontaneous</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🏠 Homebody</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1.25rem;">
+      <div class="field"><label>When are you free?</label></div>
+      <div class="time-grid">
+        <div class="time-card" onclick="this.classList.toggle('active')">
+          <div class="tc-main">Tonight</div><div class="tc-sub">Open right now</div>
+        </div>
+        <div class="time-card" onclick="this.classList.toggle('active')">
+          <div class="tc-main">This weekend</div><div class="tc-sub">Sat or Sun</div>
+        </div>
+        <div class="time-card" onclick="this.classList.toggle('active')">
+          <div class="tc-main">Next week</div><div class="tc-sub">Flexible</div>
+        </div>
+        <div class="time-card" onclick="this.classList.toggle('active')">
+          <div class="tc-main">Just browsing</div><div class="tc-sub">No rush</div>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <button class="next-btn" id="btn3" disabled onclick="unlockStep(4)">
+    That's me <span class="next-arrow">→</span>
+  </button>
+</div>
+
+<div class="divider" id="div3" style="opacity:0;transition:opacity .4s;"></div>
+
+<!-- ── STEP 4: MEDIA ── -->
+<div class="step-block locked" id="block4">
+  <div class="step-num"><div class="step-num-dot"></div>Step 4 of 5</div>
+  <h2 class="step-title">Show them<br><em>the real you.</em></h2>
+  <p class="step-sub">Video gets 3× more matches — but a photo works too.<span class="optional-tag">optional</span></p>
+
+  <div style="margin-top:1.5rem;">
+    <div class="media-tabs">
+      <button class="mtab active" onclick="switchMedia('video',this)">🎥 Record video</button>
+      <button class="mtab" onclick="switchMedia('photo',this)">📷 Upload photo</button>
+      <button class="mtab" onclick="switchMedia('skip',this)">Skip for now</button>
+    </div>
+
+    <!-- VIDEO -->
+    <div class="media-panel active" id="panelVideo">
+      <div class="field" style="margin-bottom:.75rem;"><label>Pick a prompt to answer</label></div>
+      <div class="prompt-list">
+        <div class="prompt-item active" onclick="selectPrompt(this,'Make me laugh...')">
+          <div class="pi-icon">😂</div>
+          <div class="pi-text"><div class="pi-title">Make me laugh</div><div class="pi-sub">30 sec · Always works</div></div>
+          <div class="pi-check">✓</div>
+        </div>
+        <div class="prompt-item" onclick="selectPrompt(this,'Tell me something weird...')">
+          <div class="pi-icon">🌀</div>
+          <div class="pi-text"><div class="pi-title">Something weird about you</div><div class="pi-sub">30 sec · Best conversations start here</div></div>
+          <div class="pi-check">✓</div>
+        </div>
+        <div class="prompt-item" onclick="selectPrompt(this,'Tell me a story...')">
+          <div class="pi-icon">📖</div>
+          <div class="pi-text"><div class="pi-title">Tell me a story</div><div class="pi-sub">30 sec · Show your world</div></div>
+          <div class="pi-check">✓</div>
+        </div>
+        <div class="prompt-item" onclick="selectPrompt(this,'What are you passionate about?')">
+          <div class="pi-icon">🔥</div>
+          <div class="pi-text"><div class="pi-title">What you're passionate about</div><div class="pi-sub">30 sec · Attract the right energy</div></div>
+          <div class="pi-check">✓</div>
+        </div>
+      </div>
+      <div class="recorder-box">
+        <div class="rec-prompt" id="recPrompt">"Make me laugh..."</div>
+        <button class="rec-btn" id="recBtn" onclick="toggleRec()">
+          <div class="rec-dot"></div>
+          <span id="recTxt">Start recording</span>
+        </button>
+        <div class="rec-timer" id="recTimer">Max 30 seconds</div>
+        <div class="rec-done" id="recDone">
+          <div class="rec-done-text">✦ Video saved!</div>
+          <div class="rec-done-sub">Re-record anytime from your profile</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO -->
+    <div class="media-panel" id="panelPhoto">
+      <div class="photo-drop" id="photoDrop" onclick="document.getElementById('fileInput').click()">
+        <div class="photo-av" id="photoAv">?</div>
+        <div class="drop-icon" id="dropIcon">📸</div>
+        <div class="drop-label">Tap to upload a photo</div>
+        <div class="drop-sub" id="dropSub">JPG or PNG · Clear face photo works best</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" onchange="handlePhoto(this)">
+    </div>
+
+    <!-- SKIP -->
+    <div class="media-panel" id="panelSkip">
+      <div class="skip-box">
+        <div style="font-size:36px;margin-bottom:.75rem;">👻</div>
+        <p style="font-size:var(--text-md);font-weight:700;color:#fff;margin-bottom:.4rem;">Mystery mode activated</p>
+        <p style="font-size:var(--text-sm);color:rgba(232,228,250,.4);line-height:1.65;">You can add a video or photo later from your profile. You'll still get matches — video profiles just get 3× more connections.</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="unlockStep(5)">
+    <span id="btn4Txt">Continue</span> <span class="next-arrow">→</span>
+  </button>
+</div>
+
+<div class="divider" id="div4" style="opacity:0;transition:opacity .4s;"></div>
+
+<!-- ── STEP 5: REVIEW ── -->
+<div class="step-block locked" id="block5">
+  <div class="step-num"><div class="step-num-dot"></div>Step 5 of 5</div>
+  <h2 class="step-title">You're looking good,<br><em id="previewName">friend.</em></h2>
+  <p class="step-sub">Here's your Miru profile. Your first 3 matches drop tomorrow at 9am.</p>
+
+  <div style="margin-top:1.5rem;">
+    <div class="preview-card">
+      <div class="preview-hero">
+        <div class="preview-hero-fade"></div>
+        <div class="preview-avatar" id="cardAv">?</div>
+      </div>
+      <div class="preview-body">
+        <div style="display:flex;align-items:baseline;gap:.5rem;">
+          <div class="preview-name" id="cardName">Your name</div>
+          <span style="font-size:var(--text-sm);color:rgba(232,228,250,.35);" id="cardAge">—</span>
+        </div>
+        <div class="preview-detail" id="cardDetail">Your city</div>
+        <div class="preview-tags" id="cardTags">
+          <span class="p-tag">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-box">
+      <div class="next-box-label">✦ What happens next</div>
+      <p>Every morning at <strong>9am</strong> you get <strong>3 curated matches</strong> based on your intent, vibe, age range, and availability. No swiping. Just people worth meeting.</p>
+    </div>
+
+    <div class="next-box">
+      <div class="next-box-label">🔒 Your privacy</div>
+      <p>Your last name is never shown. Your exact location is never shared — only your distance. You control who sees you.</p>
+    </div>
+  </div>
+
+  <button class="next-btn" onclick="showSuccess()">
+    Take me to Miru ✦
+  </button>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✦</div>
+  <h2 class="success-title">You're in,<br><em id="successName">friend.</em></h2>
+  <p class="success-sub">Your first 3 matches drop tomorrow at 9am. Get some rest — something good is coming your way.</p>
+  <a href="splash.html" class="success-btn">Open Miru →</a>
+  <div class="success-tags" id="successTags"></div>
+</div>
+
 </main>
 
 <script>
-const {createClient}=supabase;
-const sb=createClient('https://rlmcwbaiuowbkgfzdlme.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8');
+// CURSOR
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
 
-let currentStep=1;
-let selectedIntent='';
-let selectedTime='';
-
-// Check auth
-sb.auth.getSession().then(({data:{session}})=>{
-  if(!session) window.location.href='auth.html';
-});
-
-function showError(msg){
-  const e=document.getElementById('errorMsg');
-  e.textContent=msg;e.classList.add('show');
-  setTimeout(()=>e.classList.remove('show'),3000);
-}
-
-function goStep(n){
-  document.getElementById('step'+currentStep).classList.remove('active');
-  currentStep=n;
-  document.getElementById('step'+n).classList.add('active');
-  document.getElementById('stepNum').textContent=n;
-  document.getElementById('progressFill').style.width=(n/5*100)+'%';
-  window.scrollTo(0,0);
-}
+// STATE
+const state={name:'',age:'',city:'',gender:'',ageMin:22,ageMax:35,intent:'',vibes:[],times:[],media:'video',prompt:'Make me laugh...',recorded:false};
 
 // STEP 1
-function step1Next(){
-  const name=document.getElementById('name').value.trim();
-  const age=document.getElementById('age').value;
-  const gender=document.getElementById('gender').value;
-  const city=document.getElementById('city').value.trim();
-  if(!name){showError('Please enter your name.');return;}
-  if(!age||age<18){showError('You must be 18 or older to use Miru.');return;}
-  if(!gender){showError('Please select your gender.');return;}
-  if(!city){showError('Please enter your city.');return;}
-  goStep(2);
+function checkStep1(){
+  const n=document.getElementById('fname').value.trim();
+  const a=parseInt(document.getElementById('age').value);
+  const g=document.getElementById('gender').value;
+  const c=document.getElementById('city').value.trim();
+  const ageOk=a>=18&&a<=99;
+  document.getElementById('err-name').classList.toggle('show',n.length>0&&n.length<2);
+  document.getElementById('err-age').classList.toggle('show',document.getElementById('age').value&&!ageOk);
+  document.getElementById('btn1').disabled=!(n.length>=2&&ageOk&&g&&c);
 }
 
-// STEP 2 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â AGE RANGE
-function updateAge(){
-  let min=parseInt(document.getElementById('minSlider').value);
-  let max=parseInt(document.getElementById('maxSlider').value);
-  if(min>max-2){min=max-2;document.getElementById('minSlider').value=min;}
-  document.getElementById('minAge').textContent=min;
-  document.getElementById('maxAge').textContent=max===99?'Any':max;
+// AGE SLIDERS
+function updateSliders(){
+  const mn=parseInt(document.getElementById('minSlider').value);
+  const mx2=parseInt(document.getElementById('maxSlider').value);
+  const minVal=Math.min(mn,mx2-1);
+  const maxVal=Math.max(mx2,mn+1);
+  document.getElementById('minSlider').value=minVal;
+  document.getElementById('maxSlider').value=maxVal;
+  document.getElementById('minAgeVal').textContent=minVal;
+  document.getElementById('maxAgeVal').textContent=maxVal;
+  const minPct=((minVal-18)/(65-18))*100;
+  const maxPct=((maxVal-18)/(80-18))*100;
+  document.getElementById('minFill').style.width=minPct+'%';
+  document.getElementById('minThumb').style.left=minPct+'%';
+  document.getElementById('maxFill').style.width=maxPct+'%';
+  document.getElementById('maxThumb').style.left=maxPct+'%';
+  state.ageMin=minVal;state.ageMax=maxVal;
+  document.querySelectorAll('.age-preset').forEach(p=>p.classList.remove('active'));
 }
-function setPreset(min,max,el){
-  document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active'));
+
+function setAgePreset(mn,mx2,el){
+  document.getElementById('minSlider').value=mn;
+  document.getElementById('maxSlider').value=mx2;
+  document.querySelectorAll('.age-preset').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('minSlider').value=min;
-  document.getElementById('maxSlider').value=max;
-  updateAge();
+  updateSliders();
 }
+updateSliders();
 
-// STEP 3 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â INTENT
+// INTENT
 function selectIntent(el){
-  document.querySelectorAll('#intentGroup .pill').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#intentPills .pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
-  selectedIntent=el.textContent.replace(/^\S+\s/,'').trim();
+  state.intent=el.textContent.trim();
   document.getElementById('btn3').disabled=false;
 }
 
-// STEP 4 ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â TIME
-function selectTime(el){
-  document.querySelectorAll('#timeCards .time-card').forEach(c=>c.classList.remove('active'));
+// MEDIA TABS
+function switchMedia(type,el){
+  state.media=type;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  selectedTime=el.querySelector('.tc-title').textContent.trim();
-  document.getElementById('btn4').disabled=false;
-}
-
-function step3Next(){
-  
-  goStep(4);
-}
-
-// FINISH
-async function finish(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){window.location.href='auth.html';return;}
-
-  const name=document.getElementById('name').value.trim();
-  const age=parseInt(document.getElementById('age').value);
-  const gender=document.getElementById('gender').value;
-  const city=document.getElementById('city').value.trim();
-  const bio=document.getElementById('bio').value.trim();
-  const minAge=parseInt(document.getElementById('minSlider').value);
-  const maxAge=parseInt(document.getElementById('maxSlider').value);
-  const vibes=[...document.querySelectorAll('#vibeGroup .pill.active')].map(p=>p.textContent.replace(/[^\x00-\x7F]/g,"").trim()).join(',');
-
-  const btn=document.querySelector('#step5 .next-btn');
-  btn.disabled=true;btn.textContent='Saving...';
-
-  const {error}=await sb.from('profiles').upsert({
-    id:session.user.id,
-    name,age,gender,city,bio,
-    intent:selectedIntent.replace(/[^\x00-\x7F]/g,"").trim(),
-    vibes:JSON.stringify(vibes),
-    availability:selectedTime.replace(/[^\x00-\x7F]/g,"").trim(),
-    min_age:minAge,
-    max_age:maxAge,
-    ai_mode:true,
-    updated_at:new Date().toISOString()
+  ['video','photo','skip'].forEach(t=>{
+    const cap=t.charAt(0).toUpperCase()+t.slice(1);
+    document.getElementById('panel'+cap).classList.toggle('active',t===type);
   });
+  document.getElementById('btn4Txt').textContent=type==='skip'?'Skip for now':'Continue';
+}
 
-  if(error){
-    showError('Could not save profile: '+error.message);
-    btn.disabled=false;btn.textContent='Take me to Miru ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¦ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¦';
-    return;
+// PROMPT
+function selectPrompt(el,prompt){
+  document.querySelectorAll('.prompt-item').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  state.prompt=prompt;
+  document.getElementById('recPrompt').textContent='"'+prompt+'"';
+  stopRec(true);
+}
+
+// RECORDER
+let recInt=null,recSecs=0,isRec=false;
+function toggleRec(){isRec?stopRec(false):startRec();}
+function startRec(){
+  isRec=true;recSecs=0;
+  const btn=document.getElementById('recBtn');
+  btn.classList.add('recording');
+  document.getElementById('recTxt').textContent='Stop recording';
+  document.getElementById('recTimer').textContent='0s / 30s';
+  recInt=setInterval(()=>{
+    recSecs++;
+    document.getElementById('recTimer').textContent=recSecs+'s / 30s';
+    if(recSecs>=30)stopRec(false);
+  },1000);
+}
+function stopRec(reset){
+  isRec=false;clearInterval(recInt);
+  const btn=document.getElementById('recBtn');
+  btn.classList.remove('recording');
+  if(reset){
+    document.getElementById('recTxt').textContent='Start recording';
+    document.getElementById('recTimer').textContent='Max 30 seconds';
+    document.getElementById('recDone').classList.remove('show');
+    state.recorded=false;
+  } else {
+    document.getElementById('recTxt').textContent='Re-record';
+    document.getElementById('recTimer').textContent=recSecs+'s recorded ✓';
+    document.getElementById('recDone').classList.add('show');
+    state.recorded=true;
   }
+}
 
-  document.getElementById('step5').classList.remove('active');
+// PHOTO
+function handlePhoto(input){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  document.getElementById('photoDrop').classList.add('has-photo');
+  document.getElementById('dropIcon').style.display='none';
+  const av=document.getElementById('photoAv');
+  av.style.display='flex';
+  av.textContent=(state.name||'Y')[0].toUpperCase();
+  document.getElementById('dropSub').textContent=file.name+' uploaded ✓';
+}
+
+// UNLOCK
+function unlockStep(n){
+  if(n===2){state.name=document.getElementById('fname').value.trim();state.age=document.getElementById('age').value;state.city=document.getElementById('city').value.trim();state.gender=document.getElementById('gender').value;}
+  if(n===5){buildPreview();}
+  const prev=document.getElementById('block'+(n-1));
+  const div=document.getElementById('div'+(n-1));
+  const next=document.getElementById('block'+n);
+  if(prev){prev.classList.add('locked');prev.classList.remove('visible');}
+  if(div)div.style.opacity='1';
+  next.classList.remove('locked');next.classList.add('visible');
+  const pct=(n/5)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('navStep').textContent=n;
+  setTimeout(()=>next.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// PREVIEW
+function buildPreview(){
+  const n=state.name||'friend';
+  document.getElementById('previewName').textContent=n+'.';
+  document.getElementById('successName').textContent=n+'!';
+  document.getElementById('cardAv').textContent=n[0].toUpperCase();
+  document.getElementById('cardName').textContent=n;
+  document.getElementById('cardAge').textContent=state.age||'—';
+  document.getElementById('cardDetail').textContent=(state.city||'—')+' · Ages '+state.ageMin+'–'+state.ageMax;
+  const tags=[];
+  if(state.intent)tags.push(state.intent.replace(/^.\s/,''));
+  tags.push('Ages '+state.ageMin+'–'+state.ageMax);
+  const tc=document.getElementById('cardTags');
+  tc.innerHTML=tags.map(t=>`<span class="p-tag">${t}</span>`).join('');
+  const sc=document.getElementById('successTags');
+  sc.innerHTML=[state.city,state.intent?state.intent.replace(/^.\s/,''):'','3 matches tomorrow'].filter(Boolean).map(t=>`<span class="s-tag">${t}</span>`).join('');
+  // save to localStorage
+  localStorage.setItem('miru_profile',JSON.stringify(state));
+}
+
+// SUCCESS
+function showSuccess(){
+  document.getElementById('block5').style.display='none';
+  document.getElementById('div4').style.display='none';
   document.getElementById('successScreen').classList.add('show');
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('navStep').textContent='5';
+  document.getElementById('successScreen').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 </body>
 </html>
-
-<style>input,select,textarea{background:#fff!important;color:#1A1528!important;border:1.5px solid #E4DEFF!important;}input::placeholder,textarea::placeholder{color:#A99DC0!important;}</style>
