@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0D0A1A">
-<title>Miru â€” Let's get you set up</title>
+<title>Miru — Let's get you set up</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -103,7 +103,7 @@ main{max-width:600px;margin:0 auto;padding:2rem 1.5rem 6rem;position:relative;z-
 .field{display:flex;flex-direction:column;gap:.5rem;}
 .field label{font-size:var(--text-xs);letter-spacing:1.5px;text-transform:uppercase;color:rgba(232,228,250,.45);}
 
-/* INPUT â€” big tap target */
+/* INPUT — big tap target */
 .input{
   width:100%;
   min-height:var(--tap-min);
@@ -314,7 +314,7 @@ select.input option{background:var(--deep);color:#fff;}
 .preview-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem;}
 .p-tag{padding:3px 10px;border-radius:var(--radius-pill);font-size:var(--text-xs);background:rgba(196,184,240,.08);border:1px solid rgba(196,184,240,.2);color:var(--lilac);}
 
-/* NEXT BTN â€” big accessible tap target */
+/* NEXT BTN — big accessible tap target */
 .next-btn{
   display:flex;align-items:center;justify-content:center;gap:.6rem;
   width:100%;min-height:56px;padding:1rem 1.5rem;
@@ -391,7 +391,7 @@ select.input option{background:var(--deep);color:#fff;}
 
 <main>
 
-<!-- â”€â”€ STEP 1: BASICS â”€â”€ -->
+<!-- ── STEP 1: BASICS ── -->
 <div class="step-block visible" id="block1">
   <div class="step-num"><div class="step-num-dot"></div>Step 1 of 5</div>
   <h2 class="step-title">Hey, tell us<br><em>who you are.</em></h2>
@@ -431,13 +431,13 @@ select.input option{background:var(--deep);color:#fff;}
   </div>
 
   <button class="next-btn" id="btn1" disabled onclick="unlockStep(2)">
-    Looks good <span class="next-arrow">â†’</span>
+    Looks good <span class="next-arrow">→</span>
   </button>
 </div>
 
 <div class="divider" id="div1" style="opacity:0;transition:opacity .4s;"></div>
 
-<!-- â”€â”€ STEP 2: AGE PREFERENCE â”€â”€ -->
+<!-- ── STEP 2: AGE PREFERENCE ── -->
 <div class="step-block locked" id="block2">
   <div class="step-num"><div class="step-num-dot"></div>Step 2 of 5</div>
   <h2 class="step-title">Who do you<br><em>want to meet?</em></h2>
@@ -451,7 +451,7 @@ select.input option{background:var(--deep);color:#fff;}
         <div class="age-val" id="minAgeVal">22</div>
         <div class="age-label">Min age</div>
       </div>
-      <div class="age-sep">â€”</div>
+      <div class="age-sep">—</div>
       <div>
         <div class="age-val" id="maxAgeVal">35</div>
         <div class="age-label">Max age</div>
@@ -485,10 +485,10 @@ select.input option{background:var(--deep);color:#fff;}
     <!-- PRESETS -->
     <div class="field"><label>Quick presets</label></div>
     <div class="age-presets">
-      <button class="age-preset" onclick="setAgePreset(18,25,this)">18 â€“ 25</button>
-      <button class="age-preset active" onclick="setAgePreset(22,35,this)">22 â€“ 35</button>
-      <button class="age-preset" onclick="setAgePreset(25,40,this)">25 â€“ 40</button>
-      <button class="age-preset" onclick="setAgePreset(30,50,this)">30 â€“ 50</button>
+      <button class="age-preset" onclick="setAgePreset(18,25,this)">18 – 25</button>
+      <button class="age-preset active" onclick="setAgePreset(22,35,this)">22 – 35</button>
+      <button class="age-preset" onclick="setAgePreset(25,40,this)">25 – 40</button>
+      <button class="age-preset" onclick="setAgePreset(30,50,this)">30 – 50</button>
       <button class="age-preset" onclick="setAgePreset(18,99,this)">Any age</button>
     </div>
 
@@ -499,38 +499,38 @@ select.input option{background:var(--deep);color:#fff;}
   </div>
 
   <button class="next-btn" onclick="unlockStep(3)">
-    Set my range <span class="next-arrow">â†’</span>
+    Set my range <span class="next-arrow">→</span>
   </button>
 </div>
 
 <div class="divider" id="div2" style="opacity:0;transition:opacity .4s;"></div>
 
-<!-- â”€â”€ STEP 3: INTENT + VIBE â”€â”€ -->
+<!-- ── STEP 3: INTENT + VIBE ── -->
 <div class="step-block locked" id="block3">
   <div class="step-num"><div class="step-num-dot"></div>Step 3 of 5</div>
   <h2 class="step-title">What are you<br><em>actually here for?</em></h2>
   <p class="step-sub">We match you with people who want the same thing. No guessing.</p>
 
   <div style="margin-top:1.5rem;">
-    <div class="field"><label>Your intent â€” pick one</label></div>
+    <div class="field"><label>Your intent — pick one</label></div>
     <div class="pill-grid" id="intentPills">
-      <div class="pill" onclick="selectIntent(this)">ðŸ’ A real relationship</div>
-      <div class="pill" onclick="selectIntent(this)">âœ¨ Something fun</div>
-      <div class="pill" onclick="selectIntent(this)">ðŸ¤ Friends & networking</div>
-      <div class="pill" onclick="selectIntent(this)">ðŸŒ± Still figuring it out</div>
+      <div class="pill" onclick="selectIntent(this)">💍 A real relationship</div>
+      <div class="pill" onclick="selectIntent(this)">✨ Something fun</div>
+      <div class="pill" onclick="selectIntent(this)">🤝 Friends & networking</div>
+      <div class="pill" onclick="selectIntent(this)">🌱 Still figuring it out</div>
     </div>
 
     <div style="margin-top:1.25rem;">
-      <div class="field"><label>Your vibe â€” pick all that fit</label></div>
+      <div class="field"><label>Your vibe — pick all that fit</label></div>
       <div class="pill-grid">
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸ›‹ï¸ Chill</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸ„ Adventurous</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸŽ¨ Creative</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸ¥‚ Social</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸŒ¿ Outdoorsy</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸ“š Intellectual</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸŽ‰ Spontaneous</div>
-        <div class="pill" onclick="this.classList.toggle('active')">ðŸ  Homebody</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🛋️ Chill</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🏄 Adventurous</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🎨 Creative</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🥂 Social</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🌿 Outdoorsy</div>
+        <div class="pill" onclick="this.classList.toggle('active')">📚 Intellectual</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🎉 Spontaneous</div>
+        <div class="pill" onclick="this.classList.toggle('active')">🏠 Homebody</div>
       </div>
     </div>
 
@@ -554,22 +554,22 @@ select.input option{background:var(--deep);color:#fff;}
   </div>
 
   <button class="next-btn" id="btn3" disabled onclick="unlockStep(4)">
-    That's me <span class="next-arrow">â†’</span>
+    That's me <span class="next-arrow">→</span>
   </button>
 </div>
 
 <div class="divider" id="div3" style="opacity:0;transition:opacity .4s;"></div>
 
-<!-- â”€â”€ STEP 4: MEDIA â”€â”€ -->
+<!-- ── STEP 4: MEDIA ── -->
 <div class="step-block locked" id="block4">
   <div class="step-num"><div class="step-num-dot"></div>Step 4 of 5</div>
   <h2 class="step-title">Show them<br><em>the real you.</em></h2>
-  <p class="step-sub">Video gets 3Ã— more matches â€” but a photo works too.<span class="optional-tag">optional</span></p>
+  <p class="step-sub">Video gets 3× more matches — but a photo works too.<span class="optional-tag">optional</span></p>
 
   <div style="margin-top:1.5rem;">
     <div class="media-tabs">
-      <button class="mtab active" onclick="switchMedia('video',this)">ðŸŽ¥ Record video</button>
-      <button class="mtab" onclick="switchMedia('photo',this)">ðŸ“· Upload photo</button>
+      <button class="mtab active" onclick="switchMedia('video',this)">🎥 Record video</button>
+      <button class="mtab" onclick="switchMedia('photo',this)">📷 Upload photo</button>
       <button class="mtab" onclick="switchMedia('skip',this)">Skip for now</button>
     </div>
 
@@ -578,24 +578,24 @@ select.input option{background:var(--deep);color:#fff;}
       <div class="field" style="margin-bottom:.75rem;"><label>Pick a prompt to answer</label></div>
       <div class="prompt-list">
         <div class="prompt-item active" onclick="selectPrompt(this,'Make me laugh...')">
-          <div class="pi-icon">ðŸ˜‚</div>
-          <div class="pi-text"><div class="pi-title">Make me laugh</div><div class="pi-sub">30 sec Â· Always works</div></div>
-          <div class="pi-check">âœ“</div>
+          <div class="pi-icon">😂</div>
+          <div class="pi-text"><div class="pi-title">Make me laugh</div><div class="pi-sub">30 sec · Always works</div></div>
+          <div class="pi-check">✓</div>
         </div>
         <div class="prompt-item" onclick="selectPrompt(this,'Tell me something weird...')">
-          <div class="pi-icon">ðŸŒ€</div>
-          <div class="pi-text"><div class="pi-title">Something weird about you</div><div class="pi-sub">30 sec Â· Best conversations start here</div></div>
-          <div class="pi-check">âœ“</div>
+          <div class="pi-icon">🌀</div>
+          <div class="pi-text"><div class="pi-title">Something weird about you</div><div class="pi-sub">30 sec · Best conversations start here</div></div>
+          <div class="pi-check">✓</div>
         </div>
         <div class="prompt-item" onclick="selectPrompt(this,'Tell me a story...')">
-          <div class="pi-icon">ðŸ“–</div>
-          <div class="pi-text"><div class="pi-title">Tell me a story</div><div class="pi-sub">30 sec Â· Show your world</div></div>
-          <div class="pi-check">âœ“</div>
+          <div class="pi-icon">📖</div>
+          <div class="pi-text"><div class="pi-title">Tell me a story</div><div class="pi-sub">30 sec · Show your world</div></div>
+          <div class="pi-check">✓</div>
         </div>
         <div class="prompt-item" onclick="selectPrompt(this,'What are you passionate about?')">
-          <div class="pi-icon">ðŸ”¥</div>
-          <div class="pi-text"><div class="pi-title">What you're passionate about</div><div class="pi-sub">30 sec Â· Attract the right energy</div></div>
-          <div class="pi-check">âœ“</div>
+          <div class="pi-icon">🔥</div>
+          <div class="pi-text"><div class="pi-title">What you're passionate about</div><div class="pi-sub">30 sec · Attract the right energy</div></div>
+          <div class="pi-check">✓</div>
         </div>
       </div>
       <div class="recorder-box">
@@ -606,7 +606,7 @@ select.input option{background:var(--deep);color:#fff;}
         </button>
         <div class="rec-timer" id="recTimer">Max 30 seconds</div>
         <div class="rec-done" id="recDone">
-          <div class="rec-done-text">âœ¦ Video saved!</div>
+          <div class="rec-done-text">✦ Video saved!</div>
           <div class="rec-done-sub">Re-record anytime from your profile</div>
         </div>
       </div>
@@ -616,9 +616,9 @@ select.input option{background:var(--deep);color:#fff;}
     <div class="media-panel" id="panelPhoto">
       <div class="photo-drop" id="photoDrop" onclick="document.getElementById('fileInput').click()">
         <div class="photo-av" id="photoAv">?</div>
-        <div class="drop-icon" id="dropIcon">ðŸ“¸</div>
+        <div class="drop-icon" id="dropIcon">📸</div>
         <div class="drop-label">Tap to upload a photo</div>
-        <div class="drop-sub" id="dropSub">JPG or PNG Â· Clear face photo works best</div>
+        <div class="drop-sub" id="dropSub">JPG or PNG · Clear face photo works best</div>
       </div>
       <input type="file" id="fileInput" accept="image/*" onchange="handlePhoto(this)">
     </div>
@@ -626,21 +626,21 @@ select.input option{background:var(--deep);color:#fff;}
     <!-- SKIP -->
     <div class="media-panel" id="panelSkip">
       <div class="skip-box">
-        <div style="font-size:36px;margin-bottom:.75rem;">ðŸ‘»</div>
+        <div style="font-size:36px;margin-bottom:.75rem;">👻</div>
         <p style="font-size:var(--text-md);font-weight:700;color:#fff;margin-bottom:.4rem;">Mystery mode activated</p>
-        <p style="font-size:var(--text-sm);color:rgba(232,228,250,.4);line-height:1.65;">You can add a video or photo later from your profile. You'll still get matches â€” video profiles just get 3Ã— more connections.</p>
+        <p style="font-size:var(--text-sm);color:rgba(232,228,250,.4);line-height:1.65;">You can add a video or photo later from your profile. You'll still get matches — video profiles just get 3× more connections.</p>
       </div>
     </div>
   </div>
 
   <button class="next-btn" onclick="unlockStep(5)">
-    <span id="btn4Txt">Continue</span> <span class="next-arrow">â†’</span>
+    <span id="btn4Txt">Continue</span> <span class="next-arrow">→</span>
   </button>
 </div>
 
 <div class="divider" id="div4" style="opacity:0;transition:opacity .4s;"></div>
 
-<!-- â”€â”€ STEP 5: REVIEW â”€â”€ -->
+<!-- ── STEP 5: REVIEW ── -->
 <div class="step-block locked" id="block5">
   <div class="step-num"><div class="step-num-dot"></div>Step 5 of 5</div>
   <h2 class="step-title">You're looking good,<br><em id="previewName">friend.</em></h2>
@@ -655,37 +655,37 @@ select.input option{background:var(--deep);color:#fff;}
       <div class="preview-body">
         <div style="display:flex;align-items:baseline;gap:.5rem;">
           <div class="preview-name" id="cardName">Your name</div>
-          <span style="font-size:var(--text-sm);color:rgba(232,228,250,.35);" id="cardAge">â€”</span>
+          <span style="font-size:var(--text-sm);color:rgba(232,228,250,.35);" id="cardAge">—</span>
         </div>
         <div class="preview-detail" id="cardDetail">Your city</div>
         <div class="preview-tags" id="cardTags">
-          <span class="p-tag">â€”</span>
+          <span class="p-tag">—</span>
         </div>
       </div>
     </div>
 
     <div class="next-box">
-      <div class="next-box-label">âœ¦ What happens next</div>
+      <div class="next-box-label">✦ What happens next</div>
       <p>Every morning at <strong>9am</strong> you get <strong>3 curated matches</strong> based on your intent, vibe, age range, and availability. No swiping. Just people worth meeting.</p>
     </div>
 
     <div class="next-box">
-      <div class="next-box-label">ðŸ”’ Your privacy</div>
-      <p>Your last name is never shown. Your exact location is never shared â€” only your distance. You control who sees you.</p>
+      <div class="next-box-label">🔒 Your privacy</div>
+      <p>Your last name is never shown. Your exact location is never shared — only your distance. You control who sees you.</p>
     </div>
   </div>
 
   <button class="next-btn" onclick="showSuccess()">
-    Take me to Miru âœ¦
+    Take me to Miru ✦
   </button>
 </div>
 
 <!-- SUCCESS -->
 <div class="success-screen" id="successScreen">
-  <div class="success-icon">âœ¦</div>
+  <div class="success-icon">✦</div>
   <h2 class="success-title">You're in,<br><em id="successName">friend.</em></h2>
-  <p class="success-sub">Your first 3 matches drop tomorrow at 9am. Get some rest â€” something good is coming your way.</p>
-  <a href="splash.html" class="success-btn">Open Miru â†’</a>
+  <p class="success-sub">Your first 3 matches drop tomorrow at 9am. Get some rest — something good is coming your way.</p>
+  <a href="splash.html" class="success-btn">Open Miru →</a>
   <div class="success-tags" id="successTags"></div>
 </div>
 
@@ -797,7 +797,7 @@ function stopRec(reset){
     state.recorded=false;
   } else {
     document.getElementById('recTxt').textContent='Re-record';
-    document.getElementById('recTimer').textContent=recSecs+'s recorded âœ“';
+    document.getElementById('recTimer').textContent=recSecs+'s recorded ✓';
     document.getElementById('recDone').classList.add('show');
     state.recorded=true;
   }
@@ -812,7 +812,7 @@ function handlePhoto(input){
   const av=document.getElementById('photoAv');
   av.style.display='flex';
   av.textContent=(state.name||'Y')[0].toUpperCase();
-  document.getElementById('dropSub').textContent=file.name+' uploaded âœ“';
+  document.getElementById('dropSub').textContent=file.name+' uploaded ✓';
 }
 
 // UNLOCK
@@ -838,11 +838,11 @@ function buildPreview(){
   document.getElementById('successName').textContent=n+'!';
   document.getElementById('cardAv').textContent=n[0].toUpperCase();
   document.getElementById('cardName').textContent=n;
-  document.getElementById('cardAge').textContent=state.age||'â€”';
-  document.getElementById('cardDetail').textContent=(state.city||'â€”')+' Â· Ages '+state.ageMin+'â€“'+state.ageMax;
+  document.getElementById('cardAge').textContent=state.age||'—';
+  document.getElementById('cardDetail').textContent=(state.city||'—')+' · Ages '+state.ageMin+'–'+state.ageMax;
   const tags=[];
   if(state.intent)tags.push(state.intent.replace(/^.\s/,''));
-  tags.push('Ages '+state.ageMin+'â€“'+state.ageMax);
+  tags.push('Ages '+state.ageMin+'–'+state.ageMax);
   const tc=document.getElementById('cardTags');
   tc.innerHTML=tags.map(t=>`<span class="p-tag">${t}</span>`).join('');
   const sc=document.getElementById('successTags');
@@ -863,5 +863,3 @@ function showSuccess(){
 </script>
 </body>
 </html>
- 
-
