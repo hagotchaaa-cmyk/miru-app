@@ -162,7 +162,7 @@ const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
 /* PROFILE */
 async function loadProfile(){
-  const { data:{user} } = await sb.auth.getUser();
+  const { data: { user } } = await sb.auth.getUser();
 
   if(!user){
     window.location.href = "auth.html";
@@ -173,17 +173,18 @@ async function loadProfile(){
     .from("profiles")
     .select("*")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
-  // AUTO CREATE PROFILE (fixes "Loading...")
+  // AUTO CREATE PROFILE
   if(!data){
     await sb.from("profiles").insert({
-      user_id:user.id,
-      name:"New User"
+      user_id: user.id,
+      name: "New User"
     });
     return loadProfile();
   }
 
+  // CLEAN OUTPUT
   name.textContent = data.name + ", " + (data.age || "");
   bio.textContent = data.bio || "No bio yet";
 
@@ -197,6 +198,7 @@ async function loadProfile(){
     music.play();
   }
 }
+
 
 /* POSTS */
 async function loadPosts(){
