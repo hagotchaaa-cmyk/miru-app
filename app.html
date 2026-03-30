@@ -1,181 +1,259 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="config.js"></script>
+<script src="./config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miru App</title>
+
 <style>
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  overflow: hidden;
-  font-family: sans-serif;
+body{
+  margin:0;
+  font-family:-apple-system;
+  background:#0f0f0f;
+  color:white;
 }
 
-.feed {
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+/* HIDE VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* NAV */
+.nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:70px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  background:rgba(0,0,0,0.6);
 }
 
-.card {
-  height: 100vh;
-  position: relative;
-  scroll-snap-align: start;
-}
+/* PROFILE */
+.profile{text-align:center;padding:40px;}
+.avatar{width:120px;height:120px;border-radius:50%;background:#222;margin:auto;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:20px;}
+.grid img,.grid video{width:100%;height:120px;object-fit:cover;}
 
-.card video, .card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* EXPLORE */
+.feed{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;}
+.card{height:100vh;position:relative;scroll-snap-align:start;}
+.card-bg{position:absolute;inset:0;background-size:cover;}
+.overlay{position:absolute;inset:0;background:linear-gradient(to top,black,transparent);}
+.content{position:absolute;bottom:140px;left:20px;}
+.actions{position:absolute;right:15px;bottom:140px;display:flex;flex-direction:column;gap:15px;}
+.btn{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;}
 
-.info {
-  position: absolute;
-  bottom: 120px;
-  left: 15px;
-}
-
-.actions {
-  position: absolute;
-  right: 10px;
-  bottom: 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.btn {
-  background: rgba(0,0,0,0.5);
-  padding: 14px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-}
 </style>
 </head>
 
 <body>
 
-<div class="feed" id="feed"></div>
+<!-- EXPLORE -->
+<div id="exploreView" class="view active">
+  <div class="feed" id="feed"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="profileView" class="view">
+  <div class="profile">
+    <div class="avatar"><img id="avatar" width="100%"></div>
+    <h2 id="name"></h2>
+    <p id="bio"></p>
+    <button onclick="addPost()">➕ Add Post</button>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- MESSAGES (placeholder) -->
+<div id="messagesView" class="view">
+  <h2 style="padding:20px">💬 Messages coming soon</h2>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div onclick="showView('exploreView')">🔥</div>
+  <div onclick="showView('messagesView')">💬</div>
+  <div onclick="showView('profileView')">👤</div>
+</div>
 
 <script>
-const { createClient } = supabase;
-
-const sb = createClient(
+const sb = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_KEY
 );
 
-let startX = 0;
-
-// LOAD USERS (NOT POSTS)
-async function loadFeed(){
-  const { data: users } = await sb
-    .from("profiles")
-    .select("*");
-
-  const feed = document.getElementById("feed");
-
-  users.forEach(user => {
-    const div = document.createElement("div");
-    div.className = "card";
-
-    const img = document.createElement("img");
-    img.src = user.avatar_url || "";
-
-    const info = document.createElement("div");
-    info.className = "info";
-    info.innerHTML = `
-      <div>${user.name || "User"}, ${user.age || ""}</div>
-      <div>${user.bio || ""}</div>
-    `;
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-    actions.innerHTML = `
-      <div class="btn" onclick="like('${user.user_id}')">❤️</div>
-      <div class="btn" onclick="pass()">❌</div>
-      <div class="btn" onclick="superLike('${user.user_id}')">⭐</div>
-      <div class="btn" onclick="openProfile('${user.user_id}')">👤</div>
-    `;
-
-    div.appendChild(img);
-    div.appendChild(info);
-    div.appendChild(actions);
-
-    // SWIPE DETECTION
-    div.addEventListener("touchstart", e => {
-      startX = e.touches[0].clientX;
-    });
-
-    div.addEventListener("touchend", e => {
-      let endX = e.changedTouches[0].clientX;
-
-      if (endX - startX > 50){
-        like(user.user_id);
-      } else if (startX - endX > 50){
-        pass();
-      }
-    });
-
-    feed.appendChild(div);
-  });
+/* NAV SWITCH */
+function showView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-// LIKE SYSTEM
-async function like(targetId){
-  const { data: { user } } = await sb.auth.getUser();
-
-  await sb.from("likes").insert({
-    user_id: user.id,
-    target_user_id: targetId,
-    type: "like"
-  });
-
-  checkMatch(user.id, targetId);
+/* AUTH CHECK */
+async function getUser(){
+  const { data:{user} } = await sb.auth.getUser();
+  if(!user){
+    alert("Login required");
+    return null;
+  }
+  return user;
 }
 
-// SUPER LIKE
-async function superLike(targetId){
-  const { data: { user } } = await sb.auth.getUser();
+/* PROFILE */
+async function loadProfile(){
+  const user = await getUser();
+  if(!user) return;
 
-  await sb.from("likes").insert({
-    user_id: user.id,
-    target_user_id: targetId,
-    type: "super"
-  });
+  let { data } = await sb.from("profiles").select("*").eq("user_id", user.id);
 
-  checkMatch(user.id, targetId);
-}
+  let profile = data?.[0];
 
-// PASS
-function pass(){
-  window.scrollBy(0, window.innerHeight);
-}
+  if(!profile){
+    await sb.from("profiles").insert({user_id:user.id,name:"New User"});
+    let res = await sb.from("profiles").select("*").eq("user_id", user.id);
+    profile = res.data?.[0];
+  }
 
-// MATCH CHECK
-async function checkMatch(me, them){
-  const { data } = await sb
-    .from("likes")
-    .select("*")
-    .eq("user_id", them)
-    .eq("target_user_id", me);
+  document.getElementById("name").textContent = profile?.name || "User";
+  document.getElementById("bio").textContent = profile?.bio || "";
 
-  if (data.length > 0){
-    alert("🔥 IT'S A MATCH!");
+  if(profile?.avatar_url){
+    document.getElementById("avatar").src = profile.avatar_url;
   }
 }
 
-// OPEN PROFILE
-function openProfile(id){
-  window.location.href = "profile.html?user=" + id;
+/* POSTS */
+async function loadPosts(){
+  const user = await getUser();
+  if(!user) return;
+
+  let { data } = await sb.from("posts").select("*").eq("user_id", user.id);
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML="";
+
+  data?.forEach(p=>{
+    let el = document.createElement(p.media_type==="video"?"video":"img");
+    el.src = p.media_url;
+    if(p.media_type==="video"){el.autoplay=true;el.loop=true;el.muted=true;}
+    grid.appendChild(el);
+  });
 }
 
-loadFeed();
+async function addPost(){
+  const input = document.createElement("input");
+  input.type="file";
+
+  input.onchange = async e=>{
+    const file = e.target.files[0];
+    const user = await getUser();
+
+    const path = `${user.id}/${Date.now()}_${file.name}`;
+
+    await sb.storage.from("posts").upload(path,file);
+
+    const url = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
+
+    await sb.from("posts").insert({
+      user_id:user.id,
+      media_url:url,
+      media_type:file.type.includes("video")?"video":"image"
+    });
+
+    loadPosts();
+  };
+
+  input.click();
+}
+
+/* EXPLORE */
+async function loadUsers(){
+  const user = await getUser();
+  if(!user) return;
+
+  const { data: users } = await sb
+    .from("profiles")
+    .select("user_id,name,bio,avatar_url,boost_until")
+    .neq("user_id", user.id)
+    .order("boost_until",{ascending:false});
+
+  const feed = document.getElementById("feed");
+  feed.innerHTML="";
+
+  users.forEach(u=>{
+    const card = document.createElement("div");
+    card.className="card";
+
+    card.innerHTML=`
+      <div class="card-bg" style="background-image:url('${u.avatar_url||''}')"></div>
+      <div class="overlay"></div>
+      <div class="content">
+        <h2>${u.name||"User"}</h2>
+        <p>${u.bio||""}</p>
+      </div>
+      <div class="actions">
+        <div class="btn" onclick="pass()">✕</div>
+        <div class="btn" onclick="like('${u.user_id}')">❤</div>
+      </div>
+    `;
+
+    enableDrag(card,u.user_id);
+    feed.appendChild(card);
+  });
+}
+
+async function like(id){
+  const user = await getUser();
+
+  const { data: existing } = await sb
+    .from("likes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("target_user_id", id)
+    .maybeSingle();
+
+  if(existing) return;
+
+  await sb.from("likes").insert({
+    user_id:user.id,
+    target_user_id:id,
+    type:"like"
+  });
+
+  swipeNext();
+}
+
+function pass(){ swipeNext(); }
+
+function swipeNext(){
+  const card=document.querySelector(".card");
+  if(card){
+    card.style.transform="translateX(100%)";
+    setTimeout(()=>card.remove(),200);
+  }
+}
+
+function enableDrag(card,id){
+  let startX=0;
+
+  card.addEventListener("pointerdown",e=>startX=e.clientX);
+
+  card.addEventListener("pointerup",e=>{
+    let diff=e.clientX-startX;
+    if(diff>100) like(id);
+    if(diff<-100) pass();
+  });
+}
+
+/* INIT */
+loadProfile();
+loadPosts();
+loadUsers();
+
 </script>
 
 </body>
