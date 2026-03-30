@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>Miru — AI Matchmaker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0D0A1A;
+      --surface: #171131;
+      --surface-2: #21194A;
+      --border: rgba(196, 184, 240, 0.14);
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --lilac: #C4B8F0;
+      --gold: #FFD98E;
+      --success: #7EEDB0;
+      --danger: #FFB4C0;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+    body { padding: 12px 12px 110px; }
+    .shell { width: min(430px, 100%); margin: 0 auto; position: relative; }
+    .top-bar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 6px 14px;
+      backdrop-filter: blur(18px);
+      background: rgba(13, 10, 26, 0.74);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon { width: 34px; height: 34px; border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.22); }
+    .logo { font-family: var(--serif); font-size: 27px; font-style: italic; font-weight: 700; color: var(--white); }
+    .icon-btn, .save-btn, .ghost-btn, .preset-btn, .chip, .tab {
+      font-family: inherit; border: none; cursor: pointer;
+    }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: 999px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text);
+    }
+    .panel {
+      border-radius: 30px; padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero::after {
+      content: ""; position: absolute; right: -50px; top: -30px; width: 180px; height: 180px;
+      border-radius: 999px; background: radial-gradient(circle, rgba(196,184,240,0.22), transparent 62%);
+    }
+    .eyebrow { color: var(--gold); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin-bottom: 8px; }
+    .hero h1 { font-family: var(--serif); font-size: 38px; line-height: 0.95; letter-spacing: -1px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .hero h1 em { color: var(--lilac); font-style: italic; }
+    .hero-sub { color: var(--text-soft); font-size: 14px; line-height: 1.7; max-width: 320px; position: relative; z-index: 1; }
+    .power-card {
+      margin-top: 16px; padding: 14px; border-radius: 24px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      position: relative; z-index: 1;
+    }
+    .power-card strong { display: block; font-size: 18px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+    .power-card p { color: var(--text-soft); font-size: 13px; line-height: 1.6; }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px;
+      padding: 14px; border-radius: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .toggle-copy strong { display: block; font-size: 16px; color: var(--white); margin-bottom: 5px; }
+    .toggle-copy span { display: block; color: var(--text-muted); font-size: 12px; line-height: 1.5; }
+    .toggle {
+      width: 64px; height: 36px; border-radius: 999px; padding: 4px; border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.08); position: relative; transition: 0.2s ease;
+    }
+    .toggle .knob {
+      width: 28px; height: 28px; border-radius: 999px; background: var(--white); position: absolute; left: 4px; top: 3px; transition: 0.2s ease;
+    }
+    .toggle.on { background: rgba(126,237,176,0.18); border-color: rgba(126,237,176,0.22); }
+    .toggle.on .knob { left: 30px; }
+    .panel-title { font-family: var(--serif); font-size: 24px; color: var(--white); line-height: 1; margin-bottom: 6px; }
+    .panel-sub { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+    .preset-btn, .save-btn, .ghost-btn {
+      width: 100%; padding: 15px 16px; border-radius: 999px; font-size: 14px; font-weight: 800;
+    }
+    .preset-btn, .save-btn { background: var(--white); color: #120D25; box-shadow: 0 10px 24px rgba(255,255,255,0.12); }
+    .ghost-btn { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid rgba(255,255,255,0.08); }
+    .dual-actions { display: grid; gap: 10px; }
+    .section { margin-top: 14px; }
+    .section-label { color: var(--text-soft); font-size: 12px; font-weight: 800; letter-spacing: 0.4px; margin-bottom: 10px; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 11px 14px; border-radius: 999px; font-size: 12px; font-weight: 800;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text-soft);
+    }
+    .chip.on { background: var(--white); color: #120D25; box-shadow: 0 10px 24px rgba(255,255,255,0.12); }
+    .range-row {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+    }
+    .field {
+      padding: 14px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .field small { display: block; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 800; }
+    .field strong { display: block; color: var(--white); font-size: 16px; }
+    .summary-card {
+      padding: 16px; border-radius: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .summary-card strong { display: block; font-size: 18px; color: var(--white); margin-bottom: 6px; }
+    .summary-card p { color: var(--text-soft); font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
+    .summary-card ul { padding-left: 18px; color: var(--text-soft); font-size: 13px; line-height: 1.7; }
+    .status-box { min-height: 22px; color: var(--gold); font-size: 12px; line-height: 1.6; font-weight: 700; margin-top: 12px; }
+    .tabs {
+      position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px)); padding: 12px 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      background: rgba(18, 13, 37, 0.88); border: 1px solid rgba(196,184,240,0.12); border-radius: 24px; backdrop-filter: blur(18px); z-index: 70; box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+    .tab { text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 54px; border-radius: 18px; color: var(--text-muted); }
+    .tab.on { background: rgba(255,255,255,0.06); color: var(--white); }
+    .tab-icon { font-size: 20px; }
+    .tab-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="top-bar">
+      <div class="brand">
+        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <div class="logo">miru.</div>
+      </div>
+      <button class="icon-btn" onclick="window.location.href='index.html'">←</button>
+    </div>
+
+    <div class="panel hero">
+      <div class="eyebrow">Optional AI mode</div>
+      <h1>Let Miru <em>search for you</em><br />this week.</h1>
+      <div class="hero-sub">Turn AI Matchmaker on when you don’t want to scroll all day. Miru will curate stronger picks based on your goal, vibe, and what you actually respond to.</div>
+
+      <div class="power-card">
+        <strong>“Do the searching for me this week.”</strong>
+        <p>This mode pauses endless browsing and sends you a smaller set of stronger curated matches instead.</p>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-copy">
+          <strong>AI Matchmaker</strong>
+          <span id="toggleLabel">Off — you browse manually</span>
+        </div>
+        <button class="toggle" id="aiToggle" onclick="toggleAiMode()"><div class="knob"></div></button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Quick start</div>
+      <div class="panel-sub">Use one tap if you want Miru to handle this week for you.</div>
+      <div class="dual-actions">
+        <button class="preset-btn" onclick="applyThisWeekPreset()">Do the searching for me this week</button>
+        <button class="ghost-btn" onclick="resetPreferences()">Reset to manual browsing</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Match goals</div>
+      <div class="panel-sub">Tell Miru what kind of outcome you want right now.</div>
+
+      <div class="section">
+        <div class="section-label">Looking for</div>
+        <div class="chip-row" id="goalChips">
+          <button class="chip on" data-value="relationship" onclick="selectSingle('goalChips', this)">Relationship</button>
+          <button class="chip" data-value="casual" onclick="selectSingle('goalChips', this)">Casual</button>
+          <button class="chip" data-value="fun_tonight" onclick="selectSingle('goalChips', this)">Fun tonight</button>
+          <button class="chip" data-value="open" onclick="selectSingle('goalChips', this)">Open to anything</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Preferred vibe</div>
+        <div class="chip-row" id="vibeChips">
+          <button class="chip on" data-value="funny" onclick="toggleChip(this)">Funny</button>
+          <button class="chip on" data-value="deep" onclick="toggleChip(this)">Deep</button>
+          <button class="chip" data-value="creative" onclick="toggleChip(this)">Creative</button>
+          <button class="chip" data-value="chill" onclick="toggleChip(this)">Chill</button>
+          <button class="chip" data-value="outgoing" onclick="toggleChip(this)">Outgoing</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Delivery style</div>
+        <div class="chip-row" id="deliveryChips">
+          <button class="chip on" data-value="3_daily" onclick="selectSingle('deliveryChips', this)">3 best daily</button>
+          <button class="chip" data-value="5_daily" onclick="selectSingle('deliveryChips', this)">5 daily</button>
+          <button class="chip" data-value="only_top" onclick="selectSingle('deliveryChips', this)">Only top matches</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Range</div>
+        <div class="range-row">
+          <div class="field">
+            <small>Age range</small>
+            <strong id="ageRangeText">24–32</strong>
+          </div>
+          <div class="field">
+            <small>Distance</small>
+            <strong id="distanceText">Within 20 miles</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-box" id="statusMsg"></div>
+      <button class="save-btn" onclick="savePreferences()">Save AI Matchmaker settings</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">What Miru will do</div>
+      <div class="panel-sub">This makes the feature feel useful, not mysterious.</div>
+      <div class="summary-card">
+        <strong>Your week with AI Matchmaker</strong>
+        <p id="summaryCopy">Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.</p>
+        <ul>
+          <li>Learn from who you like, skip, and reply to</li>
+          <li>Prioritize people with similar goals and energy</li>
+          <li>Send smaller, stronger curated picks instead of endless browsing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <a class="tab on" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
+  </div>
+
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+    let me = null;
+    let state = {
+      ai_enabled: false,
+      goal: 'relationship',
+      vibes: ['funny', 'deep'],
+      delivery_mode: '3_daily',
+      week_mode: false,
+      age_range: '24-32',
+      distance_miles: 20
+    };
+
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById('statusMsg');
+      el.textContent = msg || '';
+      el.style.color = isError ? '#FFB4C0' : '#FFD98E';
+    }
+
+    function refreshToggleUI() {
+      const toggle = document.getElementById('aiToggle');
+      const label = document.getElementById('toggleLabel');
+      const summary = document.getElementById('summaryCopy');
+      toggle.classList.toggle('on', state.ai_enabled);
+      if (state.ai_enabled) {
+        label.textContent = state.week_mode
+          ? 'On — Miru is searching for you this week'
+          : 'On — Miru is curating your matches';
+        summary.textContent = state.week_mode
+          ? 'Miru will actively search for stronger fits this week so you can stop scrolling and just review curated picks.'
+          : 'Miru will add curated picks into your normal flow based on your preferences.';
+      } else {
+        label.textContent = 'Off — you browse manually';
+        summary.textContent = 'Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.';
+      }
+      document.getElementById('ageRangeText').textContent = state.age_range.replace('-', '–');
+      document.getElementById('distanceText').textContent = `Within ${state.distance_miles} miles`;
+    }
+
+    function toggleAiMode() {
+      state.ai_enabled = !state.ai_enabled;
+      if (!state.ai_enabled) state.week_mode = false;
+      refreshToggleUI();
+    }
+
+    function selectSingle(groupId, button) {
+      document.querySelectorAll(`#${groupId} .chip`).forEach((chip) => chip.classList.remove('on'));
+      button.classList.add('on');
+      if (groupId === 'goalChips') state.goal = button.dataset.value;
+      if (groupId === 'deliveryChips') state.delivery_mode = button.dataset.value;
+    }
+
+    function toggleChip(button) {
+      button.classList.toggle('on');
+      const active = [...document.querySelectorAll('#vibeChips .chip.on')].map((chip) => chip.dataset.value);
+      state.vibes = active;
+    }
+
+    function applyThisWeekPreset() {
+      state.ai_enabled = true;
+      state.week_mode = true;
+      state.goal = 'relationship';
+      state.vibes = ['funny', 'deep', 'chill'];
+      state.delivery_mode = '3_daily';
+      state.age_range = '24-32';
+      state.distance_miles = 20;
+
+      syncChipState();
+      refreshToggleUI();
+      setStatus('This week preset applied. Save it to turn AI Matchmaker on.');
+    }
+
+    function resetPreferences() {
+      state = {
+        ai_enabled: false,
+        goal: 'relationship',
+        vibes: ['funny', 'deep'],
+        delivery_mode: '3_daily',
+        week_mode: false,
+        age_range: '24-32',
+        distance_miles: 20
+      };
+      syncChipState();
+      refreshToggleUI();
+      setStatus('Reset back to manual browsing.');
+    }
+
+    function syncChipState() {
+      document.querySelectorAll('#goalChips .chip').forEach((chip) => chip.classList.toggle('on', chip.dataset.value === state.goal));
+      document.querySelectorAll('#deliveryChips .chip').forEach((chip) => chip.classList.toggle('on', chip.dataset.value === state.delivery_mode));
+      document.querySelectorAll('#vibeChips .chip').forEach((chip) => chip.classList.toggle('on', state.vibes.includes(chip.dataset.value)));
+    }
+
+    async function ensureUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return null;
+      }
+      return user;
+    }
+
+    async function loadPreferences() {
+      const { data, error } = await sb
+        .from('matchmaker_preferences')
+        .select('*')
+        .eq('user_id', me.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        state.ai_enabled = !!data.ai_enabled;
+        state.goal = data.goal || state.goal;
+        state.vibes = Array.isArray(data.vibes) && data.vibes.length ? data.vibes : state.vibes;
+        state.delivery_mode = data.delivery_mode || state.delivery_mode;
+        state.week_mode = !!data.week_mode;
+        state.age_range = data.age_range || state.age_range;
+        state.distance_miles = data.distance_miles || state.distance_miles;
+      }
+
+      syncChipState();
+      refreshToggleUI();
+    }
+
+    async function savePreferences() {
+      if (!me) return;
+      if (!state.vibes.length) {
+        setStatus('Choose at least one vibe first.', true);
+        return;
+      }
+
+      const payload = {
+        user_id: me.id,
+        ai_enabled: state.ai_enabled,
+        goal: state.goal,
+        vibes: state.vibes,
+        delivery_mode: state.delivery_mode,
+        week_mode: state.week_mode,
+        age_range: state.age_range,
+        distance_miles: state.distance_miles,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await sb.from('matchmaker_preferences').upsert(payload, { onConflict: 'user_id' });
+      if (error) {
+        setStatus(error.message, true);
+        return;
+      }
+
+      setStatus(state.ai_enabled
+        ? 'AI Matchmaker saved. Miru can now search for you this week.'
+        : 'Preferences saved. Manual browsing stays on.');
+    }
+
+    async function init() {
+      me = await ensureUser();
+      if (!me) return;
+      await loadPreferences();
+    }
+
+    init();
+  </script>
+</body>
+</html>
