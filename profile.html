@@ -1,185 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="./config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile</title>
+  <!-- Better font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<style>
-body{
-  margin:0;
-  font-family:-apple-system;
-  background:#f5f5f7;
-  color:#111;
-}
+  <style>
+    body{
+      margin:0;
+      font-family: 'Inter', -apple-system;
+      background: radial-gradient(circle at top,#1a102d,#0f0f0f);
+      color:white;
+    }
 
-/* PROFILE HEADER */
-.profile{
-  text-align:center;
-  padding:30px 20px;
-  background:white;
-}
+    /* CENTER PROFILE */
+    .profile{
+      text-align:center;
+      padding:40px 20px;
+    }
 
-.avatar{
-  width:110px;
-  height:110px;
-  margin:auto;
-  border-radius:50%;
-  background:#7c5bcf;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:40px;
-  color:white;
-  position:relative;
-}
+    .avatar{
+      width:140px;
+      height:140px;
+      margin:auto;
+      border-radius:50%;
+      overflow:hidden;
+      border:3px solid #9F7AEA;
+      box-shadow:0 10px 30px rgba(159,122,234,0.3);
+    }
 
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-}
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
 
-.plus{
-  position:absolute;
-  bottom:0;
-  right:0;
-  background:#7c5bcf;
-  border-radius:50%;
-  width:30px;
-  height:30px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .name{
+      font-size:26px;
+      font-weight:700;
+      margin-top:12px;
+      letter-spacing:-0.5px;
+    }
 
-.name{
-  font-size:22px;
-  font-weight:bold;
-  margin-top:10px;
-}
+    .bio{
+      color:#aaa;
+      margin-top:6px;
+      font-size:14px;
+    }
 
-.bio{
-  color:#777;
-  margin-top:6px;
-}
+    .music{
+      margin-top:8px;
+      color:#9F7AEA;
+      font-size:13px;
+    }
 
-/* MUSIC */
-.music{
-  margin-top:10px;
-  color:#7c5bcf;
-}
+    /* STATS */
+    .stats{
+      display:flex;
+      justify-content:space-around;
+      margin-top:20px;
+      padding:15px 0;
+      background:rgba(255,255,255,0.03);
+      backdrop-filter:blur(20px);
+    }
 
-/* STATS */
-.stats{
-  display:flex;
-  justify-content:space-around;
-  background:#fafafa;
-  padding:15px 0;
-}
+    .stat{
+      text-align:center;
+      font-size:14px;
+    }
 
-.stat{
-  text-align:center;
-}
+    /* BUTTONS */
+    .actions{
+      display:flex;
+      gap:10px;
+      padding:15px;
+    }
 
-/* ACTIONS */
-.actions{
-  display:flex;
-  gap:10px;
-  padding:15px;
-}
+    .btn{
+      flex:1;
+      padding:12px;
+      border-radius:25px;
+      background:rgba(255,255,255,0.1);
+      text-align:center;
+      cursor:pointer;
+      transition:0.2s;
+      font-weight:600;
+    }
 
-.btn{
-  flex:1;
-  padding:12px;
-  border-radius:25px;
-  background:#eee;
-  text-align:center;
-  cursor:pointer;
-}
+    .btn.primary{
+      background:linear-gradient(45deg,#9F7AEA,#6EE7B7);
+      color:black;
+    }
 
-.btn.primary{
-  background:#7c5bcf;
-  color:white;
-}
+    .btn:active{
+      transform:scale(0.96);
+    }
 
-/* TABS */
-.tabs{
-  display:flex;
-  justify-content:space-around;
-  border-bottom:2px solid #eee;
-}
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:3px;
+      margin-top:10px;
+    }
 
-.tab{
-  padding:12px;
-  cursor:pointer;
-}
-
-.tab.active{
-  border-bottom:3px solid #7c5bcf;
-}
-
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:2px;
-}
-
-.grid img,
-.grid video{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-}
-</style>
+    .grid img,
+    .grid video{
+      width:100%;
+      height:130px;
+      object-fit:cover;
+      background:#111;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="profile">
-
   <div class="avatar">
     <img id="avatar">
-    <div class="plus">+</div>
   </div>
 
   <div class="name" id="name">Loading...</div>
   <div class="bio" id="bio"></div>
-
   <div class="music" id="musicDisplay"></div>
-
 </div>
 
 <div class="stats">
-  <div class="stat">
-    <div id="matches">0</div>
-    <small>MATCHES</small>
-  </div>
   <div class="stat">
     <div id="postCount">0</div>
     <small>MEDIA</small>
   </div>
   <div class="stat">
-    <div id="convos">0</div>
+    <div>0</div>
+    <small>MATCHES</small>
+  </div>
+  <div class="stat">
+    <div>0</div>
     <small>CONVOS</small>
   </div>
 </div>
 
 <div class="actions">
-  <div class="btn primary" onclick="toggleEdit()">✏️ Edit</div>
+  <div class="btn primary" onclick="addPost()">➕ Add</div>
   <div class="btn" onclick="pickMusic()">🎵</div>
-  <div class="btn" onclick="addPost()">➕</div>
-</div>
-
-<div class="tabs">
-  <div class="tab active" onclick="setTab('video')">🎥 Videos</div>
-  <div class="tab" onclick="setTab('image')">📸 Photos</div>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -190,36 +160,49 @@ body{
 const { createClient } = supabase;
 const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
-let currentTab = "video";
-
-// PROFILE
+/* PROFILE */
 async function loadProfile(){
   const { data:{user} } = await sb.auth.getUser();
 
-  const { data } = await sb
+  if(!user){
+    window.location.href = "auth.html";
+    return;
+  }
+
+  let { data } = await sb
     .from("profiles")
     .select("*")
     .eq("user_id", user.id)
     .single();
 
-  if(data){
-    name.textContent = data.name + ", " + (data.age || "");
-    bio.textContent = data.bio || "";
-    avatar.src = data.avatar_url || "";
+  // AUTO CREATE PROFILE (fixes "Loading...")
+  if(!data){
+    await sb.from("profiles").insert({
+      user_id:user.id,
+      name:"New User"
+    });
+    return loadProfile();
+  }
 
-    if(data.music_title){
-      musicDisplay.textContent = "🎵 " + data.music_title;
-      music.src = data.music_url;
-      music.play();
-    }
+  name.textContent = data.name + ", " + (data.age || "");
+  bio.textContent = data.bio || "No bio yet";
+
+  if(data.avatar_url){
+    avatar.src = data.avatar_url;
+  }
+
+  if(data.music_title){
+    musicDisplay.textContent = "🎵 " + data.music_title;
+    music.src = data.music_url;
+    music.play();
   }
 }
 
-// POSTS
+/* POSTS */
 async function loadPosts(){
   const { data:{user} } = await sb.auth.getUser();
 
-  const { data } = await sb
+  const { data, error } = await sb
     .from("posts")
     .select("*")
     .eq("user_id", user.id);
@@ -227,29 +210,32 @@ async function loadPosts(){
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  const filtered = data.filter(p => p.media_type === currentTab);
+  if(!data){
+    postCount.textContent = 0;
+    return;
+  }
 
   postCount.textContent = data.length;
 
-  filtered.forEach(post=>{
+  data.forEach(post=>{
     let el;
 
-    if(post.media_type==="video"){
-      el=document.createElement("video");
-      el.src=post.media_url;
-      el.autoplay=true;
-      el.loop=true;
-      el.muted=true;
-    }else{
-      el=document.createElement("img");
-      el.src=post.media_url;
+    if(post.media_type === "video"){
+      el = document.createElement("video");
+      el.src = post.media_url;
+      el.autoplay = true;
+      el.loop = true;
+      el.muted = true;
+    } else {
+      el = document.createElement("img");
+      el.src = post.media_url;
     }
 
     grid.appendChild(el);
   });
 }
 
-// ADD POST (REAL FILE UPLOAD)
+/* UPLOAD (FIXED STORAGE URL) */
 async function addPost(){
   const input = document.createElement("input");
   input.type = "file";
@@ -259,20 +245,24 @@ async function addPost(){
     const file = e.target.files[0];
     const { data:{user} } = await sb.auth.getUser();
 
+    const filePath = `${user.id}/${Date.now()}_${file.name}`;
+
     const { data, error } = await sb.storage
       .from("posts")
-      .upload(`${user.id}/${Date.now()}`, file);
+      .upload(filePath, file);
 
     if(error){
       alert(error.message);
       return;
     }
 
+    const publicUrl = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${filePath}`;
+
     const type = file.type.includes("video") ? "video" : "image";
 
     await sb.from("posts").insert({
       user_id:user.id,
-      media_url:data.path,
+      media_url:publicUrl,
       media_type:type
     });
 
@@ -282,9 +272,9 @@ async function addPost(){
   input.click();
 }
 
-// MUSIC
+/* MUSIC */
 async function pickMusic(){
-  const song = prompt("Enter song name");
+  const song = prompt("Song name");
 
   if(!song) return;
 
@@ -300,13 +290,7 @@ async function pickMusic(){
   loadProfile();
 }
 
-// TAB SWITCH
-function setTab(type){
-  currentTab = type;
-  loadPosts();
-}
-
-// INIT
+/* INIT */
 loadProfile();
 loadPosts();
 </script>
