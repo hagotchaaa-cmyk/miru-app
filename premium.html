@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miru — Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,#F8F6FF 0%,#EDE8FF 60%,#D8CCFF 100%);color:#1A1528;padding:20px 20px 100px}
+    .nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+    .logo{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;font-weight:700}
+    .card{max-width:520px;margin:0 auto}
+    .icon{font-size:56px;text-align:center;margin-bottom:16px}
+    h1{font-family:'Playfair Display',serif;font-size:42px;line-height:1.05;text-align:center;margin-bottom:8px}
+    h1 em{font-style:italic;color:#7C5CBF}
+    .sub{text-align:center;color:#6B5F8A;line-height:1.6;margin-bottom:18px}
+    .compare{background:#fff;border-radius:18px;border:1px solid #E4DEFF;overflow:hidden;margin-bottom:16px}
+    .row{display:grid;grid-template-columns:1fr 80px 100px;padding:12px 14px;border-bottom:1px solid #E4DEFF}
+    .row:last-child{border-bottom:none}
+    .row.h{background:#F0ECFF;font-size:11px;text-transform:uppercase;color:#A99DC0;font-weight:700}
+    .prem{text-align:center;color:#7C5CBF;font-weight:700}
+    .free{text-align:center;color:#A99DC0}
+    .price{background:#EDE8FF;border:2px solid #7C5CBF;border-radius:18px;padding:18px;position:relative;margin-bottom:16px}
+    .badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F5A623,#E8920A);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px}
+    .pname{font-weight:700}
+    .pamt{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#7C5CBF;margin-top:6px}
+    .btn{width:100%;padding:16px;border:none;border-radius:999px;background:#7C5CBF;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+    .note{text-align:center;font-size:12px;color:#A99DC0;margin-top:10px}
+    .tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid #E4DEFF;display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
+    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#A99DC0;text-decoration:none}
+    .tab.on{color:#7C5CBF}
+    .tab div:last-child{font-size:9px;text-transform:uppercase}
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="logo">miru.</div>
+    <div>Premium</div>
+  </div>
+
+  <div class="card">
+    <div class="icon">⭐</div>
+    <h1>Unlock<br><em>Miru Premium.</em></h1>
+    <div class="sub">More swipes. More super likes. Priority matching. For now, this page is live but billing is not connected yet.</div>
+
+    <div class="compare">
+      <div class="row h"><div></div><div class="free">Free</div><div class="prem">Premium</div></div>
+      <div class="row"><div>Daily swipes</div><div class="free">40</div><div class="prem">Unlimited</div></div>
+      <div class="row"><div>Super likes/day</div><div class="free">3</div><div class="prem">10</div></div>
+      <div class="row"><div>Priority matching</div><div class="free">✕</div><div class="prem">✓</div></div>
+      <div class="row"><div>See who liked you</div><div class="free">✕</div><div class="prem">✓</div></div>
+    </div>
+
+    <div class="price">
+      <div class="badge">⭐ Most popular</div>
+      <div class="pname">Monthly Premium</div>
+      <div class="pamt">$3.99<span style="font-size:14px;color:#A99DC0">/mo</span></div>
+    </div>
+
+    <button class="btn" onclick="activatePremium()">Start Premium — $3.99/month</button>
+    <div class="note">Temporary demo button. Stripe can be added next.</div>
+  </div>
+
+  <div class="tabs">
+    <a class="tab" href="index.html"><div>💜</div><div>Matches</div></a>
+    <a class="tab" href="messages.html"><div>💬</div><div>Messages</div></a>
+    <a class="tab" href="explore.html"><div>🔍</div><div>Explore</div></a>
+    <a class="tab on" href="profile.html"><div>👤</div><div>Profile</div></a>
+  </div>
+
+<script>
+const sb = supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+);
+
+async function activatePremium(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return window.location.href = "auth.html";
+
+  const { error } = await sb
+    .from("profiles")
+    .update({ is_premium: true })
+    .eq("user_id", user.id);
+
+  if (error) return alert(error.message);
+  alert("Premium activated for demo ⭐");
+  window.location.href = "profile.html";
+}
+</script>
+</body>
+</html>
