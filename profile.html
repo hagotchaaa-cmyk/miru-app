@@ -1,110 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="./config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<style>
-body{
-  margin:0;
-  font-family:'Inter', -apple-system;
-  background: radial-gradient(circle at top,#1a102d,#0f0f0f);
-  color:white;
-}
+  <style>
+    body{
+      margin:0;
+      font-family:'Inter', -apple-system;
+      background: radial-gradient(circle at top,#1a102d,#0f0f0f);
+      color:white;
+    }
 
-/* CENTER */
-.profile{
-  text-align:center;
-  padding:40px 20px;
-}
+    .profile{
+      text-align:center;
+      padding:40px 20px;
+    }
 
-.avatar{
-  width:140px;
-  height:140px;
-  margin:auto;
-  border-radius:50%;
-  overflow:hidden;
-  border:3px solid #9F7AEA;
-  box-shadow:0 10px 30px rgba(159,122,234,0.3);
-}
+    .avatar{
+      width:140px;
+      height:140px;
+      margin:auto;
+      border-radius:50%;
+      overflow:hidden;
+      border:3px solid #9F7AEA;
+      box-shadow:0 10px 30px rgba(159,122,234,0.3);
+      background:#222;
+    }
 
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
 
-.name{
-  font-size:26px;
-  font-weight:700;
-  margin-top:12px;
-}
+    .name{
+      font-size:26px;
+      font-weight:700;
+      margin-top:12px;
+    }
 
-.bio{
-  color:#aaa;
-  margin-top:6px;
-}
+    .bio{
+      color:#aaa;
+      margin-top:6px;
+    }
 
-.music{
-  color:#9F7AEA;
-  margin-top:8px;
-}
+    .stats{
+      display:flex;
+      justify-content:space-around;
+      margin-top:20px;
+      padding:15px 0;
+      background:rgba(255,255,255,0.03);
+    }
 
-/* STATS */
-.stats{
-  display:flex;
-  justify-content:space-around;
-  margin-top:20px;
-  padding:15px 0;
-  background:rgba(255,255,255,0.03);
-}
+    .actions{
+      display:flex;
+      gap:10px;
+      padding:15px;
+    }
 
-.stat{
-  text-align:center;
-}
+    .btn{
+      flex:1;
+      padding:12px;
+      border-radius:25px;
+      background:linear-gradient(45deg,#9F7AEA,#6EE7B7);
+      text-align:center;
+      cursor:pointer;
+      font-weight:600;
+      color:black;
+    }
 
-/* BUTTONS */
-.actions{
-  display:flex;
-  gap:10px;
-  padding:15px;
-}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:3px;
+    }
 
-.btn{
-  flex:1;
-  padding:12px;
-  border-radius:25px;
-  background:rgba(255,255,255,0.1);
-  text-align:center;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.btn.primary{
-  background:linear-gradient(45deg,#9F7AEA,#6EE7B7);
-  color:black;
-}
-
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:3px;
-}
-
-.grid img,
-.grid video{
-  width:100%;
-  height:130px;
-  object-fit:cover;
-}
-</style>
+    .grid img,
+    .grid video{
+      width:100%;
+      height:130px;
+      object-fit:cover;
+    }
+  </style>
 </head>
 
 <body>
@@ -114,122 +98,121 @@ body{
     <img id="avatar">
   </div>
 
-  <div class="name" id="name">Loading...</div>
+  <div class="name" id="name">Loading profile...</div>
   <div class="bio" id="bio"></div>
-  <div class="music" id="musicDisplay"></div>
 </div>
 
 <div class="stats">
-  <div class="stat">
-    <div id="postCount">0</div>
-    <small>MEDIA</small>
-  </div>
-  <div class="stat">
-    <div>0</div>
-    <small>MATCHES</small>
-  </div>
-  <div class="stat">
-    <div>0</div>
-    <small>CONVOS</small>
-  </div>
+  <div>0<br><small>MEDIA</small></div>
+  <div>0<br><small>MATCHES</small></div>
+  <div>0<br><small>CONVOS</small></div>
 </div>
 
 <div class="actions">
-  <div class="btn primary" onclick="addPost()">➕ Add</div>
-  <div class="btn" onclick="pickMusic()">🎵</div>
+  <div class="btn" onclick="addPost()">➕ Add</div>
 </div>
 
 <div class="grid" id="grid"></div>
 
-<audio id="music" loop></audio>
-
 <script>
-const { createClient } = supabase;
-const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+const sb = supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_KEY
+);
 
-/* PROFILE (BULLETPROOF) */
+/* LOAD PROFILE (NO FAIL VERSION) */
 async function loadProfile(){
   try{
-    const { data: { user } } = await sb.auth.getUser();
+    const { data } = await sb.auth.getUser();
+    const user = data.user;
 
     if(!user){
-      name.textContent = "Not logged in";
+      document.getElementById("name").textContent = "Not logged in";
       return;
     }
 
+    // ALWAYS GET ARRAY (no .single)
     const res = await sb
       .from("profiles")
       .select("*")
       .eq("user_id", user.id);
 
-    let data = res.data?.[0];
+    let profile = res.data && res.data.length ? res.data[0] : null;
 
-    // AUTO CREATE
-    if(!data){
+    // CREATE IF NOT EXISTS
+    if(!profile){
       await sb.from("profiles").insert({
         user_id:user.id,
         name:"New User"
       });
 
-      name.textContent = "New User";
-      bio.textContent = "Profile created";
-      return;
+      // fetch again
+      const again = await sb
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id);
+
+      profile = again.data?.[0];
     }
 
-    name.textContent = (data.name || "User") + ", " + (data.age || "");
-    bio.textContent = data.bio || "No bio yet";
+    // RENDER ALWAYS
+    document.getElementById("name").textContent =
+      (profile?.name || "User");
 
-    if(data.avatar_url){
-      avatar.src = data.avatar_url;
-    }
+    document.getElementById("bio").textContent =
+      profile?.bio || "No bio yet";
 
-    if(data.music_title){
-      musicDisplay.textContent = "🎵 " + data.music_title;
-      music.src = data.music_url;
-      music.play().catch(()=>{});
+    if(profile?.avatar_url){
+      document.getElementById("avatar").src = profile.avatar_url;
     }
 
   }catch(e){
     console.error(e);
-    name.textContent = "Error loading profile";
+    document.getElementById("name").textContent = "Error loading profile";
   }
 }
 
-/* POSTS (NO CRASH) */
+/* POSTS (SAFE) */
 async function loadPosts(){
-  const { data:{user} } = await sb.auth.getUser();
+  try{
+    const { data } = await sb.auth.getUser();
+    const user = data.user;
 
-  const res = await sb
-    .from("posts")
-    .select("*")
-    .eq("user_id", user.id);
+    if(!user) return;
 
-  const data = res.data || [];
+    const res = await sb
+      .from("posts")
+      .select("*")
+      .eq("user_id", user.id);
 
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
+    const posts = res.data || [];
 
-  postCount.textContent = data.length;
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
 
-  data.forEach(post=>{
-    let el;
+    posts.forEach(p=>{
+      let el;
 
-    if(post.media_type==="video"){
-      el=document.createElement("video");
-      el.src=post.media_url;
-      el.autoplay=true;
-      el.loop=true;
-      el.muted=true;
-    }else{
-      el=document.createElement("img");
-      el.src=post.media_url;
-    }
+      if(p.media_type==="video"){
+        el=document.createElement("video");
+        el.src=p.media_url;
+        el.autoplay=true;
+        el.loop=true;
+        el.muted=true;
+      }else{
+        el=document.createElement("img");
+        el.src=p.media_url;
+      }
 
-    grid.appendChild(el);
-  });
+      grid.appendChild(el);
+    });
+
+  }catch(e){
+    console.error(e);
+  }
 }
 
-/* UPLOAD (FIXED URL) */
+/* UPLOAD */
 async function addPost(){
   const input = document.createElement("input");
   input.type="file";
@@ -237,43 +220,25 @@ async function addPost(){
 
   input.onchange = async e=>{
     const file = e.target.files[0];
-    const { data:{user} } = await sb.auth.getUser();
+    const { data } = await sb.auth.getUser();
+    const user = data.user;
 
     const path = `${user.id}/${Date.now()}_${file.name}`;
 
     await sb.storage.from("posts").upload(path, file);
 
-    const publicUrl = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
-
-    const type = file.type.includes("video") ? "video" : "image";
+    const url = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
 
     await sb.from("posts").insert({
       user_id:user.id,
-      media_url:publicUrl,
-      media_type:type
+      media_url:url,
+      media_type:file.type.includes("video") ? "video" : "image"
     });
 
     loadPosts();
   };
 
   input.click();
-}
-
-/* MUSIC */
-async function pickMusic(){
-  const song = prompt("Song name");
-  if(!song) return;
-
-  const preview = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
-
-  const { data:{user} } = await sb.auth.getUser();
-
-  await sb.from("profiles").update({
-    music_title:song,
-    music_url:preview
-  }).eq("user_id", user.id);
-
-  loadProfile();
 }
 
 /* INIT */
