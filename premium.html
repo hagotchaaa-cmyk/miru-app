@@ -601,25 +601,15 @@ const sb = supabase.createClient(
   window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
 );
 
-async function activatePremium(){
+async function activatePremium() {
   const { data: { user } } = await sb.auth.getUser();
+
   if (!user) {
     window.location.href = 'auth.html';
     return;
   }
 
-  const { error } = await sb
-    .from('profiles')
-    .update({ is_premium: true })
-    .eq('user_id', user.id);
-
-  if (error) {
-    alert(error.message);
-    return;
-  }
-
-  alert('Premium activated for demo ⭐');
-  window.location.href = 'profile.html';
+  window.location.href = 'https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';
 }
 </script>
 </body>
