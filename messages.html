@@ -20,14 +20,12 @@
       --surface-2: #21194A;
       --surface-3: #2A225A;
       --border: rgba(196, 184, 240, 0.14);
-      --border-strong: rgba(196, 184, 240, 0.22);
-      --violet: #4A3F8A;
-      --lavender: #8B7EC8;
-      --lilac: #C4B8F0;
       --white: #FFFFFF;
       --text: #F7F4FF;
       --text-soft: #D3CBF2;
       --text-muted: #9E95C9;
+      --lilac: #C4B8F0;
+      --gold: #FFD98E;
       --success: #7EEDB0;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
       --serif: 'Playfair Display', serif;
@@ -120,24 +118,23 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
     }
 
     .top-chip,
     .icon-btn,
     .search-box input,
-    .composer input,
     .composer textarea,
     .send-btn,
     .tool-btn,
     .emoji-btn,
     .thread,
-    .menu-item,
     .tab,
     .empty-cta,
     .thread-avatar,
     .chat-avatar,
     .quick-pill,
-    .avatar-menu-item,
+    .menu-item,
     .emoji-option,
     .back-btn {
       font-family: inherit;
@@ -149,7 +146,9 @@
     .tool-btn,
     .emoji-btn,
     .empty-cta,
-    .back-btn {
+    .back-btn,
+    .menu-item,
+    .quick-pill {
       border: none;
       cursor: pointer;
     }
@@ -177,6 +176,54 @@
       color: var(--text);
       font-size: 15px;
     }
+
+    .app-menu,
+    .conversation-menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      width: 230px;
+      border-radius: 22px;
+      background: rgba(23, 17, 49, 0.98);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display: none;
+      z-index: 8;
+    }
+
+    .app-menu.show,
+    .conversation-menu.show,
+    .avatar-hover-wrap:hover .conversation-menu {
+      display: block;
+    }
+
+    .menu-title {
+      padding: 8px 10px 10px;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .menu-item {
+      width: 100%;
+      text-align: left;
+      padding: 13px 12px;
+      border-radius: 16px;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .menu-item:hover { background: rgba(255,255,255,0.05); }
+    .menu-item small { color: var(--text-muted); font-size: 11px; font-weight: 700; }
 
     .page {
       flex: 1;
@@ -247,7 +294,7 @@
     .thread-pills::-webkit-scrollbar { display: none; }
 
     .quick-pill {
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-radius: 999px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
@@ -255,6 +302,13 @@
       font-size: 11px;
       font-weight: 800;
       white-space: nowrap;
+      transition: 0.2s ease;
+    }
+
+    .quick-pill.on {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
     }
 
     .thread-list {
@@ -440,55 +494,14 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
     }
 
-    .avatar-menu {
-      position: absolute;
-      top: 58px;
-      left: 0;
-      width: 240px;
-      border-radius: 22px;
-      background: rgba(23, 17, 49, 0.98);
-      border: 1px solid rgba(196,184,240,0.12);
-      box-shadow: var(--shadow);
-      padding: 10px;
-      display: none;
-      z-index: 5;
+    .conversation-menu {
+      top: 46px;
+      right: 0;
+      left: auto;
     }
-
-    .avatar-menu.show,
-    .avatar-hover-wrap:hover .avatar-menu {
-      display: block;
-    }
-
-    .avatar-menu-title {
-      padding: 8px 10px 10px;
-      color: var(--text-muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 800;
-    }
-
-    .avatar-menu-item {
-      width: 100%;
-      padding: 13px 12px;
-      border-radius: 16px;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      text-align: left;
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .avatar-menu-item:hover { background: rgba(255,255,255,0.05); }
-    .avatar-menu-item small { color: var(--text-muted); font-size: 11px; font-weight: 700; }
 
     .messages {
       flex: 1;
@@ -633,6 +646,7 @@
       resize: none;
       line-height: 1.55;
       font-size: 14px;
+      font-family: inherit;
     }
 
     .send-btn {
@@ -846,7 +860,15 @@
       </div>
       <div class="top-actions">
         <div class="top-chip" id="topConvoCount">0 chats</div>
-        <button class="icon-btn" onclick="window.location.href='profile.html'">👤</button>
+        <button class="icon-btn" onclick="toggleAppMenu()">⋯</button>
+        <div class="app-menu" id="appMenu">
+          <div class="menu-title">App menu</div>
+          <button class="menu-item" onclick="window.location.href='profile.html'">Profile <small>open your page</small></button>
+          <button class="menu-item" onclick="window.location.href='premium.html'">Subscription <small>premium access</small></button>
+          <button class="menu-item" onclick="showMenuAction('Notifications center can connect here next.')">Notifications <small>alerts and activity</small></button>
+          <button class="menu-item" onclick="showMenuAction('Settings page can connect here next.')">Settings <small>account and privacy</small></button>
+          <button class="menu-item" onclick="logout()">Log out <small>secure sign out</small></button>
+        </div>
       </div>
     </div>
 
@@ -854,13 +876,13 @@
       <div class="sidebar">
         <div class="side-head">
           <div class="side-title">Your <em>conversations.</em></div>
-          <div class="side-sub">Fast, clean, expressive messaging with media, emoji, and a premium Miru feel.</div>
-          <div class="search-box"><input id="searchInput" placeholder="Search chats..." oninput="filterThreads(this.value)" /></div>
+          <div class="side-sub">Clean message filters, real media sharing, and menus that actually do something.</div>
+          <div class="search-box"><input id="searchInput" placeholder="Search chats..." oninput="applyThreadFilters()" /></div>
           <div class="thread-pills">
-            <div class="quick-pill">All chats</div>
-            <div class="quick-pill">Unread</div>
-            <div class="quick-pill">New match</div>
-            <div class="quick-pill">Media shared</div>
+            <button class="quick-pill on" data-filter="all" onclick="setThreadFilter('all', this)">All chats</button>
+            <button class="quick-pill" data-filter="unread" onclick="setThreadFilter('unread', this)">Unread</button>
+            <button class="quick-pill" data-filter="match" onclick="setThreadFilter('match', this)">New match</button>
+            <button class="quick-pill" data-filter="media" onclick="setThreadFilter('media', this)">Media shared</button>
           </div>
         </div>
         <div class="thread-list" id="threads"></div>
@@ -871,17 +893,17 @@
           <div class="chat-head-left">
             <button class="back-btn" onclick="closeMobileChat()">←</button>
             <div class="avatar-hover-wrap" style="position:relative;">
-              <div class="chat-avatar" id="chatAvatar" onclick="toggleAvatarMenu()">
+              <div class="chat-avatar" id="chatAvatar" onclick="toggleConversationMenu()">
                 <span id="chatAvatarInitial">M</span>
                 <div class="status-dot"></div>
               </div>
-              <div class="avatar-menu" id="avatarMenu">
-                <div class="avatar-menu-title">Conversation menu</div>
-                <button class="avatar-menu-item" onclick="showMenuAction('Profile preview page is the next thing to connect.')">View profile <small>open their page</small></button>
-                <button class="avatar-menu-item" onclick="showMenuAction('Media gallery view is ready to add next.')">Shared media <small>photos and videos</small></button>
-                <button class="avatar-menu-item" onclick="showMenuAction('Notifications and mute controls can connect here.')">Mute chat <small>quiet this thread</small></button>
-                <button class="avatar-menu-item" onclick="showMenuAction('Premium chat layer can connect here.')">Subscribe <small>premium access</small></button>
-                <button class="avatar-menu-item" onclick="showMenuAction('Safety tools can connect here.')">Block or report <small>privacy and safety</small></button>
+              <div class="conversation-menu" id="conversationMenu">
+                <div class="menu-title">Conversation menu</div>
+                <button class="menu-item" onclick="showMenuAction('Profile preview page is the next thing to connect.')">View profile <small>open their page</small></button>
+                <button class="menu-item" onclick="focusMediaFilter()">Shared media <small>filter media chats</small></button>
+                <button class="menu-item" onclick="showMenuAction('Mute toggle can connect here next.')">Mute chat <small>quiet this thread</small></button>
+                <button class="menu-item" onclick="window.location.href='premium.html'">Subscription <small>premium access</small></button>
+                <button class="menu-item" onclick="showMenuAction('Safety tools can connect here next.')">Block or report <small>privacy and safety</small></button>
               </div>
             </div>
             <div class="chat-head-copy">
@@ -890,8 +912,7 @@
             </div>
           </div>
           <div class="chat-head-right">
-            <button class="icon-btn" onclick="showMenuAction('Voice and video calls can plug in here later.')">📞</button>
-            <button class="icon-btn" onclick="showMenuAction('Premium chat tools can plug in here later.')">✦</button>
+            <button class="icon-btn" onclick="toggleConversationMenu()">⋯</button>
           </div>
         </div>
 
@@ -953,6 +974,8 @@ let currentConvo = null;
 let currentOtherProfile = null;
 let msgSub = null;
 let pendingMediaFile = null;
+let activeThreadFilter = 'all';
+let convoMetaById = {};
 
 const quickEmoji = ['😂','😍','🥹','😉','🔥','💜','😌','✨','😭','🥰','😮','😏','🙏','🎥','📸','💫'];
 
@@ -986,7 +1009,8 @@ function focusSearch() {
 }
 
 function showMenuAction(message) {
-  closeAvatarMenu();
+  closeAppMenu();
+  closeConversationMenu();
   alert(message);
 }
 
@@ -1025,12 +1049,20 @@ function insertEmoji(emoji) {
   autoGrowInput();
 }
 
-function toggleAvatarMenu() {
-  document.getElementById('avatarMenu').classList.toggle('show');
+function toggleAppMenu() {
+  document.getElementById('appMenu').classList.toggle('show');
 }
 
-function closeAvatarMenu() {
-  document.getElementById('avatarMenu').classList.remove('show');
+function closeAppMenu() {
+  document.getElementById('appMenu').classList.remove('show');
+}
+
+function toggleConversationMenu() {
+  document.getElementById('conversationMenu').classList.toggle('show');
+}
+
+function closeConversationMenu() {
+  document.getElementById('conversationMenu').classList.remove('show');
 }
 
 function autoGrowInput() {
@@ -1048,6 +1080,43 @@ function bindComposer() {
       sendMessage();
     }
   });
+}
+
+function setThreadFilter(filter, button) {
+  activeThreadFilter = filter;
+  document.querySelectorAll('.quick-pill').forEach((pill) => pill.classList.remove('on'));
+  if (button) button.classList.add('on');
+  applyThreadFilters();
+}
+
+function focusMediaFilter() {
+  const pill = document.querySelector('.quick-pill[data-filter="media"]');
+  if (pill) setThreadFilter('media', pill);
+  closeConversationMenu();
+  closeMobileChat();
+}
+
+function getFilteredConversations() {
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  return convos.filter((c) => {
+    const otherId = c.user_a === me.id ? c.user_b : c.user_a;
+    const otherName = (profilesById[otherId]?.name || '').toLowerCase();
+    const preview = (c.last_message || '').toLowerCase();
+    const meta = convoMetaById[c.id] || {};
+
+    const matchesSearch = !search || otherName.includes(search) || preview.includes(search);
+    if (!matchesSearch) return false;
+
+    if (activeThreadFilter === 'unread') return !!meta.isUnread;
+    if (activeThreadFilter === 'match') return !!meta.isNewMatch;
+    if (activeThreadFilter === 'media') return !!meta.hasMedia;
+    return true;
+  });
+}
+
+function applyThreadFilters() {
+  renderThreads(getFilteredConversations());
 }
 
 async function init(){
@@ -1079,7 +1148,8 @@ async function loadConversations(){
   convos = data || [];
   document.getElementById('topConvoCount').textContent = `${convos.length} chats`;
   await loadThreadProfiles();
-  renderThreads(convos);
+  await loadConversationMeta();
+  applyThreadFilters();
 }
 
 async function loadThreadProfiles() {
@@ -1095,10 +1165,44 @@ async function loadThreadProfiles() {
   profilesById = Object.fromEntries((profileRows || []).map(p => [p.user_id, p]));
 }
 
+async function loadConversationMeta() {
+  if (!convos.length) {
+    convoMetaById = {};
+    return;
+  }
+
+  const ids = convos.map((c) => c.id);
+  const { data: messageRows } = await sb
+    .from('messages')
+    .select('conversation_id,sender_id,created_at,media_url')
+    .in('conversation_id', ids)
+    .order('created_at', { ascending: false });
+
+  const meta = {};
+  (messageRows || []).forEach((row) => {
+    if (!meta[row.conversation_id]) {
+      meta[row.conversation_id] = {
+        lastSenderId: row.sender_id,
+        isUnread: row.sender_id !== me.id,
+        hasMedia: !!row.media_url
+      };
+    } else if (row.media_url) {
+      meta[row.conversation_id].hasMedia = true;
+    }
+  });
+
+  convos.forEach((c) => {
+    if (!meta[c.id]) meta[c.id] = { isUnread: false, hasMedia: false };
+    meta[c.id].isNewMatch = !c.last_message || c.last_message === 'You matched 💜';
+  });
+
+  convoMetaById = meta;
+}
+
 function renderThreads(list){
   const box = document.getElementById('threads');
   if (!list.length) {
-    box.innerHTML = `<div class="empty-state"><div class="empty-card"><strong>No conversations yet.</strong><p>When you match with someone, your chats will land here.</p></div></div>`;
+    box.innerHTML = `<div class="empty-state"><div class="empty-card"><strong>No chats in this view.</strong><p>Try a different filter or clear your search to see more conversations.</p></div></div>`;
     return;
   }
 
@@ -1110,7 +1214,8 @@ function renderThreads(list){
       ? `<img src="${esc(other.avatar_url)}" alt="avatar" />`
       : `<span>${esc(initialFrom(other.name || 'M'))}</span>`;
     const preview = c.last_message || 'You matched 💜';
-    const unread = Math.random() > 0.72 ? `<span class="unread-pill">1</span>` : '';
+    const meta = convoMetaById[c.id] || {};
+    const unread = meta.isUnread ? `<span class="unread-pill">1</span>` : '';
 
     return `
       <button class="thread ${active}" id="thread-${c.id}" onclick="openConversation('${c.id}')">
@@ -1128,27 +1233,11 @@ function renderThreads(list){
   }).join('');
 }
 
-function filterThreads(q){
-  const query = (q || '').toLowerCase().trim();
-  if (!query) {
-    renderThreads(convos);
-    return;
-  }
-
-  const filtered = convos.filter(c => {
-    const otherId = c.user_a === me.id ? c.user_b : c.user_a;
-    const otherName = (profilesById[otherId]?.name || '').toLowerCase();
-    const lastMessage = (c.last_message || '').toLowerCase();
-    return otherName.includes(query) || lastMessage.includes(query);
-  });
-  renderThreads(filtered);
-}
-
 async function openConversation(id){
   currentConvo = id;
   openMobileChat();
   closeEmojiPanel();
-  closeAvatarMenu();
+  closeConversationMenu();
 
   document.querySelectorAll('.thread').forEach(el => el.classList.remove('active'));
   const active = document.getElementById('thread-' + id);
@@ -1180,13 +1269,12 @@ async function openConversation(id){
 
 function renderChatHeader(profile) {
   const avatarBox = document.getElementById('chatAvatar');
-  const avatarInitial = document.getElementById('chatAvatarInitial');
   const chatName = document.getElementById('chatName');
   const chatStatus = document.getElementById('chatStatus');
 
   avatarBox.innerHTML = profile?.avatar_url
     ? `<img src="${esc(profile.avatar_url)}" alt="avatar" /><div class="status-dot"></div>`
-    : `<span id="chatAvatarInitial">${esc(initialFrom(profile?.name || 'M'))}</span><div class="status-dot"></div>`;
+    : `<span>${esc(initialFrom(profile?.name || 'M'))}</span><div class="status-dot"></div>`;
 
   chatName.textContent = profile?.name || 'Match';
   chatStatus.textContent = profile?.is_premium
@@ -1374,18 +1462,22 @@ async function sendMessage(){
   await loadConversations();
 }
 
+async function logout() {
+  await sb.auth.signOut();
+  window.location.href = 'auth.html';
+}
+
 document.addEventListener('click', (e) => {
   const emojiPanel = document.getElementById('emojiPanel');
-  const avatarMenu = document.getElementById('avatarMenu');
+  const appMenu = document.getElementById('appMenu');
+  const convoMenu = document.getElementById('conversationMenu');
   const withinComposer = e.target.closest('.composer');
-  const withinAvatar = e.target.closest('.avatar-hover-wrap');
+  const withinAppMenu = e.target.closest('.top-actions');
+  const withinConversation = e.target.closest('.chat-head');
 
-  if (!withinComposer && emojiPanel.classList.contains('show')) {
-    closeEmojiPanel();
-  }
-  if (!withinAvatar && avatarMenu.classList.contains('show')) {
-    closeAvatarMenu();
-  }
+  if (!withinComposer && emojiPanel.classList.contains('show')) closeEmojiPanel();
+  if (!withinAppMenu && appMenu.classList.contains('show')) closeAppMenu();
+  if (!withinConversation && convoMenu.classList.contains('show')) closeConversationMenu();
 });
 
 window.addEventListener('resize', () => {
