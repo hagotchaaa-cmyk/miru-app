@@ -4,719 +4,207 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miru — Explore</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
 :root{
-  --forest:#0F1F12;--forest2:#162A19;--forest3:#1E3B22;
-  --moss:#2D5533;--sage:#5C8A5E;--mint:#A8C8A0;
-  --cream:#F5F0E4;--pop:#D4F55A;
-  --border:rgba(92,138,94,0.25);
-  --serif:'Playfair Display',Georgia,serif;
-  --sans:'Cabinet Grotesk',sans-serif;
+  --bg1:#0f0f0f;
+  --bg2:#1a102d;
+  --bg3:#2d1b69;
+
+  --purple:#7C5CBF;
+  --purple2:#9F7AEA;
+  --accent:#B794F4;
+
+  --text:#ffffff;
+  --muted:rgba(255,255,255,0.6);
 }
 
-html,body{height:100%;overflow:hidden;background:#000;}
-body{font-family:var(--sans);color:var(--cream);cursor:none;}
-
-/* CURSOR */
-.cursor{position:fixed;width:12px;height:12px;background:var(--pop);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;}
-.cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(168,200,160,0.35);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
-
-/* NAV OVERLAY */
-.nav-overlay{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1rem 1.25rem;
-  background:linear-gradient(to bottom,rgba(0,0,0,0.7) 0%,transparent 100%);
-}
-.logo{display:flex;align-items:baseline;gap:4px;}
-.logo-word{font-family:var(--serif);font-size:22px;font-weight:700;font-style:italic;color:var(--cream);}
-.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--pop);margin-bottom:3px;}
-.nav-mode{
-  display:flex;gap:0;background:rgba(0,0,0,0.5);
-  border:1px solid rgba(255,255,255,0.15);border-radius:999px;padding:3px;
-  backdrop-filter:blur(8px);
-}
-.mode-btn{
-  padding:.4rem 1rem;border-radius:999px;font-size:12px;font-weight:700;
-  color:rgba(255,255,255,0.45);cursor:pointer;border:none;background:transparent;
-  font-family:var(--sans);transition:all .2s;letter-spacing:.5px;
-}
-.mode-btn.active{background:var(--pop);color:var(--forest);}
-.nav-back{
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:18px;backdrop-filter:blur(8px);
-  text-decoration:none;color:var(--cream);
+html,body{
+  height:100%;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+  font-family:sans-serif;
+  color:var(--text);
 }
 
-/* FEED CONTAINER */
+/* FEED */
 .feed{
-  height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;
-  scrollbar-width:none;
+  height:100vh;
+  overflow-y:scroll;
+  scroll-snap-type:y mandatory;
 }
-.feed::-webkit-scrollbar{display:none;}
 
 /* CARD */
 .card{
-  height:100vh;width:100%;
+  height:100vh;
   scroll-snap-align:start;
-  position:relative;overflow:hidden;
-  display:flex;align-items:flex-end;
-}
-
-/* VIDEO BG */
-.card-bg{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.card-bg-inner{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
   position:relative;
 }
-/* Animated gradient simulating video */
-.bg-a{background:linear-gradient(160deg,#0a1a0c 0%,#1a3820 40%,#2d5533 100%);}
-.bg-b{background:linear-gradient(160deg,#0a0f1a 0%,#102040 40%,#1a3555 100%);}
-.bg-c{background:linear-gradient(160deg,#1a0a10 0%,#3a1525 40%,#55203a 100%);}
-.bg-d{background:linear-gradient(160deg,#0f1a0a 0%,#253a10 40%,#3a5515 100%);}
-.bg-e{background:linear-gradient(160deg,#1a100a 0%,#402a10 40%,#553520 100%);}
 
-/* Floating orbs in bg */
-.orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;animation:orbFloat 6s ease-in-out infinite alternate;}
-@keyframes orbFloat{from{transform:translate(0,0) scale(1);}to{transform:translate(20px,30px) scale(1.1);}}
-
-/* Play indicator */
-.play-indicator{
-  position:absolute;z-index:2;
-  width:70px;height:70px;border-radius:50%;
-  background:rgba(212,245,90,0.15);border:2px solid rgba(212,245,90,0.4);
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(4px);
-  animation:playPulse 2s ease-in-out infinite;
-}
-@keyframes playPulse{0%,100%{transform:scale(1);opacity:.8;}50%{transform:scale(1.05);opacity:1;}}
-.play-tri{width:0;height:0;border-style:solid;border-width:12px 0 12px 22px;border-color:transparent transparent transparent var(--pop);margin-left:4px;}
-
-/* Video duration */
-.vid-dur{
-  position:absolute;bottom:12px;right:12px;z-index:3;
-  font-size:11px;color:rgba(255,255,255,0.6);
-  background:rgba(0,0,0,0.4);padding:2px 8px;border-radius:999px;
-  backdrop-filter:blur(4px);
+/* BACKGROUND */
+.card-bg{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(160deg,#1a102d,#2d1b69,#7C5CBF);
 }
 
-/* GRADIENT OVERLAYS */
-.grad-bottom{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.4) 40%,transparent 70%);
-  z-index:1;
-}
-.grad-top{
-  position:absolute;top:0;left:0;right:0;height:180px;
-  background:linear-gradient(to bottom,rgba(0,0,0,0.5) 0%,transparent 100%);
-  z-index:1;
+/* OVERLAY */
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
 }
 
-/* PROMPT TAG */
-.prompt-tag{
-  position:absolute;top:80px;left:1rem;z-index:3;
-  padding:5px 12px;border-radius:999px;
-  background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.15);
-  font-family:var(--serif);font-size:12px;font-style:italic;
-  color:rgba(255,255,255,0.75);backdrop-filter:blur(6px);
+/* CONTENT */
+.content{
+  position:absolute;
+  bottom:120px;
+  left:15px;
 }
 
-/* CARD CONTENT */
-.card-content{
-  position:relative;z-index:2;
-  padding:0 1rem 1.5rem;width:100%;
+.name{
+  font-size:26px;
+  font-weight:bold;
 }
 
-/* PROFILE ROW */
-.profile-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:.85rem;}
-.profile-left{}
-.profile-name{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,0.5);}
-.profile-age{font-size:16px;color:rgba(255,255,255,0.6);margin-left:.4rem;}
-.profile-loc{font-size:12px;color:rgba(255,255,255,0.45);margin-top:4px;letter-spacing:.5px;}
-.profile-match{
-  padding:6px 12px;border-radius:999px;
-  background:rgba(212,245,90,0.15);border:1.5px solid rgba(212,245,90,0.4);
-  font-size:12px;font-weight:700;color:var(--pop);
-  backdrop-filter:blur(4px);
+.bio{
+  font-size:14px;
+  color:var(--muted);
+  max-width:280px;
 }
 
-/* TAGS */
-.card-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.85rem;}
-.ctag{
-  padding:4px 10px;border-radius:999px;font-size:11px;
-  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
-  color:rgba(255,255,255,0.75);backdrop-filter:blur(4px);
-}
-.ctag.intent{background:rgba(212,245,90,0.12);border-color:rgba(212,245,90,0.3);color:var(--pop);}
-
-/* BIO */
-.card-bio{
-  font-size:14px;color:rgba(255,255,255,0.6);
-  line-height:1.55;margin-bottom:1rem;
-  max-width:320px;
+/* ACTIONS */
+.actions{
+  position:absolute;
+  right:15px;
+  bottom:120px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-/* ACTION BUTTONS */
-.actions{display:flex;align-items:center;justify-content:center;gap:1.25rem;padding:.5rem 0 .5rem;}
-.action-btn{
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  cursor:pointer;transition:transform .2s;
-}
-.action-btn:hover{transform:scale(1.08);}
-.action-btn:active{transform:scale(.94);}
-.btn-circle{
-  width:56px;height:56px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;border:2px solid rgba(255,255,255,0.2);
-  backdrop-filter:blur(8px);transition:all .2s;
-}
-.btn-pass-c{background:rgba(255,80,80,0.15);border-color:rgba(255,100,100,0.35);}
-.btn-pass-c:hover{background:rgba(255,80,80,0.3);border-color:rgba(255,100,100,0.6);}
-.btn-super-c{background:rgba(80,150,255,0.15);border-color:rgba(100,160,255,0.35);width:48px;height:48px;font-size:18px;}
-.btn-super-c:hover{background:rgba(80,150,255,0.3);}
-.btn-like-c{background:rgba(212,245,90,0.15);border-color:rgba(212,245,90,0.4);}
-.btn-like-c:hover{background:rgba(212,245,90,0.3);border-color:rgba(212,245,90,0.7);}
-.btn-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+.btn{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  cursor:pointer;
 
-/* SIDE ACTIONS */
-.side-actions{
-  position:absolute;right:1rem;bottom:180px;z-index:3;
-  display:flex;flex-direction:column;gap:1.25rem;align-items:center;
-}
-.side-btn{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  cursor:pointer;transition:transform .2s;
-}
-.side-btn:hover{transform:scale(1.1);}
-.side-icon{font-size:26px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));}
-.side-count{font-size:11px;color:rgba(255,255,255,0.5);}
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
 
-/* SCROLL HINT */
-.scroll-hint-card{
-  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
-  z-index:3;display:flex;flex-direction:column;align-items:center;gap:4px;
-  animation:bounceUp 1.5s ease-in-out infinite;
-  opacity:.5;
+  border:1px solid rgba(255,255,255,0.2);
 }
-@keyframes bounceUp{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}}
-.sh-text{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);}
-.sh-arrow{font-size:16px;color:rgba(255,255,255,0.4);}
+
+.btn.like{color:#ff4d6d;}
+.btn.super{color:#4da6ff;}
+.btn.pass{color:#aaa;}
+.btn.profile{color:#fff;}
+
+.btn:hover{
+  box-shadow:0 0 15px rgba(159,122,234,0.6);
+  transform:scale(1.1);
+}
 
 /* MATCH POPUP */
-.match-popup{
-  position:fixed;inset:0;z-index:500;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);
-  opacity:0;pointer-events:none;transition:opacity .4s;
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.9);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:0.3s;
 }
-.match-popup.show{opacity:1;pointer-events:all;}
-.match-popup-inner{
-  text-align:center;padding:2.5rem 2rem;
-  max-width:340px;
-}
-.match-pop-icon{font-size:60px;margin-bottom:1rem;animation:popBounce .5s ease both;}
-@keyframes popBounce{from{transform:scale(0);}to{transform:scale(1);}}
-.match-pop-title{font-family:var(--serif);font-size:40px;font-weight:700;font-style:italic;color:var(--pop);margin-bottom:.5rem;}
-.match-pop-sub{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:2rem;line-height:1.6;}
-.match-pop-btns{display:flex;flex-direction:column;gap:.75rem;}
-.pop-btn-msg{
-  padding:.9rem 2rem;border-radius:999px;
-  background:var(--pop);color:var(--forest);
-  font-family:var(--sans);font-size:14px;font-weight:800;
-  border:none;cursor:pointer;transition:all .2s;
-}
-.pop-btn-msg:hover{transform:translateY(-2px);}
-.pop-btn-skip{
-  padding:.75rem 2rem;border-radius:999px;
-  background:transparent;border:1px solid rgba(255,255,255,0.2);
-  color:rgba(255,255,255,0.5);font-family:var(--sans);font-size:14px;
-  cursor:pointer;transition:all .2s;
-}
-.pop-btn-skip:hover{border-color:rgba(255,255,255,0.4);color:rgba(255,255,255,0.7);}
 
-/* TOAST */
-.toast{
-  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-10px);
-  padding:.6rem 1.25rem;border-radius:999px;
-  font-size:13px;font-weight:500;z-index:400;
-  opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;
+.popup.show{
+  opacity:1;
+  pointer-events:all;
 }
-.toast.like{background:rgba(212,245,90,0.2);border:1px solid rgba(212,245,90,0.4);color:var(--pop);}
-.toast.pass{background:rgba(255,80,80,0.15);border:1px solid rgba(255,100,100,0.3);color:#ff9090;}
-.toast.super{background:rgba(80,150,255,0.15);border:1px solid rgba(100,160,255,0.3);color:#90c0ff;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* BOTTOM NAV */
-.bottom-nav{
-  position:fixed;bottom:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:space-around;align-items:center;
-  padding:.65rem 1rem 1.1rem;
-  background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,transparent 100%);
+.popup-inner{
+  text-align:center;
 }
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.2rem .6rem;border-radius:10px;}
-.bnav-icon{font-size:20px;color:rgba(255,255,255,0.3);}
-.bnav-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);}
-.bnav-item.active .bnav-icon,.bnav-item.active .bnav-label{color:var(--pop);}
+
+.popup h1{
+  color:var(--purple2);
+  font-size:40px;
+}
+
+.popup button{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  background:linear-gradient(90deg,var(--purple),var(--purple2));
+  color:white;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
-<div class="cursor" id="cur"></div>
-<div class="cursor-ring" id="curR"></div>
 
-<!-- NAV -->
-<div class="nav-overlay">
-  <a href="app.html" class="nav-back">←</a>
-  <div class="logo"><span class="logo-word">miru</span><div class="logo-dot"></div></div>
-  <div class="nav-mode">
-    <button class="mode-btn" onclick="window.location.href='app.html'">AI picks</button>
-    <button class="mode-btn active">Explore</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- FEED -->
 <div class="feed" id="feed">
 
-  <!-- CARD 1 -->
-  <div class="card" id="card0">
-    <div class="card-bg">
-      <div class="card-bg-inner bg-a">
-        <div class="orb" style="width:300px;height:300px;background:rgba(45,85,51,0.5);top:-50px;right:-50px;"></div>
-        <div class="orb" style="width:200px;height:200px;background:rgba(92,138,94,0.3);bottom:100px;left:-30px;animation-delay:-3s;"></div>
-        <div class="play-indicator"><div class="play-tri"></div></div>
-        <div class="vid-dur">0:22</div>
-      </div>
+  <!-- USER CARD -->
+  <div class="card">
+    <div class="card-bg"></div>
+    <div class="overlay"></div>
+
+    <div class="content">
+      <div class="name">Sofia, 27</div>
+      <div class="bio">Funny, chill, loves late night food runs 🍔</div>
     </div>
-    <div class="grad-top"></div>
-    <div class="grad-bottom"></div>
-    <div class="prompt-tag">"Make me laugh..."</div>
-    <div class="side-actions">
-      <div class="side-btn" onclick="likeCard(0,'Sofia')">
-        <div class="side-icon">❤️</div>
-        <div class="side-count">142</div>
-      </div>
-      <div class="side-btn" onclick="superCard(0,'Sofia')">
-        <div class="side-icon">⚡</div>
-        <div class="side-count">Super</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">💬</div>
-        <div class="side-count">Chat</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">↗️</div>
-        <div class="side-count">Share</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="profile-row">
-        <div class="profile-left">
-          <div><span class="profile-name">Sofia R.</span><span class="profile-age">27</span></div>
-          <div class="profile-loc">📍 2.4 mi · Phoenix, AZ</div>
-        </div>
-        <div class="profile-match">97% match</div>
-      </div>
-      <div class="card-tags">
-        <span class="ctag intent">Relationship</span>
-        <span class="ctag">chill</span>
-        <span class="ctag">artsy</span>
-        <span class="ctag">dog mom</span>
-        <span class="ctag">tonight</span>
-      </div>
-      <div class="card-bio">Graphic designer by day, chaotic baker by night. I will absolutely challenge you to a hot sauce contest and I will win.</div>
-      <div class="actions">
-        <div class="action-btn" onclick="passCard(0,'Sofia')">
-          <div class="btn-circle btn-pass-c">✕</div>
-          <div class="btn-label">Pass</div>
-        </div>
-        <div class="action-btn" onclick="superCard(0,'Sofia')">
-          <div class="btn-circle btn-super-c">⚡</div>
-          <div class="btn-label">Super</div>
-        </div>
-        <div class="action-btn" onclick="likeCard(0,'Sofia')">
-          <div class="btn-circle btn-like-c">❤️</div>
-          <div class="btn-label">Like</div>
-        </div>
-      </div>
+
+    <div class="actions">
+      <div class="btn pass" onclick="pass()">✕</div>
+      <div class="btn super" onclick="superLike()">⚡</div>
+      <div class="btn like" onclick="like()">❤️</div>
+      <div class="btn profile" onclick="openProfile()">👤</div>
     </div>
   </div>
 
-  <!-- CARD 2 -->
-  <div class="card" id="card1">
-    <div class="card-bg">
-      <div class="card-bg-inner bg-b">
-        <div class="orb" style="width:350px;height:350px;background:rgba(20,60,100,0.5);top:-80px;left:-60px;"></div>
-        <div class="orb" style="width:180px;height:180px;background:rgba(40,90,140,0.35);bottom:80px;right:-20px;animation-delay:-4s;"></div>
-        <div class="play-indicator"><div class="play-tri"></div></div>
-        <div class="vid-dur">0:18</div>
-      </div>
-    </div>
-    <div class="grad-top"></div>
-    <div class="grad-bottom"></div>
-    <div class="prompt-tag">"Something weird about you..."</div>
-    <div class="side-actions">
-      <div class="side-btn" onclick="likeCard(1,'Marcus')">
-        <div class="side-icon">❤️</div>
-        <div class="side-count">98</div>
-      </div>
-      <div class="side-btn" onclick="superCard(1,'Marcus')">
-        <div class="side-icon">⚡</div>
-        <div class="side-count">Super</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">💬</div>
-        <div class="side-count">Chat</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">↗️</div>
-        <div class="side-count">Share</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="profile-row">
-        <div class="profile-left">
-          <div><span class="profile-name">Marcus T.</span><span class="profile-age">30</span></div>
-          <div class="profile-loc">📍 1.1 mi · Tempe, AZ</div>
-        </div>
-        <div class="profile-match">91% match</div>
-      </div>
-      <div class="card-tags">
-        <span class="ctag intent">Relationship</span>
-        <span class="ctag">adventurous</span>
-        <span class="ctag">deep talks</span>
-        <span class="ctag">weekend</span>
-      </div>
-      <div class="card-bio">Software engineer who actually goes outside. Hiked 14 peaks last year. Looking for someone to debate the best Coen Brothers film with.</div>
-      <div class="actions">
-        <div class="action-btn" onclick="passCard(1,'Marcus')">
-          <div class="btn-circle btn-pass-c">✕</div>
-          <div class="btn-label">Pass</div>
-        </div>
-        <div class="action-btn" onclick="superCard(1,'Marcus')">
-          <div class="btn-circle btn-super-c">⚡</div>
-          <div class="btn-label">Super</div>
-        </div>
-        <div class="action-btn" onclick="likeCard(1,'Marcus')">
-          <div class="btn-circle btn-like-c">❤️</div>
-          <div class="btn-label">Like</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CARD 3 -->
-  <div class="card" id="card2">
-    <div class="card-bg">
-      <div class="card-bg-inner bg-c">
-        <div class="orb" style="width:300px;height:300px;background:rgba(100,20,60,0.5);top:-60px;right:-40px;"></div>
-        <div class="orb" style="width:200px;height:200px;background:rgba(80,15,45,0.35);bottom:60px;left:-20px;animation-delay:-2s;"></div>
-        <div class="play-indicator"><div class="play-tri"></div></div>
-        <div class="vid-dur">0:29</div>
-      </div>
-    </div>
-    <div class="grad-top"></div>
-    <div class="grad-bottom"></div>
-    <div class="prompt-tag">"Tell me a story..."</div>
-    <div class="side-actions">
-      <div class="side-btn" onclick="likeCard(2,'Priya')">
-        <div class="side-icon">❤️</div>
-        <div class="side-count">211</div>
-      </div>
-      <div class="side-btn" onclick="superCard(2,'Priya')">
-        <div class="side-icon">⚡</div>
-        <div class="side-count">Super</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">💬</div>
-        <div class="side-count">Chat</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">↗️</div>
-        <div class="side-count">Share</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="profile-row">
-        <div class="profile-left">
-          <div><span class="profile-name">Priya N.</span><span class="profile-age">26</span></div>
-          <div class="profile-loc">📍 4.8 mi · Scottsdale, AZ</div>
-        </div>
-        <div class="profile-match">88% match</div>
-      </div>
-      <div class="card-tags">
-        <span class="ctag intent">Relationship</span>
-        <span class="ctag">intellectual</span>
-        <span class="ctag">foodie</span>
-        <span class="ctag">flexible</span>
-      </div>
-      <div class="card-bio">UX researcher. I read menus the way other people read novels. Will absolutely make you try the weird thing on the menu.</div>
-      <div class="actions">
-        <div class="action-btn" onclick="passCard(2,'Priya')">
-          <div class="btn-circle btn-pass-c">✕</div>
-          <div class="btn-label">Pass</div>
-        </div>
-        <div class="action-btn" onclick="superCard(2,'Priya')">
-          <div class="btn-circle btn-super-c">⚡</div>
-          <div class="btn-label">Super</div>
-        </div>
-        <div class="action-btn" onclick="likeCard(2,'Priya')">
-          <div class="btn-circle btn-like-c">❤️</div>
-          <div class="btn-label">Like</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CARD 4 -->
-  <div class="card" id="card3">
-    <div class="card-bg">
-      <div class="card-bg-inner bg-d">
-        <div class="orb" style="width:280px;height:280px;background:rgba(40,80,20,0.5);top:-40px;left:-40px;"></div>
-        <div class="orb" style="width:220px;height:220px;background:rgba(60,100,15,0.35);bottom:80px;right:-30px;animation-delay:-5s;"></div>
-        <div class="play-indicator"><div class="play-tri"></div></div>
-        <div class="vid-dur">0:25</div>
-      </div>
-    </div>
-    <div class="grad-top"></div>
-    <div class="grad-bottom"></div>
-    <div class="prompt-tag">"What are you passionate about..."</div>
-    <div class="side-actions">
-      <div class="side-btn" onclick="likeCard(3,'Jordan')">
-        <div class="side-icon">❤️</div>
-        <div class="side-count">76</div>
-      </div>
-      <div class="side-btn" onclick="superCard(3,'Jordan')">
-        <div class="side-icon">⚡</div>
-        <div class="side-count">Super</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">💬</div>
-        <div class="side-count">Chat</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">↗️</div>
-        <div class="side-count">Share</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="profile-row">
-        <div class="profile-left">
-          <div><span class="profile-name">Jordan K.</span><span class="profile-age">28</span></div>
-          <div class="profile-loc">📍 3.2 mi · Chandler, AZ</div>
-        </div>
-        <div class="profile-match">85% match</div>
-      </div>
-      <div class="card-tags">
-        <span class="ctag intent">Something fun</span>
-        <span class="ctag">outdoorsy</span>
-        <span class="ctag">spontaneous</span>
-        <span class="ctag">tonight</span>
-      </div>
-      <div class="card-bio">Landscape photographer and part-time sunrise chaser. If you're down for a 4am hike I'm already your favorite person.</div>
-      <div class="actions">
-        <div class="action-btn" onclick="passCard(3,'Jordan')">
-          <div class="btn-circle btn-pass-c">✕</div>
-          <div class="btn-label">Pass</div>
-        </div>
-        <div class="action-btn" onclick="superCard(3,'Jordan')">
-          <div class="btn-circle btn-super-c">⚡</div>
-          <div class="btn-label">Super</div>
-        </div>
-        <div class="action-btn" onclick="likeCard(3,'Jordan')">
-          <div class="btn-circle btn-like-c">❤️</div>
-          <div class="btn-label">Like</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CARD 5 -->
-  <div class="card" id="card4">
-    <div class="card-bg">
-      <div class="card-bg-inner bg-e">
-        <div class="orb" style="width:320px;height:320px;background:rgba(100,60,20,0.45);top:-60px;right:-50px;"></div>
-        <div class="orb" style="width:180px;height:180px;background:rgba(80,40,10,0.35);bottom:60px;left:-20px;animation-delay:-7s;"></div>
-        <div class="play-indicator"><div class="play-tri"></div></div>
-        <div class="vid-dur">0:30</div>
-      </div>
-    </div>
-    <div class="grad-top"></div>
-    <div class="grad-bottom"></div>
-    <div class="prompt-tag">"Make me laugh..."</div>
-    <div class="side-actions">
-      <div class="side-btn" onclick="likeCard(4,'Aisha')">
-        <div class="side-icon">❤️</div>
-        <div class="side-count">189</div>
-      </div>
-      <div class="side-btn" onclick="superCard(4,'Aisha')">
-        <div class="side-icon">⚡</div>
-        <div class="side-count">Super</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">💬</div>
-        <div class="side-count">Chat</div>
-      </div>
-      <div class="side-btn">
-        <div class="side-icon">↗️</div>
-        <div class="side-count">Share</div>
-      </div>
-    </div>
-    <div class="card-content">
-      <div class="profile-row">
-        <div class="profile-left">
-          <div><span class="profile-name">Aisha M.</span><span class="profile-age">25</span></div>
-          <div class="profile-loc">📍 5.6 mi · Mesa, AZ</div>
-        </div>
-        <div class="profile-match">82% match</div>
-      </div>
-      <div class="card-tags">
-        <span class="ctag intent">Relationship</span>
-        <span class="ctag">warm</span>
-        <span class="ctag">artsy</span>
-        <span class="ctag">weekend</span>
-      </div>
-      <div class="card-bio">Children's book illustrator. I laugh at my own jokes before I finish telling them. Looking for someone who finds that charming not annoying.</div>
-      <div class="actions">
-        <div class="action-btn" onclick="passCard(4,'Aisha')">
-          <div class="btn-circle btn-pass-c">✕</div>
-          <div class="btn-label">Pass</div>
-        </div>
-        <div class="action-btn" onclick="superCard(4,'Aisha')">
-          <div class="btn-circle btn-super-c">⚡</div>
-          <div class="btn-label">Super</div>
-        </div>
-        <div class="action-btn" onclick="likeCard(4,'Aisha')">
-          <div class="btn-circle btn-like-c">❤️</div>
-          <div class="btn-label">Like</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div><!-- end feed -->
-
-<!-- MATCH POPUP -->
-<div class="match-popup" id="matchPopup">
-  <div class="match-popup-inner">
-    <div class="match-pop-icon">✦</div>
-    <div class="match-pop-title">It's a match!</div>
-    <div class="match-pop-sub">You and <span id="matchName">Sofia</span> both liked each other. Don't leave them waiting.</div>
-    <div class="match-pop-btns">
-      <button class="pop-btn-msg" onclick="window.location.href='messages.html'">Send a message</button>
-      <button class="pop-btn-skip" onclick="closeMatch()">Keep exploring</button>
-    </div>
-  </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="bnav-item" onclick="window.location.href='app.html'">
-    <div class="bnav-icon">💚</div>
-    <div class="bnav-label">Matches</div>
-  </div>
-  <div class="bnav-item" onclick="window.location.href='messages.html'">
-    <div class="bnav-icon">💬</div>
-    <div class="bnav-label">Messages</div>
-  </div>
-  <div class="bnav-item active">
-    <div class="bnav-icon">🔍</div>
-    <div class="bnav-label">Explore</div>
-  </div>
-  <div class="bnav-item" onclick="window.location.href='edit-profile.html'">
-    <div class="bnav-icon">👤</div>
-    <div class="bnav-label">Profile</div>
+<!-- MATCH POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-inner">
+    <h1>🔥 It's a Match</h1>
+    <button onclick="closePopup()">Continue</button>
   </div>
 </div>
 
 <script>
-// CURSOR
-const cur=document.getElementById('cur'),curR=document.getElementById('curR');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
-
-// KEYBOARD SWIPE
-document.addEventListener('keydown',e=>{
-  const visible=getVisibleCard();
-  if(!visible)return;
-  const names=['Sofia','Marcus','Priya','Jordan','Aisha'];
-  const idx=parseInt(visible.id.replace('card',''));
-  if(e.key==='ArrowRight'||e.key==='l')likeCard(idx,names[idx]);
-  if(e.key==='ArrowLeft'||e.key==='j')passCard(idx,names[idx]);
-  if(e.key==='ArrowUp'||e.key==='k')superCard(idx,names[idx]);
-});
-
-function getVisibleCard(){
-  const feed=document.getElementById('feed');
-  const cards=document.querySelectorAll('.card');
-  for(const card of cards){
-    const rect=card.getBoundingClientRect();
-    if(rect.top>=0&&rect.top<window.innerHeight/2)return card;
-  }
-  return cards[0];
-}
-
-// ACTIONS
-let toastTimer;
-function showToast(msg,type){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast '+type+' show';
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),1800);
-}
-
-function likeCard(i,name){
-  showToast('❤️ Liked '+name,'like');
-  // 40% chance of instant match
-  if(Math.random()<0.4){
-    setTimeout(()=>showMatch(name),600);
-  } else {
-    scrollNext(i);
+function like(){
+  if(Math.random() < 0.4){
+    document.getElementById("popup").classList.add("show");
   }
 }
 
-function passCard(i,name){
-  showToast('Passed on '+name,'pass');
-  scrollNext(i);
+function pass(){
+  window.scrollBy(0, window.innerHeight);
 }
 
-function superCard(i,name){
-  showToast('⚡ Super connected with '+name+'!','super');
-  setTimeout(()=>showMatch(name),600);
+function superLike(){
+  document.getElementById("popup").classList.add("show");
 }
 
-function scrollNext(i){
-  const next=document.getElementById('card'+(i+1));
-  if(next){
-    next.scrollIntoView({behavior:'smooth'});
-  }
+function openProfile(){
+  window.location.href = "profile.html";
 }
 
-function showMatch(name){
-  document.getElementById('matchName').textContent=name;
-  document.getElementById('matchPopup').classList.add('show');
+function closePopup(){
+  document.getElementById("popup").classList.remove("show");
 }
-
-function closeMatch(){
-  document.getElementById('matchPopup').classList.remove('show');
-}
-
-// TOUCH SWIPE
-let touchStartY=0;
-document.getElementById('feed').addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY;},{passive:true});
 </script>
+
 </body>
 </html>
