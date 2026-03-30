@@ -145,18 +145,29 @@ async function loadUsers(){
   });
 }
 
-// LIKE
-async function like(targetId){
+window.like = async function(id){
   const { data: { user } } = await sb.auth.getUser();
 
-  await sb.from("likes").insert({
+  if (!user) {
+    alert("Login first");
+    return;
+  }
+
+  const { error } = await sb.from("likes").insert({
     user_id: user.id,
-    target_user_id: targetId,
+    target_user_id: id,
     type: "like"
   });
 
-  checkMatch(user.id, targetId);
-}
+  if (error) {
+    console.log(error);
+    alert("Error saving like");
+    return;
+  }
+
+  alert("Liked 💜");
+};
+
 
 // SUPER LIKE
 async function superLike(targetId){
