@@ -6,21 +6,21 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
+  <title>Miru — Profile</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
     body{
       margin:0;
-      font-family:'Inter', -apple-system;
+      font-family:'Inter', -apple-system, sans-serif;
       background: radial-gradient(circle at top,#1a102d,#0f0f0f);
       color:white;
     }
 
     .profile{
       text-align:center;
-      padding:40px 20px;
+      padding:40px 20px 20px;
     }
 
     .avatar{
@@ -38,6 +38,7 @@
       width:100%;
       height:100%;
       object-fit:cover;
+      display:block;
     }
 
     .name{
@@ -49,6 +50,9 @@
     .bio{
       color:#aaa;
       margin-top:6px;
+      max-width:420px;
+      margin-left:auto;
+      margin-right:auto;
     }
 
     .stats{
@@ -74,12 +78,15 @@
       cursor:pointer;
       font-weight:600;
       color:black;
+      border:none;
+      font-size:15px;
     }
 
     .grid{
       display:grid;
       grid-template-columns:repeat(3,1fr);
       gap:3px;
+      padding-bottom:20px;
     }
 
     .grid img,
@@ -87,6 +94,8 @@
       width:100%;
       height:130px;
       object-fit:cover;
+      display:block;
+      background:#111;
     }
   </style>
 </head>
@@ -95,7 +104,7 @@
 
 <div class="profile">
   <div class="avatar">
-    <img id="avatar">
+    <img id="avatar" src="" alt="Profile avatar">
   </div>
 
   <div class="name" id="name">Loading profile...</div>
@@ -103,13 +112,14 @@
 </div>
 
 <div class="stats">
-  <div>0<br><small>MEDIA</small></div>
-  <div>0<br><small>MATCHES</small></div>
-  <div>0<br><small>CONVOS</small></div>
+  <div><span id="mediaCount">0</span><br><small>MEDIA</small></div>
+  <div><span id="matchCount">0</span><br><small>MATCHES</small></div>
+  <div><span id="convoCount">0</span><br><small>CONVOS</small></div>
 </div>
 
 <div class="actions">
-  <div class="btn" onclick="addPost()">➕ Add</div>
+  <button class="btn" onclick="addPost()">➕ Add</button>
+  <button class="btn" onclick="window.location.href='edit-profile.html'">✏️ Edit</button>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -117,133 +127,185 @@
 <script>
 const sb = supabase.createClient(
   window.SUPABASE_URL,
-  window.SUPABASE_KEY
+  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
 );
 
-/* LOAD PROFILE (NO FAIL VERSION) */
-async function loadProfile(){
-  try{
-    const { data } = await sb.auth.getUser();
-    const user = data.user;
+async function getCurrentUser() {
+  const { data, error } = await sb.auth.getUser();
+  if (error || !data?.user) {
+    window.location.href = "auth.html";
+    return null;
+  }
+  return data.user;
+}
 
-    if(!user){
-      document.getElementById("name").textContent = "Not logged in";
-      return;
-    }
+async function loadProfile() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
 
-    // ALWAYS GET ARRAY (no .single)
-    const res = await sb
+    const { data, error } = await sb
       .from("profiles")
       .select("*")
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .limit(1);
 
-    let profile = res.data && res.data.length ? res.data[0] : null;
+    if (error) throw error;
 
-    // CREATE IF NOT EXISTS
-    if(!profile){
-      await sb.from("profiles").insert({
-        user_id:user.id,
-        name:"New User"
+    let profile = data && data.length ? data[0] : null;
+
+    if (!profile) {
+      const { error: insertError } = await sb.from("profiles").insert({
+        user_id: user.id,
+        name: user.email ? user.email.split("@")[0] : "New User",
+        bio: "",
+        avatar_url: ""
       });
 
-      // fetch again
-      const again = await sb
+      if (insertError) throw insertError;
+
+      const { data: again, error: againError } = await sb
         .from("profiles")
         .select("*")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .limit(1);
 
-      profile = again.data?.[0];
+      if (againError) throw againError;
+      profile = again?.[0] || null;
     }
 
-    // RENDER ALWAYS
-    document.getElementById("name").textContent =
-      (profile?.name || "User");
+    document.getElementById("name").textContent = profile?.name || "User";
+    document.getElementById("bio").textContent = profile?.bio || "No bio yet";
 
-    document.getElementById("bio").textContent =
-      profile?.bio || "No bio yet";
-
-    if(profile?.avatar_url){
+    if (profile?.avatar_url) {
       document.getElementById("avatar").src = profile.avatar_url;
+    } else {
+      document.getElementById("avatar").src = "";
     }
 
-  }catch(e){
-    console.error(e);
+  } catch (e) {
+    console.error("loadProfile error:", e);
     document.getElementById("name").textContent = "Error loading profile";
   }
 }
 
-/* POSTS (SAFE) */
-async function loadPosts(){
-  try{
-    const { data } = await sb.auth.getUser();
-    const user = data.user;
+async function loadPosts() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
 
-    if(!user) return;
-
-    const res = await sb
+    const { data, error } = await sb
       .from("posts")
       .select("*")
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
-    const posts = res.data || [];
+    if (error) throw error;
+
+    const posts = data || [];
+    document.getElementById("mediaCount").textContent = posts.length;
 
     const grid = document.getElementById("grid");
     grid.innerHTML = "";
 
-    posts.forEach(p=>{
+    posts.forEach(p => {
       let el;
 
-      if(p.media_type==="video"){
-        el=document.createElement("video");
-        el.src=p.media_url;
-        el.autoplay=true;
-        el.loop=true;
-        el.muted=true;
-      }else{
-        el=document.createElement("img");
-        el.src=p.media_url;
+      if (p.media_type === "video") {
+        el = document.createElement("video");
+        el.src = p.media_url;
+        el.autoplay = true;
+        el.loop = true;
+        el.muted = true;
+        el.playsInline = true;
+      } else {
+        el = document.createElement("img");
+        el.src = p.media_url;
+        el.alt = "Post";
       }
 
       grid.appendChild(el);
     });
 
-  }catch(e){
-    console.error(e);
+  } catch (e) {
+    console.error("loadPosts error:", e);
   }
 }
 
-/* UPLOAD */
-async function addPost(){
+async function loadStats() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
+
+    const { count: matchCount } = await sb
+      .from("likes")
+      .select("*", { count: "exact", head: true })
+      .eq("target_user_id", user.id);
+
+    document.getElementById("matchCount").textContent = matchCount || 0;
+
+    const { count: convoCount } = await sb
+      .from("conversations")
+      .select("*", { count: "exact", head: true })
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`);
+
+    document.getElementById("convoCount").textContent = convoCount || 0;
+
+  } catch (e) {
+    console.error("loadStats error:", e);
+  }
+}
+
+async function addPost() {
   const input = document.createElement("input");
-  input.type="file";
-  input.accept="image/*,video/*";
+  input.type = "file";
+  input.accept = "image/*,video/*";
 
-  input.onchange = async e=>{
-    const file = e.target.files[0];
-    const { data } = await sb.auth.getUser();
-    const user = data.user;
+  input.onchange = async e => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
 
-    const path = `${user.id}/${Date.now()}_${file.name}`;
+      const user = await getCurrentUser();
+      if (!user) return;
 
-    await sb.storage.from("posts").upload(path, file);
+      const path = `${user.id}/${Date.now()}_${file.name}`;
 
-    const url = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
+      const { error: uploadError } = await sb.storage
+        .from("posts")
+        .upload(path, file);
 
-    await sb.from("posts").insert({
-      user_id:user.id,
-      media_url:url,
-      media_type:file.type.includes("video") ? "video" : "image"
-    });
+      if (uploadError) throw uploadError;
 
-    loadPosts();
+      const url = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
+
+      const { error: insertError } = await sb.from("posts").insert({
+        user_id: user.id,
+        media_url: url,
+        media_type: file.type.includes("video") ? "video" : "image"
+      });
+
+      if (insertError) throw insertError;
+
+      await loadPosts();
+      await loadStats();
+
+    } catch (err) {
+      console.error("addPost error:", err);
+      alert(err.message || "Upload failed");
+    }
   };
 
   input.click();
 }
 
-/* INIT */
-loadProfile();
-loadPosts();
+async function init() {
+  await loadProfile();
+  await loadPosts();
+  await loadStats();
+}
+
+init();
 </script>
 
 </body>
