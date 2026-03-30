@@ -13,63 +13,115 @@
 body{
   margin:0;
   font-family:-apple-system;
-  background: radial-gradient(circle at top,#1a102d,#0f0f0f);
-  color:white;
+  background:#f5f5f7;
+  color:#111;
 }
 
-/* HEADER */
-.header{
-  padding:20px;
+/* PROFILE HEADER */
+.profile{
+  text-align:center;
+  padding:30px 20px;
+  background:white;
+}
+
+.avatar{
+  width:110px;
+  height:110px;
+  margin:auto;
+  border-radius:50%;
+  background:#7c5bcf;
   display:flex;
   align-items:center;
-  backdrop-filter:blur(20px);
-}
-
-/* AVATAR */
-.avatar{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  overflow:hidden;
-  border:2px solid #9F7AEA;
+  justify-content:center;
+  font-size:40px;
+  color:white;
+  position:relative;
 }
 
 .avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
+  border-radius:50%;
 }
 
-/* INFO */
-.info{
-  margin-left:20px;
+.plus{
+  position:absolute;
+  bottom:0;
+  right:0;
+  background:#7c5bcf;
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .name{
   font-size:22px;
   font-weight:bold;
-}
-
-.badge{
-  margin-left:8px;
-  font-size:10px;
-  background:#9F7AEA;
-  padding:3px 8px;
-  border-radius:10px;
+  margin-top:10px;
 }
 
 .bio{
-  color:#aaa;
-  margin-top:5px;
+  color:#777;
+  margin-top:6px;
 }
 
-/* BUTTON */
-.btn{
+/* MUSIC */
+.music{
   margin-top:10px;
-  padding:6px 12px;
-  border-radius:20px;
-  background:rgba(255,255,255,0.1);
+  color:#7c5bcf;
+}
+
+/* STATS */
+.stats{
+  display:flex;
+  justify-content:space-around;
+  background:#fafafa;
+  padding:15px 0;
+}
+
+.stat{
+  text-align:center;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  gap:10px;
+  padding:15px;
+}
+
+.btn{
+  flex:1;
+  padding:12px;
+  border-radius:25px;
+  background:#eee;
+  text-align:center;
   cursor:pointer;
+}
+
+.btn.primary{
+  background:#7c5bcf;
+  color:white;
+}
+
+/* TABS */
+.tabs{
+  display:flex;
+  justify-content:space-around;
+  border-bottom:2px solid #eee;
+}
+
+.tab{
+  padding:12px;
+  cursor:pointer;
+}
+
+.tab.active{
+  border-bottom:3px solid #7c5bcf;
 }
 
 /* GRID */
@@ -77,79 +129,70 @@ body{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:2px;
-  margin-top:10px;
 }
 
 .grid img,
 .grid video{
   width:100%;
-  height:130px;
+  height:120px;
   object-fit:cover;
-}
-
-/* MUSIC BUTTON */
-.musicToggle{
-  position:fixed;
-  top:15px;
-  right:15px;
-  background:rgba(0,0,0,0.6);
-  padding:10px;
-  border-radius:50%;
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="musicToggle" onclick="toggleMusic()">🎵</div>
+<div class="profile">
 
-<audio id="music" loop></audio>
-
-<div class="header">
   <div class="avatar">
     <img id="avatar">
+    <div class="plus">+</div>
   </div>
 
-  <div class="info">
-    <div class="name" id="name"></div>
-    <div class="bio" id="bio"></div>
+  <div class="name" id="name">Loading...</div>
+  <div class="bio" id="bio"></div>
 
-    <div class="btn" onclick="toggleEdit()">Edit</div>
-    <div class="btn" onclick="generateBio()">✨ AI Bio</div>
-    <div class="btn" onclick="addPost()">➕ Add Post</div>
+  <div class="music" id="musicDisplay"></div>
+
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div id="matches">0</div>
+    <small>MATCHES</small>
+  </div>
+  <div class="stat">
+    <div id="postCount">0</div>
+    <small>MEDIA</small>
+  </div>
+  <div class="stat">
+    <div id="convos">0</div>
+    <small>CONVOS</small>
   </div>
 </div>
 
-<!-- EDIT -->
-<div id="editForm" style="display:none;padding:15px;">
-  <input id="nameInput" placeholder="Name">
-  <input id="ageInput" placeholder="Age">
-  <textarea id="bioInput"></textarea>
-  <input id="avatarInput" placeholder="Avatar URL">
-  <input id="musicInput" placeholder="Music URL">
-  <button onclick="saveProfile()">Save</button>
+<div class="actions">
+  <div class="btn primary" onclick="toggleEdit()">✏️ Edit</div>
+  <div class="btn" onclick="pickMusic()">🎵</div>
+  <div class="btn" onclick="addPost()">➕</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="setTab('video')">🎥 Videos</div>
+  <div class="tab" onclick="setTab('image')">📸 Photos</div>
 </div>
 
 <div class="grid" id="grid"></div>
+
+<audio id="music" loop></audio>
 
 <script>
 const { createClient } = supabase;
 const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
-let musicOn = true;
+let currentTab = "video";
 
-function toggleMusic(){
-  const m = document.getElementById("music");
-  if(musicOn){
-    m.pause();
-  }else{
-    m.play();
-  }
-  musicOn = !musicOn;
-}
-
-// LOAD PROFILE
+// PROFILE
 async function loadProfile(){
   const { data:{user} } = await sb.auth.getUser();
 
@@ -160,71 +203,19 @@ async function loadProfile(){
     .single();
 
   if(data){
-    name.innerHTML = data.name + ", " + (data.age || "");
-
-    if(data.is_premium){
-      name.innerHTML += " <span class='badge'>💎</span>";
-    }
-
+    name.textContent = data.name + ", " + (data.age || "");
     bio.textContent = data.bio || "";
     avatar.src = data.avatar_url || "";
 
-    if(data.music_url){
-      const m = document.getElementById("music");
-      m.src = data.music_url;
-      m.play();
+    if(data.music_title){
+      musicDisplay.textContent = "🎵 " + data.music_title;
+      music.src = data.music_url;
+      music.play();
     }
-
-    nameInput.value = data.name || "";
-    ageInput.value = data.age || "";
-    bioInput.value = data.bio || "";
-    avatarInput.value = data.avatar_url || "";
-    musicInput.value = data.music_url || "";
   }
 }
 
-// SAVE
-async function saveProfile(){
-  const { data:{user} } = await sb.auth.getUser();
-
-  await sb.from("profiles").upsert({
-    user_id:user.id,
-    name:nameInput.value,
-    age:parseInt(ageInput.value),
-    bio:bioInput.value,
-    avatar_url:avatarInput.value,
-    music_url:musicInput.value
-  });
-
-  alert("Saved");
-  loadProfile();
-}
-
-function toggleEdit(){
-  editForm.style.display = editForm.style.display === "none" ? "block":"none";
-}
-
-// AI BIO
-function generateBio(){
-  bioInput.value = "Adventurous, chill, and always down for something new 🔥";
-}
-
-// ADD POST
-async function addPost(){
-  const url = prompt("Enter image/video URL");
-
-  const { data:{user} } = await sb.auth.getUser();
-
-  await sb.from("posts").insert({
-    user_id:user.id,
-    media_url:url,
-    media_type:url.includes("mp4")?"video":"image"
-  });
-
-  loadPosts();
-}
-
-// LOAD POSTS
+// POSTS
 async function loadPosts(){
   const { data:{user} } = await sb.auth.getUser();
 
@@ -233,9 +224,14 @@ async function loadPosts(){
     .select("*")
     .eq("user_id", user.id);
 
+  const grid = document.getElementById("grid");
   grid.innerHTML = "";
 
-  data.forEach(post=>{
+  const filtered = data.filter(p => p.media_type === currentTab);
+
+  postCount.textContent = data.length;
+
+  filtered.forEach(post=>{
     let el;
 
     if(post.media_type==="video"){
@@ -249,40 +245,68 @@ async function loadPosts(){
       el.src=post.media_url;
     }
 
-    el.onclick = ()=>{
-      window.open(post.media_url,"_blank");
-    };
-
     grid.appendChild(el);
   });
 }
 
-async function loadProfile(){
-  const { data: { user } } = await sb.auth.getUser();
+// ADD POST (REAL FILE UPLOAD)
+async function addPost(){
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*,video/*";
 
-  // 🚨 NOT LOGGED IN
-  if(!user){
-    window.location.href = "auth.html";
-    return;
-  }
+  input.onchange = async e=>{
+    const file = e.target.files[0];
+    const { data:{user} } = await sb.auth.getUser();
 
-  const { data } = await sb
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user.id)
-    .single();
+    const { data, error } = await sb.storage
+      .from("posts")
+      .upload(`${user.id}/${Date.now()}`, file);
 
-  if (data){
-    name.innerHTML = data.name + ", " + (data.age || "");
-
-    if(data.is_premium){
-      name.innerHTML += " <span class='badge'>💎</span>";
+    if(error){
+      alert(error.message);
+      return;
     }
 
-    bio.textContent = data.bio || "";
-    avatar.src = data.avatar_url || "";
-  }
+    const type = file.type.includes("video") ? "video" : "image";
+
+    await sb.from("posts").insert({
+      user_id:user.id,
+      media_url:data.path,
+      media_type:type
+    });
+
+    loadPosts();
+  };
+
+  input.click();
 }
+
+// MUSIC
+async function pickMusic(){
+  const song = prompt("Enter song name");
+
+  if(!song) return;
+
+  const preview = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+
+  const { data:{user} } = await sb.auth.getUser();
+
+  await sb.from("profiles").update({
+    music_title:song,
+    music_url:preview
+  }).eq("user_id", user.id);
+
+  loadProfile();
+}
+
+// TAB SWITCH
+function setTab(type){
+  currentTab = type;
+  loadPosts();
+}
+
+// INIT
 loadProfile();
 loadPosts();
 </script>
