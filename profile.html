@@ -1,123 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="./config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile</title>
 
-  <!-- Better font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <style>
-    body{
-      margin:0;
-      font-family: 'Inter', -apple-system;
-      background: radial-gradient(circle at top,#1a102d,#0f0f0f);
-      color:white;
-    }
+<style>
+body{
+  margin:0;
+  font-family:'Inter', -apple-system;
+  background: radial-gradient(circle at top,#1a102d,#0f0f0f);
+  color:white;
+}
 
-    /* CENTER PROFILE */
-    .profile{
-      text-align:center;
-      padding:40px 20px;
-    }
+/* CENTER */
+.profile{
+  text-align:center;
+  padding:40px 20px;
+}
 
-    .avatar{
-      width:140px;
-      height:140px;
-      margin:auto;
-      border-radius:50%;
-      overflow:hidden;
-      border:3px solid #9F7AEA;
-      box-shadow:0 10px 30px rgba(159,122,234,0.3);
-    }
+.avatar{
+  width:140px;
+  height:140px;
+  margin:auto;
+  border-radius:50%;
+  overflow:hidden;
+  border:3px solid #9F7AEA;
+  box-shadow:0 10px 30px rgba(159,122,234,0.3);
+}
 
-    .avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
 
-    .name{
-      font-size:26px;
-      font-weight:700;
-      margin-top:12px;
-      letter-spacing:-0.5px;
-    }
+.name{
+  font-size:26px;
+  font-weight:700;
+  margin-top:12px;
+}
 
-    .bio{
-      color:#aaa;
-      margin-top:6px;
-      font-size:14px;
-    }
+.bio{
+  color:#aaa;
+  margin-top:6px;
+}
 
-    .music{
-      margin-top:8px;
-      color:#9F7AEA;
-      font-size:13px;
-    }
+.music{
+  color:#9F7AEA;
+  margin-top:8px;
+}
 
-    /* STATS */
-    .stats{
-      display:flex;
-      justify-content:space-around;
-      margin-top:20px;
-      padding:15px 0;
-      background:rgba(255,255,255,0.03);
-      backdrop-filter:blur(20px);
-    }
+/* STATS */
+.stats{
+  display:flex;
+  justify-content:space-around;
+  margin-top:20px;
+  padding:15px 0;
+  background:rgba(255,255,255,0.03);
+}
 
-    .stat{
-      text-align:center;
-      font-size:14px;
-    }
+.stat{
+  text-align:center;
+}
 
-    /* BUTTONS */
-    .actions{
-      display:flex;
-      gap:10px;
-      padding:15px;
-    }
+/* BUTTONS */
+.actions{
+  display:flex;
+  gap:10px;
+  padding:15px;
+}
 
-    .btn{
-      flex:1;
-      padding:12px;
-      border-radius:25px;
-      background:rgba(255,255,255,0.1);
-      text-align:center;
-      cursor:pointer;
-      transition:0.2s;
-      font-weight:600;
-    }
+.btn{
+  flex:1;
+  padding:12px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.1);
+  text-align:center;
+  cursor:pointer;
+  font-weight:600;
+}
 
-    .btn.primary{
-      background:linear-gradient(45deg,#9F7AEA,#6EE7B7);
-      color:black;
-    }
+.btn.primary{
+  background:linear-gradient(45deg,#9F7AEA,#6EE7B7);
+  color:black;
+}
 
-    .btn:active{
-      transform:scale(0.96);
-    }
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:3px;
+}
 
-    /* GRID */
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:3px;
-      margin-top:10px;
-    }
-
-    .grid img,
-    .grid video{
-      width:100%;
-      height:130px;
-      object-fit:cover;
-      background:#111;
-    }
-  </style>
+.grid img,
+.grid video{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+}
+</style>
 </head>
 
 <body>
@@ -160,105 +147,103 @@
 const { createClient } = supabase;
 const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
-/* PROFILE */
+/* PROFILE (BULLETPROOF) */
 async function loadProfile(){
-  const { data: { user } } = await sb.auth.getUser();
+  try{
+    const { data: { user } } = await sb.auth.getUser();
 
-  if(!user){
-    window.location.href = "auth.html";
-    return;
-  }
+    if(!user){
+      name.textContent = "Not logged in";
+      return;
+    }
 
-  let { data } = await sb
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+    const res = await sb
+      .from("profiles")
+      .select("*")
+      .eq("user_id", user.id);
 
-  // AUTO CREATE PROFILE
-  if(!data){
-    await sb.from("profiles").insert({
-      user_id: user.id,
-      name: "New User"
-    });
-    return loadProfile();
-  }
+    let data = res.data?.[0];
 
-  // CLEAN OUTPUT
-  name.textContent = data.name + ", " + (data.age || "");
-  bio.textContent = data.bio || "No bio yet";
+    // AUTO CREATE
+    if(!data){
+      await sb.from("profiles").insert({
+        user_id:user.id,
+        name:"New User"
+      });
 
-  if(data.avatar_url){
-    avatar.src = data.avatar_url;
-  }
+      name.textContent = "New User";
+      bio.textContent = "Profile created";
+      return;
+    }
 
-  if(data.music_title){
-    musicDisplay.textContent = "🎵 " + data.music_title;
-    music.src = data.music_url;
-    music.play();
+    name.textContent = (data.name || "User") + ", " + (data.age || "");
+    bio.textContent = data.bio || "No bio yet";
+
+    if(data.avatar_url){
+      avatar.src = data.avatar_url;
+    }
+
+    if(data.music_title){
+      musicDisplay.textContent = "🎵 " + data.music_title;
+      music.src = data.music_url;
+      music.play().catch(()=>{});
+    }
+
+  }catch(e){
+    console.error(e);
+    name.textContent = "Error loading profile";
   }
 }
 
-
-/* POSTS */
+/* POSTS (NO CRASH) */
 async function loadPosts(){
   const { data:{user} } = await sb.auth.getUser();
 
-  const { data, error } = await sb
+  const res = await sb
     .from("posts")
     .select("*")
     .eq("user_id", user.id);
 
+  const data = res.data || [];
+
   const grid = document.getElementById("grid");
   grid.innerHTML = "";
-
-  if(!data){
-    postCount.textContent = 0;
-    return;
-  }
 
   postCount.textContent = data.length;
 
   data.forEach(post=>{
     let el;
 
-    if(post.media_type === "video"){
-      el = document.createElement("video");
-      el.src = post.media_url;
-      el.autoplay = true;
-      el.loop = true;
-      el.muted = true;
-    } else {
-      el = document.createElement("img");
-      el.src = post.media_url;
+    if(post.media_type==="video"){
+      el=document.createElement("video");
+      el.src=post.media_url;
+      el.autoplay=true;
+      el.loop=true;
+      el.muted=true;
+    }else{
+      el=document.createElement("img");
+      el.src=post.media_url;
     }
 
     grid.appendChild(el);
   });
 }
 
-/* UPLOAD (FIXED STORAGE URL) */
+/* UPLOAD (FIXED URL) */
 async function addPost(){
   const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*,video/*";
+  input.type="file";
+  input.accept="image/*,video/*";
 
   input.onchange = async e=>{
     const file = e.target.files[0];
     const { data:{user} } = await sb.auth.getUser();
 
-    const filePath = `${user.id}/${Date.now()}_${file.name}`;
+    const path = `${user.id}/${Date.now()}_${file.name}`;
 
-    const { data, error } = await sb.storage
-      .from("posts")
-      .upload(filePath, file);
+    await sb.storage.from("posts").upload(path, file);
 
-    if(error){
-      alert(error.message);
-      return;
-    }
-
-    const publicUrl = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${filePath}`;
+    const publicUrl = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
 
     const type = file.type.includes("video") ? "video" : "image";
 
@@ -277,7 +262,6 @@ async function addPost(){
 /* MUSIC */
 async function pickMusic(){
   const song = prompt("Song name");
-
   if(!song) return;
 
   const preview = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
