@@ -29,12 +29,8 @@
       --text-soft: #D3CBF2;
       --text-muted: #9E95C9;
       --success: #7EEDB0;
-      --danger: #FF8EA1;
-      --warning: #FFD98E;
+      --gold: #FFD98E;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-      --radius-xl: 30px;
-      --radius-lg: 22px;
-      --radius-md: 18px;
       --serif: 'Playfair Display', serif;
       --sans: 'DM Sans', sans-serif;
     }
@@ -127,17 +123,14 @@
     }
 
     .icon-btn,
-    .ghost-btn,
     .primary-btn,
     .secondary-btn,
     .pill-btn,
     .sheet-btn,
     .tab-btn,
     .menu-item,
-    .quick-btn,
     .fab,
     .tab,
-    .grid-card button,
     .save-btn {
       border: none;
       cursor: pointer;
@@ -313,8 +306,7 @@
     .verify,
     .premium-chip,
     .soft-chip,
-    .mini-chip,
-    .stat-label-chip {
+    .mini-chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -366,7 +358,7 @@
 
     .cta-row {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
       margin-bottom: 16px;
     }
@@ -423,8 +415,7 @@
 
     .panel {
       border-radius: 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
       border: 1px solid rgba(196,184,240,0.1);
       box-shadow: var(--shadow);
       padding: 16px;
@@ -457,49 +448,6 @@
       border: 1px solid rgba(255,255,255,0.08);
       color: var(--text-soft);
       padding: 9px 12px;
-    }
-
-    .creator-strip {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 12px;
-      align-items: stretch;
-    }
-
-    .create-card,
-    .premium-card {
-      border-radius: 24px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .create-card strong,
-    .premium-card strong {
-      display: block;
-      color: var(--white);
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-
-    .create-card p,
-    .premium-card p {
-      color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .pill-btn {
-      padding: 12px 14px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #120D25;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
     }
 
     .tab-row {
@@ -597,13 +545,16 @@
       margin-bottom: 14px;
     }
 
-    .about-grid {
+    .about-grid,
+    .creator-strip {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
 
-    .about-card {
+    .about-card,
+    .create-card,
+    .premium-card {
       padding: 14px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
@@ -625,6 +576,34 @@
       font-size: 13px;
       line-height: 1.5;
       font-weight: 700;
+    }
+
+    .create-card strong,
+    .premium-card strong {
+      display: block;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .create-card p,
+    .premium-card p {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .pill-btn {
+      padding: 12px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
     }
 
     .modal,
@@ -871,10 +850,9 @@
     @media (max-width: 390px) {
       .profile-head { align-items: flex-start; flex-direction: column; }
       .cta-row,
-      .creator-strip,
-      .tab-row,
       .stats-row,
-      .about-grid { grid-template-columns: 1fr 1fr; }
+      .about-grid,
+      .creator-strip { grid-template-columns: 1fr 1fr; }
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .fab { right: 16px; }
     }
@@ -891,14 +869,13 @@
       </div>
 
       <div class="top-actions">
-        <button class="icon-btn" onclick="openComposer()">＋</button>
         <button class="icon-btn" onclick="toggleMenu()">⋯</button>
 
         <div class="menu" id="profileMenu">
           <div class="menu-title">Profile menu</div>
           <button class="menu-item" onclick="openEditProfile()">Edit profile <small>name, bio</small></button>
           <button class="menu-item" onclick="openComposer()">Create post <small>photo or video</small></button>
-          <button class="menu-item" onclick="showPremiumAlert()">Subscribe <small>premium creator</small></button>
+          <button class="menu-item" onclick="window.location.href='premium.html'">Subscribe <small>premium creator</small></button>
           <button class="menu-item" onclick="showMenuAlert('Notifications center coming next.')">Notifications <small>push and activity</small></button>
           <button class="menu-item" onclick="showMenuAlert('Privacy controls page coming next.')">Privacy <small>visibility and safety</small></button>
           <button class="menu-item" onclick="showMenuAlert('Account center coming next.')">Account center <small>email and sessions</small></button>
@@ -937,8 +914,8 @@
           </div>
 
           <div class="cta-row">
-            <button class="primary-btn" onclick="openComposer()">Make post</button>
-            <button class="secondary-btn" onclick="openEditProfile()">Edit profile</button>
+            <button class="primary-btn" onclick="openEditProfile()">Edit profile</button>
+            <button class="secondary-btn" onclick="window.location.href='premium.html'">See premium</button>
           </div>
 
           <div class="stats-row">
@@ -965,32 +942,8 @@
       <div class="panel">
         <div class="panel-head">
           <div>
-            <div class="panel-title">Creator mode</div>
-            <div class="panel-sub">Make your profile feel alive. Drop short videos, still photos, and visual updates directly from your phone.</div>
-          </div>
-          <div class="mini-chip">camera-ready</div>
-        </div>
-
-        <div class="creator-strip">
-          <div class="create-card">
-            <strong>Post from camera or library</strong>
-            <p>Use your phone camera for a quick photo or video, or upload something already in your gallery. Build a profile that feels real.</p>
-            <button class="pill-btn" onclick="openComposer()">Create new post</button>
-          </div>
-
-          <div class="premium-card">
-            <strong>Go premium</strong>
-            <p>Boost profile reach, unlock more drops, and make your page feel more exclusive.</p>
-            <button class="secondary-btn" style="width:100%;padding:12px 14px;" onclick="showPremiumAlert()">Subscribe</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <div>
             <div class="panel-title">Your profile media</div>
-            <div class="panel-sub">Instagram energy, TikTok speed, but built for a cleaner and more premium Miru profile.</div>
+            <div class="panel-sub">Media comes first. Let people see the photos and videos before they ever think about tools.</div>
           </div>
           <div class="mini-chip" id="postCountChip">0 drops</div>
         </div>
@@ -1013,6 +966,30 @@
             <div class="about-card"><small>Best energy</small><strong>Intentional, playful, and actually communicative</strong></div>
             <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, and a conversation that keeps going</strong></div>
             <div class="about-card"><small>Status</small><strong id="premiumAbout">Standard profile</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Creator tools</div>
+            <div class="panel-sub">Keep posting secondary. One clear creation area is enough after people have seen the profile.</div>
+          </div>
+          <div class="mini-chip">simple flow</div>
+        </div>
+
+        <div class="creator-strip">
+          <div class="create-card">
+            <strong>Create your next drop</strong>
+            <p>The main visible create action lives in one place: the floating + button. This section just explains it and keeps the page organized.</p>
+            <button class="pill-btn" onclick="openComposer()">Create post</button>
+          </div>
+
+          <div class="premium-card">
+            <strong>Go premium</strong>
+            <p>Boost profile reach, unlock more drops, and make your page feel more exclusive.</p>
+            <button class="secondary-btn" style="width:100%;padding:12px 14px;" onclick="window.location.href='premium.html'">Subscribe</button>
           </div>
         </div>
       </div>
@@ -1223,7 +1200,7 @@
       if (!filtered.length) {
         grid.innerHTML = `
           <div class="grid-card empty" style="grid-column: 1 / -1; aspect-ratio:auto; min-height:180px;">
-            No ${activeFilter === 'all' ? 'posts' : activeFilter} yet. Tap <strong>Make post</strong> and upload straight from your phone camera.
+            No ${activeFilter === 'all' ? 'posts' : activeFilter} yet. Tap the floating <strong>+</strong> button when you want to create one.
           </div>
         `;
         return;
@@ -1399,11 +1376,6 @@
       closeComposer();
       await loadPosts();
       switchTab(document.querySelector('.tab-btn[data-tab="all"]'), 'all');
-    }
-
-    function showPremiumAlert() {
-      closeMenu();
-      alert('Premium page is the next screen to build. This button is ready to connect to premium.html.');
     }
 
     function showMenuAlert(message) {
