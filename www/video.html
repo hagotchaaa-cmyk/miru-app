@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F8F6FF">
+<title>Miru — Add Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F8F6FF;--surface:#FFFFFF;--surface2:#F0ECFF;
+  --border:#E4DEFF;--purple:#7C5CBF;--purple-mid:#9B7FD4;
+  --purple-light:#C4B0F0;--purple-pale:#EDE8FF;
+  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
+  --like:#FF5E7A;--serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;--radius:16px;--radius-lg:24px;--radius-pill:999px;
+  --shadow:0 2px 20px rgba(124,92,191,0.08);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh;}
+
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:rgba(248,246,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.back{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);text-decoration:none;}
+.nav-title{font-family:var(--serif);font-size:18px;font-weight:700;flex:1;}
+
+main{max-width:480px;margin:0 auto;padding:1.5rem 1.25rem 4rem;}
+
+.page-header{margin-bottom:1.5rem;}
+.page-title{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.15;margin-bottom:.4rem;}
+.page-title em{font-style:italic;color:var(--purple);}
+.page-sub{font-size:14px;color:var(--text2);line-height:1.6;}
+
+/* PROMPT SELECTOR */
+.section-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;font-weight:500;}
+.prompts{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem;}
+.prompt-item{display:flex;align-items:center;gap:.85rem;padding:.85rem 1rem;border-radius:var(--radius);border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;}
+.prompt-item:hover{border-color:var(--purple-light);}
+.prompt-item.active{border-color:var(--purple);background:var(--purple-pale);}
+.prompt-emoji{font-size:20px;flex-shrink:0;}
+.prompt-text{font-size:14px;font-weight:500;color:var(--text);flex:1;}
+.prompt-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .2s;}
+.prompt-item.active .prompt-check{background:var(--purple);border-color:var(--purple);color:#fff;}
+
+/* VIDEO RECORDER */
+.recorder-section{margin-bottom:1.5rem;}
+.video-preview{
+  width:100%;aspect-ratio:9/16;max-height:400px;
+  border-radius:var(--radius-lg);overflow:hidden;
+  background:var(--surface2);border:1.5px solid var(--border);
+  position:relative;display:flex;align-items:center;justify-content:center;
+  margin-bottom:1rem;
+}
+.video-preview video{width:100%;height:100%;object-fit:cover;}
+.preview-placeholder{text-align:center;}
+.preview-icon{font-size:48px;margin-bottom:.75rem;}
+.preview-text{font-size:14px;color:var(--text3);}
+
+/* TIMER */
+.timer-ring{
+  position:absolute;top:12px;right:12px;
+  width:48px;height:48px;display:none;
+}
+.timer-ring.show{display:block;}
+.timer-svg{transform:rotate(-90deg);}
+.timer-track{fill:none;stroke:rgba(255,255,255,.3);stroke-width:4;}
+.timer-fill{fill:none;stroke:var(--purple);stroke-width:4;stroke-linecap:round;stroke-dasharray:138;stroke-dashoffset:0;transition:stroke-dashoffset .5s linear;}
+.timer-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;}
+
+/* RECORDING INDICATOR */
+.rec-indicator{
+  position:absolute;top:12px;left:12px;
+  display:none;align-items:center;gap:.4rem;
+  background:rgba(255,94,122,.9);
+  padding:4px 10px;border-radius:var(--radius-pill);
+}
+.rec-indicator.show{display:flex;}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:recBlink .8s ease-in-out infinite;}
+@keyframes recBlink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.rec-label{font-size:12px;font-weight:700;color:#fff;}
+
+/* CONTROLS */
+.controls{display:flex;gap:.65rem;margin-bottom:1rem;}
+.ctrl-btn{
+  flex:1;padding:.8rem;border-radius:var(--radius-pill);
+  font-family:var(--sans);font-size:14px;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+}
+.btn-record{background:var(--purple);color:#fff;box-shadow:0 4px 16px rgba(124,92,191,.25);}
+.btn-record:hover{background:#6a4daa;}
+.btn-record.recording{background:var(--like);box-shadow:0 4px 16px rgba(255,94,122,.25);}
+.btn-switch{background:var(--surface2);border:1.5px solid var(--border);color:var(--text2);flex:0;padding:.8rem 1rem;}
+.btn-switch:hover{border-color:var(--purple-light);}
+
+/* UPLOAD OPTION */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1rem 0;}
+.div-line{flex:1;height:1px;background:var(--border);}
+.div-text{font-size:12px;color:var(--text3);}
+
+.upload-zone{
+  border:1.5px dashed var(--border);border-radius:var(--radius-lg);
+  padding:2rem;text-align:center;cursor:pointer;transition:all .2s;
+  background:var(--surface);
+}
+.upload-zone:hover{border-color:var(--purple-light);background:var(--purple-pale);}
+.upload-icon{font-size:36px;margin-bottom:.75rem;}
+.upload-label{font-size:14px;font-weight:600;color:var(--text);margin-bottom:.3rem;}
+.upload-sub{font-size:12px;color:var(--text3);}
+#fileInput{display:none;}
+
+/* RULES */
+.rules-box{
+  padding:1rem 1.1rem;border-radius:var(--radius);
+  background:var(--surface2);border:1px solid var(--border);
+  margin-bottom:1.5rem;
+}
+.rules-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.5rem;letter-spacing:.5px;text-transform:uppercase;}
+.rule{display:flex;align-items:center;gap:.5rem;font-size:13px;color:var(--text2);margin-bottom:.3rem;}
+.rule:last-child{margin-bottom:0;}
+.rule-icon{font-size:14px;flex-shrink:0;}
+
+/* PROGRESS */
+.upload-progress{display:none;margin-bottom:1rem;}
+.upload-progress.show{display:block;}
+.progress-label{font-size:13px;color:var(--text2);margin-bottom:.4rem;display:flex;justify-content:space-between;}
+.progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--purple-light),var(--purple));border-radius:3px;width:0%;transition:width .3s ease;}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:1rem;border-radius:var(--radius-pill);
+  background:var(--purple);color:#fff;
+  font-family:var(--sans);font-size:15px;font-weight:700;
+  border:none;cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 16px rgba(124,92,191,.25);
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  min-height:52px;
+}
+.submit-btn:hover{background:#6a4daa;transform:translateY(-1px);}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* SUCCESS */
+.success-screen{display:none;text-align:center;padding:3rem 1rem;}
+.success-screen.show{display:block;}
+.success-icon{font-size:56px;margin-bottom:1rem;}
+.success-title{font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:.5rem;}
+.success-title em{font-style:italic;color:var(--purple);}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:2rem;}
+.success-btn{padding:.9rem 2.5rem;border-radius:var(--radius-pill);background:var(--purple);color:#fff;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;}
+
+.error-msg{padding:.75rem 1rem;border-radius:var(--radius);background:#FFF0F3;border:1px solid #FFD0DA;color:#CC3355;font-size:13px;margin-bottom:1rem;display:none;}
+.error-msg.show{display:block;}
+
+.spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="www/edit-profile.html" class="back">←</a>
+  <div class="nav-title">Add your video</div>
+</div>
+
+<main>
+  <div id="mainContent">
+    <div class="page-header">
+      <h1 class="page-title">Show them<br><em>the real you.</em></h1>
+      <p class="page-sub">Record up to 90 seconds answering a prompt. Video profiles get 3× more matches.</p>
+    </div>
+
+    <!-- ERROR -->
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- PROMPT SELECTOR -->
+    <div class="section-label">Pick a prompt</div>
+    <div class="prompts">
+      <div class="prompt-item active" onclick="selectPrompt(this,'Make me laugh')">
+        <div class="prompt-emoji">😂</div>
+        <div class="prompt-text">Make me laugh</div>
+        <div class="prompt-check">✓</div>
+      </div>
+      <div class="prompt-item" onclick="selectPrompt(this,'Tell me something weird about you')">
+        <div class="prompt-emoji">🌀</div>
+        <div class="prompt-text">Tell me something weird about you</div>
+        <div class="prompt-check">✓</div>
+      </div>
+      <div class="prompt-item" onclick="selectPrompt(this,'Tell me a story')">
+        <div class="prompt-emoji">📖</div>
+        <div class="prompt-text">Tell me a story</div>
+        <div class="prompt-check">✓</div>
+      </div>
+      <div class="prompt-item" onclick="selectPrompt(this,'What are you passionate about')">
+        <div class="prompt-emoji">🔥</div>
+        <div class="prompt-text">What are you passionate about</div>
+        <div class="prompt-check">✓</div>
+      </div>
+    </div>
+
+    <!-- VIDEO RECORDER -->
+    <div class="recorder-section">
+      <div class="section-label">Record or upload</div>
+      <div class="video-preview" id="videoPreview">
+        <div class="preview-placeholder" id="placeholder">
+          <div class="preview-icon">🎥</div>
+          <div class="preview-text">Your video will appear here</div>
+        </div>
+        <video id="videoEl" style="display:none;" playsinline autoplay muted></video>
+        <div class="rec-indicator" id="recIndicator">
+          <div class="rec-dot"></div>
+          <div class="rec-label">REC</div>
+        </div>
+        <div class="timer-ring" id="timerRing">
+          <svg class="timer-svg" width="48" height="48" viewBox="0 0 48 48">
+            <circle class="timer-track" cx="24" cy="24" r="22"/>
+            <circle class="timer-fill" id="timerFill" cx="24" cy="24" r="22"/>
+          </svg>
+          <div class="timer-text" id="timerText">90</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn btn-switch" onclick="switchCamera()" title="Switch camera">🔄</button>
+        <button class="ctrl-btn btn-record" id="recordBtn" onclick="toggleRecord()">
+          🎥 Start recording
+        </button>
+      </div>
+    </div>
+
+    <!-- UPLOAD OPTION -->
+    <div class="divider"><div class="div-line"></div><div class="div-text">or upload from camera roll</div><div class="div-line"></div></div>
+
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon">📁</div>
+      <div class="upload-label">Choose from your library</div>
+      <div class="upload-sub">MP4, MOV or WebM · Max 100MB · Max 90 seconds</div>
+    </div>
+    <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/webm" onchange="handleUpload(this)">
+
+    <!-- RULES -->
+    <div class="rules-box" style="margin-top:1.25rem;">
+      <div class="rules-title">Video guidelines</div>
+      <div class="rule"><span class="rule-icon">✅</span> Max 90 seconds</div>
+      <div class="rule"><span class="rule-icon">✅</span> Max file size 100MB</div>
+      <div class="rule"><span class="rule-icon">✅</span> Must show your face clearly</div>
+      <div class="rule"><span class="rule-icon">❌</span> No explicit or inappropriate content</div>
+      <div class="rule"><span class="rule-icon">❌</span> No other people without their consent</div>
+    </div>
+
+    <!-- UPLOAD PROGRESS -->
+    <div class="upload-progress" id="uploadProgress">
+      <div class="progress-label">
+        <span id="progressLabel">Uploading...</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button class="submit-btn" id="submitBtn" onclick="submitVideo()" disabled>
+      Upload video
+    </button>
+
+    <p style="font-size:12px;color:var(--text3);text-align:center;margin-top:.75rem;">You can add up to 5 videos to your profile</p>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✦</div>
+    <h2 class="success-title">Video<br><em>uploaded!</em></h2>
+    <p class="success-sub">Your video is live on your profile. People can now see the real you.</p>
+    <button class="success-btn" onclick="window.location.href='app.html'">Go to my matches →</button>
+  </div>
+</main>
+
+<script>
+// SUPABASE
+const { createClient } = supabase;
+const sb = createClient(
+  'https://rlmcwbaiuowbkgfzdlme.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'
+);
+
+// STATE
+let selectedPrompt = 'Make me laugh';
+let stream = null;
+let mediaRecorder = null;
+let chunks = [];
+let recordedBlob = null;
+let uploadedFile = null;
+let isRecording = false;
+let recSeconds = 0;
+let recInterval = null;
+let facingMode = 'user'; // front camera default
+const MAX_DURATION = 90;
+const MAX_SIZE = 100 * 1024 * 1024; // 100MB
+
+// CHECK AUTH
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (!session) window.location.href = 'auth.html';
+});
+
+// PROMPT SELECT
+function selectPrompt(el, prompt) {
+  document.querySelectorAll('.prompt-item').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  selectedPrompt = prompt;
+}
+
+// CAMERA
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode, width: { ideal: 720 }, height: { ideal: 1280 } },
+      audio: true
+    });
+    const video = document.getElementById('videoEl');
+    video.srcObject = stream;
+    video.muted = true;
+    video.style.display = 'block';
+    document.getElementById('placeholder').style.display = 'none';
+  } catch (err) {
+    showError('Camera access denied. Please allow camera access and try again.');
+  }
+}
+
+async function switchCamera() {
+  facingMode = facingMode === 'user' ? 'environment' : 'user';
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    await startCamera();
+  }
+}
+
+// START/STOP RECORDING
+async function toggleRecord() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    if (!stream) await startCamera();
+    startRecording();
+  }
+}
+
+function startRecording() {
+  chunks = [];
+  recordedBlob = null;
+  uploadedFile = null;
+  isRecording = true;
+  recSeconds = 0;
+
+  const btn = document.getElementById('recordBtn');
+  btn.classList.add('recording');
+  btn.innerHTML = '⏹ Stop recording';
+  document.getElementById('recIndicator').classList.add('show');
+  document.getElementById('timerRing').classList.add('show');
+
+  mediaRecorder = new MediaRecorder(stream, { mimeType: getSupportedMimeType() });
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+  mediaRecorder.onstop = processRecording;
+  mediaRecorder.start(1000);
+
+  recInterval = setInterval(() => {
+    recSeconds++;
+    const remaining = MAX_DURATION - recSeconds;
+    document.getElementById('timerText').textContent = remaining;
+    // Update ring
+    const pct = recSeconds / MAX_DURATION;
+    document.getElementById('timerFill').style.strokeDashoffset = 138 * pct;
+    if (recSeconds >= MAX_DURATION) stopRecording();
+  }, 1000);
+}
+
+function stopRecording() {
+  isRecording = false;
+  clearInterval(recInterval);
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  const btn = document.getElementById('recordBtn');
+  btn.classList.remove('recording');
+  btn.innerHTML = '🎥 Record again';
+  document.getElementById('recIndicator').classList.remove('show');
+  document.getElementById('timerRing').classList.remove('show');
+}
+
+function processRecording() {
+  const mime = getSupportedMimeType();
+  recordedBlob = new Blob(chunks, { type: mime });
+  // Show playback
+  const video = document.getElementById('videoEl');
+  video.srcObject = null;
+  video.muted = false;
+  video.src = URL.createObjectURL(recordedBlob);
+  video.play();
+  document.getElementById('submitBtn').disabled = false;
+  // Stop camera stream
+  if (stream) stream.getTracks().forEach(t => t.stop());
+}
+
+function getSupportedMimeType() {
+  const types = ['video/webm;codecs=vp9', 'video/webm', 'video/mp4'];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
+}
+
+// FILE UPLOAD
+function handleUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Validate size
+  if (file.size > MAX_SIZE) {
+    showError('File too large. Maximum size is 100MB.');
+    return;
+  }
+
+  // Validate duration
+  const url = URL.createObjectURL(file);
+  const tempVideo = document.createElement('video');
+  tempVideo.src = url;
+  tempVideo.onloadedmetadata = () => {
+    if (tempVideo.duration > MAX_DURATION) {
+      showError('Video too long. Maximum length is 90 seconds.');
+      URL.revokeObjectURL(url);
+      return;
+    }
+    // Show preview
+    uploadedFile = file;
+    const video = document.getElementById('videoEl');
+    video.src = url;
+    video.muted = false;
+    video.style.display = 'block';
+    video.play();
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    clearError();
+  };
+}
+
+// SUBMIT
+async function submitVideo() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'auth.html'; return; }
+
+  const fileToUpload = uploadedFile || recordedBlob;
+  if (!fileToUpload) { showError('Please record or upload a video first.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div>';
+
+  // Show progress
+  document.getElementById('uploadProgress').classList.add('show');
+
+  try {
+    const ext = uploadedFile ? uploadedFile.name.split('.').pop() : 'webm';
+    const fileName = `${session.user.id}/${Date.now()}.${ext}`;
+
+    // Simulate progress (Supabase doesn't have upload progress events yet)
+    let prog = 0;
+    const progInterval = setInterval(() => {
+      prog = Math.min(prog + 10, 90);
+      updateProgress(prog);
+    }, 300);
+
+    const { data, error } = await sb.storage
+      .from('media')
+      .upload(fileName, fileToUpload, {
+        contentType: fileToUpload.type || 'video/webm',
+        upsert: false
+      });
+
+    clearInterval(progInterval);
+
+    if (error) throw error;
+
+    updateProgress(100);
+
+    // Get public URL
+    const { data: { publicUrl } } = sb.storage.from('media').getPublicUrl(fileName);
+
+    // Save to media table
+    await sb.from('media').insert({
+      user_id: session.user.id,
+      type: 'video',
+      url: publicUrl,
+      prompt: selectedPrompt,
+      duration: recSeconds || null,
+      is_primary: true
+    });
+
+    // Update profile video_url
+    await sb.from('profiles').update({
+      video_url: publicUrl,
+      video_prompt: selectedPrompt
+    }).eq('id', session.user.id);
+
+    // Show success
+    setTimeout(() => {
+      document.getElementById('mainContent').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+    }, 500);
+
+  } catch (err) {
+    showError('Upload failed: ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Upload video';
+    document.getElementById('uploadProgress').classList.remove('show');
+  }
+}
+
+function updateProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = pct < 100 ? 'Uploading...' : 'Processing...';
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearError() {
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+// Auto-start camera on load
+window.addEventListener('load', () => {
+  if (navigator.mediaDevices) startCamera();
+});
+</script>
+</body>
+</html>

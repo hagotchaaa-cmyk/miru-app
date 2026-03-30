@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miru - Setup</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  color: #333;
+}
+
+.container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.step { display: none; }
+.step.active { display: block; }
+
+h1 { font-size: 26px; margin-bottom: 10px; }
+p { color: #666; margin-bottom: 20px; }
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 25px;
+  background: #7C5CBF;
+  color: white;
+  font-size: 16px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 10px 14px;
+  margin: 5px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pill.active {
+  background: #7C5CBF;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="step active" id="step1">
+  <h1>Tell us about you</h1>
+  <input placeholder="Your name">
+  <input placeholder="Age">
+  <input placeholder="City">
+  <button onclick="next()">Continue</button>
+</div>
+
+<div class="step" id="step2">
+  <h1>What are you looking for?</h1>
+  <div class="pill" onclick="select(this)">?? Relationship</div>
+  <div class="pill" onclick="select(this)">?? Fun</div>
+  <div class="pill" onclick="select(this)">?? Friends</div>
+  <button onclick="next()">Continue</button>
+</div>
+
+<div class="step" id="step3">
+  <h1>Your vibe</h1>
+  <div class="pill" onclick="select(this)">?? Funny</div>
+  <div class="pill" onclick="select(this)">?? Chill</div>
+  <div class="pill" onclick="select(this)">?? Spontaneous</div>
+  <button onclick="finish()">Finish</button>
+</div>
+
+<div class="step" id="done">
+  <h1>? You’re in</h1>
+  <p>Finding your matches...</p>
+</div>
+
+</div>
+
+<script>
+let current = 1;
+
+function next() {
+  document.getElementById("step" + current).classList.remove("active");
+  current++;
+  document.getElementById("step" + current).classList.add("active");
+}
+
+function select(el) {
+  el.classList.toggle("active");
+}
+
+function finish() {
+  document.getElementById("step3").classList.remove("active");
+  document.getElementById("done").classList.add("active");
+
+  setTimeout(() => {
+    document.querySelector("#done p").textContent =
+      "?? 24 people match your vibe";
+  }, 1200);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Profile</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #f5f3ff, #ffffff);
+}
+.container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+}
+h2 {
+  text-align: center;
+}
+input, textarea {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+textarea {
+  height: 100px;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(90deg, #7C5CBF, #9F7AEA);
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Edit Profile</h2>
+
+  <input id="name" placeholder="Name">
+  <input id="age" placeholder="Age">
+  <input id="location" placeholder="Location">
+  <textarea id="bio" placeholder="Write your bio..."></textarea>
+
+  <button onclick="saveProfile()">Save</button>
+</div>
+
+<script>
+const supabase = supabase.createClient(
+  "https://rlmcwbaiuowbkgfzdlme.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8
+"
+);
+
+async function saveProfile(){
+  await supabase.from("profiles").insert({
+    name: document.getElementById("name").value,
+    age: document.getElementById("age").value,
+    location: document.getElementById("location").value,
+    bio: document.getElementById("bio").value
+  });
+
+  alert("Saved");
+  window.location.href = "www/profile.html";
+}
+</script>
+
+</body>
+</html>
+<script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js'></script>
+<script>
+const supabase = supabase.createClient(
+  "PASTE_URL_HERE",
+  "PASTE_ANON_KEY_HERE"
+);
+</script>

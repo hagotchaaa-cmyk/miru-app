@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F8F6FF">
+<title>Miru</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#F8F6FF;--surface:#fff;--surface2:#F0ECFF;--border:#E4DEFF;--purple:#7C5CBF;--purple-mid:#9B7FD4;--purple-light:#C4B0F0;--purple-pale:#EDE8FF;--text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;--like:#FF5E7A;--super:#5B8CFF;--gold:#F5A623;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;--radius:16px;--radius-lg:24px;--radius-pill:999px;--shadow:0 2px 20px rgba(124,92,191,0.08);}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh;}
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(248,246,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:6px;}
+.logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;}
+.logo-eye{width:18px;height:11px;border:2px solid #fff;border-radius:999px;display:flex;align-items:center;justify-content:center;}
+.logo-pupil{width:5px;height:5px;border-radius:50%;background:#fff;}
+.logo-word{font-family:var(--serif);font-size:20px;font-weight:700;font-style:italic;color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:.6rem;position:relative;}
+.nav-btn{width:38px;height:38px;border-radius:50%;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;position:relative;}
+.nav-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--like);border:2px solid var(--bg);display:none;}
+.nav-badge.show{display:block;}
+.nav-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;border:2px solid var(--purple-light);cursor:pointer;position:relative;}
+.menu-dd{display:none;position:fixed;top:60px;right:12px;width:210px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 40px rgba(124,92,191,.15);z-index:9999;overflow:hidden;}
+.menu-dd.show{display:block;}
+.mi{padding:.8rem 1rem;font-size:14px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem;}
+.mi:last-child{border-bottom:none;}
+.mi.red{color:#CC3355;}
+.notif-dd{display:none;position:fixed;top:60px;right:56px;width:300px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 40px rgba(124,92,191,.15);z-index:9999;overflow:hidden;max-height:400px;overflow-y:auto;}
+.notif-dd.show{display:block;}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid var(--border);}
+.notif-title{font-size:14px;font-weight:600;color:var(--text);}
+.notif-clear{font-size:12px;color:var(--purple);cursor:pointer;}
+.notif-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item.unread{background:var(--purple-pale);}
+.ni-icon{font-size:18px;flex-shrink:0;}
+.ni-text{font-size:13px;color:var(--text);line-height:1.45;flex:1;}
+.ni-time{font-size:11px;color:var(--text3);margin-top:2px;}
+.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:4px;}
+.mode-wrap{padding:.75rem 1.25rem 0;}
+.mode-toggle{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;}
+.mode-pill{flex:1;padding:.5rem;border-radius:var(--radius-pill);text-align:center;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:var(--sans);}
+.mode-pill.active{background:var(--purple);color:#fff;font-weight:600;}
+main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
+.swipe-bar{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;border-radius:var(--radius);background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:1rem;}
+.swipe-left{display:flex;flex-direction:column;gap:4px;flex:1;}
+.swipe-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+.swipe-counts{display:flex;align-items:center;gap:1rem;}
+.sc-num{font-size:18px;font-weight:700;color:var(--text);}
+.sc-label{font-size:11px;color:var(--text3);}
+.swipe-track{height:4px;background:var(--border);border-radius:2px;margin-top:2px;overflow:hidden;width:120px;}
+.swipe-fill{height:100%;border-radius:2px;transition:width .3s ease;}
+.upgrade-btn{padding:.5rem 1rem;border-radius:var(--radius-pill);background:linear-gradient(135deg,var(--gold),#E8920A);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;border:none;cursor:pointer;margin-left:.75rem;}
+.dash-header{margin-bottom:1rem;}
+.dash-greeting{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem;}
+.dash-title{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.15;color:var(--text);}
+.dash-title em{font-style:italic;color:var(--purple);}
+.countdown{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:12px;color:var(--text2);margin-bottom:1.25rem;}
+.cd-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:cdPulse 1.5s ease-in-out infinite;}
+@keyframes cdPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.cd-time{font-weight:600;color:var(--purple);}
+.swipe-hint{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.5rem;margin-bottom:.75rem;font-size:12px;color:var(--text3);}
+.empty-state{text-align:center;padding:3rem 1rem;background:#fff;border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow);}
+.empty-icon{font-size:56px;margin-bottom:1rem;}
+.empty-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:.5rem;color:var(--text);}
+.empty-title em{font-style:italic;color:var(--purple);}
+.empty-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;}
+.empty-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:13px;color:var(--purple);font-weight:500;}
+.empty-explore{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius-pill);background:var(--purple);color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;border:none;cursor:pointer;margin-top:1rem;box-shadow:0 4px 16px rgba(124,92,191,.2);}
+.pw-overlay{position:fixed;inset:0;z-index:500;background:rgba(26,21,40,0.55);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.pw-overlay.show{opacity:1;pointer-events:all;}
+.pw-sheet{width:100%;max-width:480px;background:#fff;border-radius:28px 28px 0 0;padding:1.5rem 1.5rem 2.5rem;transform:translateY(100%);transition:transform .4s cubic-bezier(.32,0,.67,0);max-height:90vh;overflow-y:auto;}
+.pw-overlay.show .pw-sheet{transform:translateY(0);}
+.sheet-handle{width:40px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 1.5rem;}
+.pw-icon{font-size:44px;text-align:center;margin-bottom:.75rem;}
+.pw-title{font-family:var(--serif);font-size:24px;font-weight:700;text-align:center;line-height:1.2;margin-bottom:.5rem;color:var(--text);}
+.pw-title em{font-style:italic;color:var(--purple);}
+.pw-sub{font-size:13px;color:var(--text2);text-align:center;line-height:1.6;margin-bottom:1.25rem;}
+.compare-table{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:1.25rem;}
+.cr{display:grid;grid-template-columns:1fr 70px 90px;padding:.65rem .9rem;border-bottom:1px solid var(--border);align-items:center;}
+.cr:last-child{border-bottom:none;}
+.cr.hdr{background:var(--surface2);font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
+.cf{font-size:13px;color:var(--text2);}
+.cv{text-align:center;font-size:13px;color:var(--text3);}
+.cp{text-align:center;font-size:13px;color:var(--purple);font-weight:600;}
+.plan-box{padding:1.1rem 1.25rem;border-radius:var(--radius);border:2px solid var(--purple);background:var(--purple-pale);margin-bottom:1.25rem;position:relative;}
+.plan-popular{position:absolute;top:-10px;left:50%;transform:translateX(-50%);padding:3px 14px;border-radius:var(--radius-pill);background:linear-gradient(135deg,var(--gold),#E8920A);color:#fff;font-size:11px;font-weight:700;white-space:nowrap;}
+.plan-row{display:flex;align-items:center;justify-content:space-between;margin-top:.25rem;}
+.plan-name{font-size:16px;font-weight:700;color:var(--text);}
+.plan-price{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--purple);}
+.plan-price span{font-size:13px;font-weight:400;color:var(--text3);}
+.plan-perks{display:flex;flex-direction:column;gap:.3rem;margin-top:.85rem;}
+.perk{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:.4rem;}
+.perk.hi{color:var(--purple);font-weight:500;}
+.sub-btn{width:100%;padding:1rem;border-radius:var(--radius-pill);background:linear-gradient(135deg,var(--purple),var(--purple-mid));color:#fff;font-family:var(--sans);font-size:16px;font-weight:700;border:none;cursor:pointer;}
+.sub-btn:active{transform:scale(.98);}
+.pw-fine{font-size:11px;color:var(--text3);text-align:center;margin-top:.75rem;}
+.pw-later{width:100%;padding:.75rem;border-radius:var(--radius-pill);background:transparent;border:1px solid var(--border);color:var(--text2);font-family:var(--sans);font-size:14px;cursor:pointer;margin-top:.6rem;}
+.success-screen{position:fixed;inset:0;z-index:600;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.success-screen.show{display:flex;}
+.success-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 1.5rem;}
+.success-title{font-family:var(--serif);font-size:28px;font-weight:700;margin-bottom:.5rem;color:var(--text);}
+.success-title em{font-style:italic;color:var(--purple);}
+.success-sub{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:2rem;}
+.success-go{padding:.9rem 2.5rem;border-radius:var(--radius-pill);background:var(--purple);color:#fff;font-family:var(--sans);font-size:15px;font-weight:600;border:none;cursor:pointer;}
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);padding:.6rem 1.25rem;border-radius:var(--radius-pill);font-size:13px;font-weight:500;z-index:999;background:var(--text);color:#fff;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;padding:.75rem 0 1.25rem;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);}
+.bnav{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.25rem .75rem;border-radius:12px;position:relative;}
+.bnav:active{transform:scale(.9);}
+.bnav-icon{font-size:21px;color:var(--text3);}
+.bnav-label{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
+.bnav.active .bnav-icon,.bnav.active .bnav-label{color:var(--purple);}
+.bnav-dot{position:absolute;top:0;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:var(--like);border:2px solid #fff;}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="nav">
+  <div class="logo"><div class="logo-mark"><div class="logo-eye"><div class="logo-pupil"></div></div></div><span class="logo-word">miru</span></div>
+  <div class="nav-right">
+    <div class="nav-btn" id="bellBtn" onclick="toggleNotifs()">🔔<div class="nav-badge" id="notifBadge"></div></div>
+    <div class="notif-dd" id="notifDd">
+      <div class="notif-head"><div class="notif-title">Notifications</div><div class="notif-clear" onclick="markAllRead()">Mark all read</div></div>
+      <div id="notifList"></div>
+    </div>
+    <div class="nav-avatar" id="navAv" onclick="toggleMenu()">Y
+      <div class="menu-dd" id="menuDd">
+        <div class="mi" onclick="location.href='profile.html'">👤 My Profile</div>
+        <div class="mi" onclick="location.href='edit-profile.html'">✏️ Edit Profile</div>
+        <div class="mi" onclick="location.href='video.html'">🎥 Add Video</div>
+        <div class="mi" onclick="showPW('upgrade')">⭐ Go Premium</div>
+        <div class="mi" onclick="location.href='messages.html'">💬 Messages</div>
+        <div class="mi" onclick="location.href='privacy.html'">🔒 Privacy</div>
+        <div class="mi" onclick="location.href='terms.html'">📄 Terms</div>
+        <div class="mi" onclick="navLogout()">🚪 Sign Out</div>
+        <div class="mi red" onclick="location.href='delete-account.html'">🗑️ Delete Account</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mode-wrap">
+  <div class="mode-toggle">
+    <button class="mode-pill active">🤖 AI picks for me</button>
+    <button class="mode-pill" onclick="location.href='explore.html'">👆 I'll explore</button>
+  </div>
+</div>
+<main>
+  <div class="swipe-bar" style="margin-top:1rem;">
+    <div class="swipe-left">
+      <div class="swipe-label">Today's swipes</div>
+      <div class="swipe-counts"><div class="swipe-count"><span class="sc-num" id="swipesLeft">40</span><span style="font-size:14px;">👆</span><span class="sc-label">swipes</span></div><div class="swipe-count"><span class="sc-num" id="supersLeft">3</span><span style="font-size:14px;">⚡</span><span class="sc-label">super</span></div></div>
+      <div class="swipe-track"><div class="swipe-fill" id="swipeFill" style="width:100%;background:linear-gradient(to right,var(--purple-light),var(--purple));"></div></div>
+    </div>
+    <button class="upgrade-btn" onclick="showPW('upgrade')">⭐ Premium</button>
+  </div>
+  <div class="dash-header">
+    <div class="dash-greeting">Good morning, <span id="greetName">friend</span> ✦</div>
+    <h1 class="dash-title">Your <em>matches</em><br>are waiting.</h1>
+  </div>
+  <div class="countdown"><div class="cd-dot"></div>Next batch in <span class="cd-time" id="cdTime">—</span></div>
+  <div class="swipe-hint"><span>👈 Pass</span><span>⚡ Swipe up = Super</span><span>👉 Like</span></div>
+  <div id="matchList">
+    <div class="empty-state">
+      <div class="empty-icon">💜</div>
+      <h2 class="empty-title">Your matches are<br><em>on their way.</em></h2>
+      <p class="empty-sub">Complete your profile and your first 3 curated matches will drop tomorrow at 9am.</p>
+      <div class="empty-pill">🌙 First matches drop at 9am</div><br>
+      <button class="empty-explore" onclick="location.href='explore.html'">👆 Explore now</button>
+    </div>
+  </div>
+</main>
+<div class="bottom-nav">
+  <div class="bnav active"><div class="bnav-icon">💜</div><div class="bnav-label">Matches</div></div>
+  <div class="bnav" onclick="location.href='messages.html'"><div class="bnav-icon">💬</div><div class="bnav-label">Messages</div><div class="bnav-dot"></div></div>
+  <div class="bnav" onclick="location.href='explore.html'"><div class="bnav-icon">🔍</div><div class="bnav-label">Explore</div></div>
+  <div class="bnav" onclick="location.href='profile.html'"><div class="bnav-icon">👤</div><div class="bnav-label">Profile</div></div>
+</div>
+<div class="pw-overlay" id="pwOverlay" onclick="closePW(event)">
+  <div class="pw-sheet">
+    <div class="sheet-handle"></div>
+    <div class="pw-icon" id="pwIcon">⭐</div>
+    <h2 class="pw-title" id="pwTitle">Unlock<br><em>Miru Premium.</em></h2>
+    <p class="pw-sub" id="pwSub">Unlimited swipes, 10 super likes, priority matching.</p>
+    <div class="compare-table">
+      <div class="cr hdr"><div></div><div class="cv">Free</div><div class="cp">Premium</div></div>
+      <div class="cr"><div class="cf">Daily swipes</div><div class="cv">40</div><div class="cp">Unlimited</div></div>
+      <div class="cr"><div class="cf">Super likes/day</div><div class="cv">3</div><div class="cp">10</div></div>
+      <div class="cr"><div class="cf">Priority matching</div><div class="cv">✕</div><div class="cp">✓</div></div>
+      <div class="cr"><div class="cf">See who liked you</div><div class="cv">✕</div><div class="cp">✓</div></div>
+    </div>
+    <div class="plan-box">
+      <div class="plan-popular">⭐ Most popular</div>
+      <div class="plan-row"><div class="plan-name">Monthly Premium</div><div class="plan-price">$3.99<span>/mo</span></div></div>
+      <div class="plan-perks">
+        <div class="perk hi">✦ Unlimited swipes every day</div>
+        <div class="perk hi">✦ 10 super likes per day</div>
+        <div class="perk">✦ Priority in AI matching</div>
+        <div class="perk">✦ See who liked you first</div>
+      </div>
+    </div>
+    <button class="sub-btn" onclick="subscribe()">Start Premium — $3.99/month</button>
+    <p class="pw-fine">Cancel anytime · No hidden fees</p>
+    <button class="pw-later" onclick="closePW()">Maybe later</button>
+  </div>
+</div>
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">⭐</div>
+  <h2 class="success-title">Welcome to<br><em>Miru Premium!</em></h2>
+  <p class="success-sub">Unlimited swipes, 10 super likes, priority matching.</p>
+  <button class="success-go" onclick="document.getElementById('successScreen').classList.remove('show')">Let's go →</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://rlmcwbaiuowbkgfzdlme.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8');
+sb.auth.getSession().then(({data:{session}})=>{if(!session)window.location.href='auth.html';});
+const FREE_SWIPES=40,FREE_SUPERS=3,PREM_SUPERS=10;
+let S=JSON.parse(localStorage.getItem('miru_swipes')||'null')||{sw:FREE_SWIPES,su:FREE_SUPERS,premium:false,day:new Date().toDateString()};
+if(S.day!==new Date().toDateString()){S.sw=S.premium?9999:FREE_SWIPES;S.su=S.premium?PREM_SUPERS:FREE_SUPERS;S.day=new Date().toDateString();save();}
+function save(){localStorage.setItem('miru_swipes',JSON.stringify(S));}
+function updateBar(){document.getElementById('swipesLeft').textContent=S.premium?'∞':S.sw;document.getElementById('supersLeft').textContent=S.su;const pct=S.premium?100:(S.sw/FREE_SWIPES)*100;const f=document.getElementById('swipeFill');f.style.width=pct+'%';f.style.background=pct>50?'linear-gradient(to right,var(--purple-light),var(--purple))':pct>20?'linear-gradient(to right,#F5A623,#E8920A)':'linear-gradient(to right,var(--like),#cc3355)';}
+updateBar();
+const p=JSON.parse(localStorage.getItem('miru_profile')||'{}');
+const nm=p.name||'friend';
+document.getElementById('greetName').textContent=nm;
+document.getElementById('navAv').childNodes[0].textContent=(nm[0]||'Y').toUpperCase();
+function updateCD(){const now=new Date(),next=new Date();next.setHours(9,0,0,0);if(now>=next)next.setDate(next.getDate()+1);const d=next-now,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);document.getElementById('cdTime').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+updateCD();setInterval(updateCD,1000);
+let tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000);}
+function toggleMenu(){document.getElementById('menuDd').classList.toggle('show');}
+function toggleNotifs(){document.getElementById('notifDd').classList.toggle('show');renderNotifs();}
+document.addEventListener('click',e=>{const av=document.getElementById('navAv');const mn=document.getElementById('menuDd');const bell=document.getElementById('bellBtn');const nd=document.getElementById('notifDd');if(av&&mn&&!av.contains(e.target))mn.classList.remove('show');if(bell&&nd&&!bell.contains(e.target)&&!nd.contains(e.target))nd.classList.remove('show');});
+async function navLogout(){try{await sb.auth.signOut();}catch(e){}localStorage.clear();window.location.href='auth.html';}
+const NOTIFS=[{id:1,icon:'💜',text:'Your matches are ready! 3 new people picked for you.',time:'9:00 AM',unread:true},{id:2,icon:'❤️',text:'Someone liked you! Upgrade to see who.',time:'2h ago',unread:true},{id:3,icon:'⚡',text:'You got a Super Like!',time:'3h ago',unread:false}];
+let notifState=JSON.parse(localStorage.getItem('miru_notifs')||'null')||NOTIFS;
+function renderNotifs(){const list=document.getElementById('notifList');const unread=notifState.filter(n=>n.unread);document.getElementById('notifBadge').classList.toggle('show',unread.length>0);list.innerHTML=notifState.map(n=>`<div class="notif-item ${n.unread?'unread':''}" onclick="readNotif(${n.id})"><div class="ni-icon">${n.icon}</div><div style="flex:1"><div class="ni-text">${n.text}</div><div class="ni-time">${n.time}</div></div>${n.unread?'<div class="ni-dot"></div>':''}</div>`).join('');}
+function readNotif(id){notifState=notifState.map(n=>n.id===id?{...n,unread:false}:n);localStorage.setItem('miru_notifs',JSON.stringify(notifState));renderNotifs();}
+function markAllRead(){notifState=notifState.map(n=>({...n,unread:false}));localStorage.setItem('miru_notifs',JSON.stringify(notifState));renderNotifs();}
+renderNotifs();
+function showPW(mode){if(mode==='out_sw'){document.getElementById('pwIcon').textContent='😮';document.getElementById('pwTitle').innerHTML='Out of<br><em>swipes today.</em>';document.getElementById('pwSub').textContent='Upgrade to keep going.';}else if(mode==='out_su'){document.getElementById('pwIcon').textContent='⚡';document.getElementById('pwTitle').innerHTML='Out of<br><em>super likes.</em>';document.getElementById('pwSub').textContent='Get 10 per day with Premium.';}else{document.getElementById('pwIcon').textContent='⭐';document.getElementById('pwTitle').innerHTML='Unlock<br><em>Miru Premium.</em>';document.getElementById('pwSub').textContent='Unlimited swipes, 10 super likes, priority matching.';}document.getElementById('pwOverlay').classList.add('show');}
+function closePW(e){if(!e||e.target===document.getElementById('pwOverlay'))document.getElementById('pwOverlay').classList.remove('show');}
+function subscribe(){window.location.href='https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';}
+</script>
+</body>
+</html>

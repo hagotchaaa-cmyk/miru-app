@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: black;
+  overflow: hidden;
+}
+
+/* CARD */
+.card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* MEDIA */
+video, img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* OVERLAY */
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 25px;
+  color: white;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+/* TEXT */
+.name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* ACTIONS */
+.actions {
+  position: absolute;
+  right: 15px;
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: white;
+  cursor: pointer;
+}
+
+/* SWIPE BADGES */
+.badge {
+  position: absolute;
+  top: 60px;
+  font-size: 40px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: 4px solid;
+  border-radius: 10px;
+  opacity: 0;
+}
+
+.like { left: 20px; color: #22c55e; }
+.nope { right: 20px; color: #ef4444; }
+</style>
+</head>
+
+<body>
+
+<div id="cards"></div>
+
+<script>
+const supabase = supabase.createClient(
+  "https://rlmcwbaiuowbkgfzdlme.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8"
+);
+
+let posts = [];
+let index = 0;
+
+/* LOAD POSTS */
+async function loadPosts(){
+  const { data } = await supabase
+    .from("posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  posts = data;
+  showNext();
+}
+
+/* SHOW CARD */
+function showNext(){
+  if(index >= posts.length) return;
+
+  const post = posts[index];
+
+  const card = document.createElement("div");
+  card.className = "card";
+
+  if(post.media_type === "video"){
+    card.innerHTML = `<video autoplay loop muted playsinline src="${post.media_url}"></video>`;
+  } else {
+    card.innerHTML = `<img src="${post.media_url}">`;
+  }
+
+  card.innerHTML += `
+    <div class="badge like">LIKE</div>
+    <div class="badge nope">NOPE</div>
+
+    <div class="overlay">
+      <div class="name">${post.name}, ${post.age}</div><div>${post.location}</div>
+    </div>
+
+    <div class="actions">
+      <div class="btn" onclick="swipe('left')">❌</div>
+      <div class="btn" onclick="swipe('right')">❤️</div>
+    </div>
+  `;
+
+  document.getElementById("cards").appendChild(card);
+
+  addSwipe(card);
+}
+
+/* SWIPE */
+function swipe(direction){
+  const card = document.querySelector(".card:last-child");
+
+  if(!card) return;
+
+  card.style.transform =
+    direction === "right"
+      ? "translateX(100%) rotate(20deg)"
+      : "translateX(-100%) rotate(-20deg)";
+
+  setTimeout(()=>{
+    card.remove();
+    index++;
+    showNext();
+  }, 300);
+}
+
+/* DRAG SWIPE */
+function addSwipe(card){
+  let startX = 0;
+
+  card.addEventListener("mousedown", e => startX = e.clientX);
+
+  card.addEventListener("mouseup", e => {
+    let diff = e.clientX - startX;
+
+    if(diff > 100) swipe("right");
+    else if(diff < -100) swipe("left");
+  });
+}
+
+loadPosts();
+</script>
+
+</body>
+</html>
