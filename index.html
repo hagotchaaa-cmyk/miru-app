@@ -1,12 +1,14 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="./config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0D0A1A">
-<title>Miru — Purple Rebrand Preview</title>
+<title>Miru</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -373,6 +375,41 @@ html,body{height:100%;background:var(--void);font-family:var(--sans);color:var(-
 .sw-circle{width:36px;height:36px;border-radius:50%;flex-shrink:0;}
 .sw-info .sw-name{font-size:13px;font-weight:700;color:var(--mist);}
 .sw-info .sw-hex{font-size:11px;color:rgba(232,228,250,.4);font-family:monospace;}
+
+/* APP WIRING */
+.auth-modal{position:fixed;inset:0;background:rgba(13,10,26,.84);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;z-index:200;}
+.auth-modal.show{display:flex;}
+.auth-card{width:min(92vw,420px);background:var(--deep);border:1px solid var(--border);border-radius:24px;padding:1.25rem;box-shadow:0 30px 80px rgba(0,0,0,.45);}
+.auth-title{font-family:var(--serif);font-size:34px;font-style:italic;margin-bottom:.4rem;}
+.auth-sub{color:rgba(232,228,250,.55);font-size:14px;line-height:1.5;margin-bottom:1rem;}
+.auth-input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border-light);color:var(--mist);border-radius:14px;padding:.95rem 1rem;margin:.4rem 0;font:inherit;outline:none;}
+.auth-row{display:flex;gap:.65rem;margin-top:.8rem;}
+.auth-ghost{flex:1;padding:.9rem 1rem;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--mist);font:inherit;cursor:pointer;}
+.auth-primary{flex:1;padding:.9rem 1rem;border-radius:999px;border:none;background:#fff;color:var(--void);font-weight:800;font:inherit;cursor:pointer;}
+.app-hidden{display:none !important;}
+.d-app-view{display:none;}
+.d-app-view.on{display:block;}
+.d-empty{padding:1.1rem;border:1px solid var(--border-light);border-radius:16px;background:rgba(255,255,255,.03);color:rgba(232,228,250,.55);font-size:14px;}
+.profile-shell{padding:1rem 1.1rem 1.2rem;}
+.p-head{display:flex;align-items:center;gap:.9rem;margin-bottom:1rem;}
+.p-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(145deg,var(--dusk),var(--twilight));border:1px solid var(--border);overflow:hidden;flex-shrink:0;}
+.p-avatar img{width:100%;height:100%;object-fit:cover;}
+.p-name{font-family:var(--serif);font-size:24px;font-weight:700;}
+.p-sub{font-size:12px;color:rgba(232,228,250,.4);}
+.p-bio{font-size:14px;color:rgba(232,228,250,.62);line-height:1.55;margin-bottom:1rem;}
+.p-actions{display:flex;gap:.55rem;margin-bottom:1rem;}
+.p-btn{padding:.8rem 1rem;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--mist);font:inherit;cursor:pointer;}
+.p-btn.main{background:#fff;color:var(--void);border:none;font-weight:800;}
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin-bottom:1rem;}
+.p-stat{padding:.85rem;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid var(--border-light);text-align:center;}
+.p-stat b{display:block;font-family:var(--serif);font-size:24px;color:#fff;}
+.p-stat span{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(232,228,250,.34);}
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.p-grid img,.p-grid video{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px;background:var(--dusk);}
+.notice{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#fff;color:var(--void);padding:.85rem 1rem;border-radius:999px;font-weight:700;z-index:300;display:none;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+.notice.show{display:block;}
+.small-link{background:none;border:none;color:var(--lilac);font:inherit;cursor:pointer;padding:0;}
+
 </style>
 </head>
 <body>
@@ -491,81 +528,90 @@ html,body{height:100%;background:var(--void);font-family:var(--sans);color:var(-
 <!-- ══ DASHBOARD PREVIEW ══ -->
 <div class="section-label">App Dashboard</div>
 <div style="padding:1.5rem;background:var(--void);">
+
 <div class="dashboard-preview">
   <div class="d-nav">
     <div class="d-logo"><span class="d-logo-w">miru</span><div class="d-logo-d"></div></div>
     <div class="d-mode">
-      <div class="d-mpill on">🤖 AI picks</div>
-      <div class="d-mpill">👆 Explore</div>
+      <button class="d-mpill on" id="modeMatches">🤖 AI picks</button>
+      <button class="d-mpill" id="modeExplore">👆 Explore</button>
     </div>
-    <div class="d-bell">🔔<div class="d-bell-dot"></div></div>
+    <div class="d-bell" id="boostBtn" title="Boost for 30 min">🚀<div class="d-bell-dot"></div></div>
   </div>
+
   <div class="d-scroll">
-    <div class="d-greeting">Good morning, friend ✦</div>
-    <div class="d-title">Your <em>3 matches</em><br>dropped today.</div>
-    <div class="d-cd">
-      <div class="d-cd-dot"></div>
-      <div class="d-cd-txt">Next batch in <b>13:22:41</b></div>
+    <div class="d-app-view on" id="matchesView">
+      <div class="d-greeting" id="greetingText">Good evening ✦</div>
+      <div class="d-title">Your <em>Miru picks</em><br>are waiting.</div>
+      <div class="d-cd">
+        <div class="d-cd-dot"></div>
+        <div class="d-cd-txt">Signed in as <b id="sessionText">guest</b></div>
+      </div>
+      <div id="cardsWrap"></div>
+      <div class="d-empty app-hidden" id="noCards">No profiles yet. Create another account or add more profiles in Supabase.</div>
     </div>
 
-    <!-- Card 1 -->
-    <div class="d-card">
-      <div class="d-vid dv1">
-        <div class="d-vid-fade"></div>
-        <div class="d-play"><div class="d-ptri"></div></div>
-        <div class="d-prompt-tag">"Make me laugh..."</div>
-        <div class="d-score">97% match</div>
-      </div>
-      <div class="d-body">
-        <div class="d-top">
-          <div><div><span class="d-name">Sofia R.</span><span class="d-age">27</span></div><div class="d-loc">📍 2.4 mi · Phoenix</div></div>
-          <div class="d-ibadge">Relationship</div>
-        </div>
-        <div class="d-tags"><span class="d-tag">chill</span><span class="d-tag">artsy</span><span class="d-tag">tonight</span></div>
-        <div class="d-compat">
-          <div class="d-compat-row"><span>Compatibility</span><span>97%</span></div>
-          <div class="d-ctrack"><div class="d-cbar" style="width:97%"></div></div>
-        </div>
-        <div class="d-actions">
-          <button class="d-pass">Pass</button>
-          <button class="d-connect">✦ Connect</button>
-        </div>
-      </div>
+    <div class="d-app-view" id="messagesView">
+      <div class="d-greeting">Inbox</div>
+      <div class="d-title">Your <em>matches</em><br>and chats.</div>
+      <div class="d-empty" id="messagesList">Messaging UI can sit on top of your <b>conversations</b> table next. For now, this keeps the purple app flow in one place.</div>
     </div>
 
-    <!-- Card 2 -->
-    <div class="d-card">
-      <div class="d-vid dv2">
-        <div class="d-vid-fade"></div>
-        <div class="d-play"><div class="d-ptri"></div></div>
-        <div class="d-prompt-tag">"Something weird..."</div>
-        <div class="d-score">91% match</div>
-      </div>
-      <div class="d-body">
-        <div class="d-top">
-          <div><div><span class="d-name">Marcus T.</span><span class="d-age">30</span></div><div class="d-loc">📍 1.1 mi · Tempe</div></div>
-          <div class="d-ibadge">Relationship</div>
+    <div class="d-app-view" id="exploreView">
+      <div class="d-greeting">Explore</div>
+      <div class="d-title">See who <em>actually</em><br>fits your vibe.</div>
+      <div id="exploreCards"></div>
+      <div class="d-empty app-hidden" id="noExplore">No explore cards available yet.</div>
+    </div>
+
+    <div class="d-app-view" id="profileView">
+      <div class="profile-shell">
+        <div class="p-head">
+          <div class="p-avatar"><img id="profileAvatar" alt=""></div>
+          <div>
+            <div class="p-name" id="profileName">New User</div>
+            <div class="p-sub" id="profileMeta">Miru profile</div>
+          </div>
         </div>
-        <div class="d-tags"><span class="d-tag">adventurous</span><span class="d-tag">deep talks</span></div>
-        <div class="d-compat">
-          <div class="d-compat-row"><span>Compatibility</span><span>91%</span></div>
-          <div class="d-ctrack"><div class="d-cbar" style="width:91%"></div></div>
+        <div class="p-bio" id="profileBio">No bio yet.</div>
+        <div class="p-actions">
+          <button class="p-btn main" id="addPostBtn">Add post</button>
+          <button class="p-btn" id="refreshBtn">Refresh</button>
         </div>
-        <div class="d-actions">
-          <button class="d-pass">Pass</button>
-          <button class="d-connect">✦ Connect</button>
+        <div class="p-stats">
+          <div class="p-stat"><b id="statPosts">0</b><span>Posts</span></div>
+          <div class="p-stat"><b id="statLikes">0</b><span>Likes sent</span></div>
+          <div class="p-stat"><b id="statBoost">Off</b><span>Boost</span></div>
         </div>
+        <div class="p-grid" id="profileGrid"></div>
       </div>
     </div>
   </div>
+
   <div class="d-tabs">
-    <div class="d-tab on"><div class="d-tab-icon">💜</div><div class="d-tab-label">Matches</div></div>
-    <div class="d-tab"><div class="d-tab-icon">💬</div><div class="d-tab-label">Messages</div></div>
-    <div class="d-tab"><div class="d-tab-icon">🔍</div><div class="d-tab-label">Explore</div></div>
-    <div class="d-tab"><div class="d-tab-icon">👤</div><div class="d-tab-label">Profile</div></div>
+    <div class="d-tab on" data-view="matchesView"><div class="d-tab-icon">💜</div><div class="d-tab-label">Matches</div></div>
+    <div class="d-tab" data-view="messagesView"><div class="d-tab-icon">💬</div><div class="d-tab-label">Messages</div></div>
+    <div class="d-tab" data-view="exploreView"><div class="d-tab-icon">🔍</div><div class="d-tab-label">Explore</div></div>
+    <div class="d-tab" data-view="profileView"><div class="d-tab-icon">👤</div><div class="d-tab-label">Profile</div></div>
   </div>
 </div>
 </div>
+
+<div class="auth-modal" id="authModal">
+  <div class="auth-card">
+    <div class="auth-title">miru</div>
+    <div class="auth-sub">Use your real purple page as the live app. Sign in, then Miru will load your profile, explore cards, likes, and uploads.</div>
+    <input class="auth-input" id="authEmail" type="email" placeholder="Email">
+    <input class="auth-input" id="authPassword" type="password" placeholder="Password">
+    <div class="auth-row">
+      <button class="auth-ghost" id="signUpBtn">Sign up</button>
+      <button class="auth-primary" id="signInBtn">Sign in</button>
+    </div>
+    <div style="margin-top:.8rem;font-size:12px;color:rgba(232,228,250,.42);">Use your Supabase <b>anon</b> key in <code>config.js</code>.</div>
+  </div>
+</div>
+
+<div class="notice" id="notice"></div>
 
 <!-- ══ COLOR SWATCHES ══ -->
 <div class="section-label">Color Palette</div>
@@ -582,11 +628,272 @@ html,body{height:100%;background:var(--void);font-family:var(--sans);color:var(-
 
 <div style="height:3rem;background:var(--void);"></div>
 
+
 <script>
 const cur=document.getElementById('cur'),curR=document.getElementById('curR');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
 (function a(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+
+const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+const appState = { user:null, profiles:[], currentIndex:0 };
+
+const authModal = document.getElementById('authModal');
+const notice = document.getElementById('notice');
+
+function flash(msg){
+  notice.textContent = msg;
+  notice.classList.add('show');
+  clearTimeout(flash.t);
+  flash.t = setTimeout(()=>notice.classList.remove('show'), 1800);
+}
+
+function setView(id){
+  document.querySelectorAll('.d-app-view').forEach(v=>v.classList.toggle('on', v.id === id));
+  document.querySelectorAll('.d-tab').forEach(t=>t.classList.toggle('on', t.dataset.view === id));
+}
+document.querySelectorAll('.d-tab').forEach(tab => tab.addEventListener('click', ()=> setView(tab.dataset.view)));
+
+document.getElementById('modeMatches').addEventListener('click', ()=>{
+  document.getElementById('modeMatches').classList.add('on');
+  document.getElementById('modeExplore').classList.remove('on');
+  setView('matchesView');
+});
+document.getElementById('modeExplore').addEventListener('click', ()=>{
+  document.getElementById('modeExplore').classList.add('on');
+  document.getElementById('modeMatches').classList.remove('on');
+  setView('exploreView');
+});
+
+async function ensureProfile(user){
+  const { data: existing, error } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (existing) return existing;
+
+  const seed = {
+    user_id: user.id,
+    name: user.email ? user.email.split('@')[0] : 'New User',
+    bio: '',
+    avatar_url: '',
+    age: null
+  };
+
+  const { error: insertError } = await sb.from('profiles').insert(seed);
+  if (insertError) throw insertError;
+  return seed;
+}
+
+function cardTemplate(p, index, actionMode='matches'){
+  const age = p.age ? `<span class="d-age">${p.age}</span>` : '';
+  const score = Math.max(78, 97 - index * 3);
+  const prompt = ['"Make me laugh..."','"Something weird..."','"Tell me a story..."'][index % 3];
+  const tags = [p.bio?.split(' ').slice(0,2).join(' ') || 'real vibes', 'nearby'].map(t=>`<span class="d-tag">${t}</span>`).join('');
+  const vidClass = ['dv1','dv2','dv3'][index % 3];
+  return `
+    <div class="d-card" data-id="${p.user_id}">
+      <div class="d-vid ${vidClass}" style="${p.avatar_url ? `background-image:url('${p.avatar_url}');background-size:cover;background-position:center;` : ''}">
+        <div class="d-vid-fade"></div>
+        <div class="d-play"><div class="d-ptri"></div></div>
+        <div class="d-prompt-tag">${prompt}</div>
+        <div class="d-score">${score}% match</div>
+      </div>
+      <div class="d-body">
+        <div class="d-top">
+          <div>
+            <div><span class="d-name">${p.name || 'User'}</span>${age}</div>
+            <div class="d-loc">📍 Miru profile</div>
+          </div>
+          <div class="d-ibadge">${actionMode === 'matches' ? 'Relationship' : 'Explore'}</div>
+        </div>
+        <div class="d-tags">${tags}</div>
+        <div class="d-compat">
+          <div class="d-compat-row"><span>Compatibility</span><span>${score}%</span></div>
+          <div class="d-ctrack"><div class="d-cbar" style="width:${score}%"></div></div>
+        </div>
+        <div class="d-actions">
+          <button class="d-pass" onclick="passCard('${p.user_id}', this)">Pass</button>
+          <button class="d-connect" onclick="likeProfile('${p.user_id}', this)">✦ Connect</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadCards(){
+  const { data, error } = await sb
+    .from('profiles')
+    .select('user_id,name,age,bio,avatar_url,boost_until')
+    .neq('user_id', appState.user.id)
+    .order('boost_until', { ascending:false });
+
+  if (error) throw error;
+  appState.profiles = data || [];
+  const cardsWrap = document.getElementById('cardsWrap');
+  const exploreCards = document.getElementById('exploreCards');
+  cardsWrap.innerHTML = appState.profiles.slice(0,3).map((p,i)=>cardTemplate(p,i,'matches')).join('');
+  exploreCards.innerHTML = appState.profiles.map((p,i)=>cardTemplate(p,i,'explore')).join('');
+  document.getElementById('noCards').classList.toggle('app-hidden', appState.profiles.length !== 0);
+  document.getElementById('noExplore').classList.toggle('app-hidden', appState.profiles.length !== 0);
+}
+
+async function loadProfile(){
+  const { data: profile, error } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('user_id', appState.user.id)
+    .maybeSingle();
+  if (error) throw error;
+
+  document.getElementById('profileName').textContent = profile?.name || 'New User';
+  document.getElementById('profileBio').textContent = profile?.bio || 'No bio yet.';
+  document.getElementById('profileMeta').textContent = appState.user.email || 'Miru profile';
+  if (profile?.avatar_url) document.getElementById('profileAvatar').src = profile.avatar_url;
+
+  const { data: posts } = await sb.from('posts').select('*').eq('user_id', appState.user.id).order('created_at', { ascending:false });
+  const grid = document.getElementById('profileGrid');
+  grid.innerHTML = '';
+  (posts || []).forEach(p=>{
+    const el = document.createElement(p.media_type === 'video' ? 'video' : 'img');
+    el.src = p.media_url;
+    if (p.media_type === 'video'){ el.autoplay = true; el.loop = true; el.muted = true; el.playsInline = true; }
+    grid.appendChild(el);
+  });
+
+  const { count: sentLikes } = await sb.from('likes').select('*', { count:'exact', head:true }).eq('user_id', appState.user.id);
+  document.getElementById('statPosts').textContent = (posts || []).length;
+  document.getElementById('statLikes').textContent = sentLikes || 0;
+  const boosted = profile?.boost_until && new Date(profile.boost_until) > new Date();
+  document.getElementById('statBoost').textContent = boosted ? 'On' : 'Off';
+
+  document.getElementById('sessionText').textContent = appState.user.email || 'guest';
+  document.getElementById('greetingText').textContent = `Hi ${profile?.name || 'friend'} ✦`;
+}
+
+async function likeProfile(targetId, btn){
+  const { data: existing } = await sb
+    .from('likes')
+    .select('id')
+    .eq('user_id', appState.user.id)
+    .eq('target_user_id', targetId)
+    .eq('type', 'like')
+    .maybeSingle();
+  if (existing){
+    flash('Already liked');
+    return;
+  }
+
+  const { error } = await sb.from('likes').insert({
+    user_id: appState.user.id,
+    target_user_id: targetId,
+    type: 'like'
+  });
+  if (error){
+    alert(error.message);
+    return;
+  }
+  flash('Liked 💜');
+  btn?.closest('.d-card')?.remove();
+  await loadProfile();
+}
+
+function passCard(targetId, btn){
+  btn?.closest('.d-card')?.remove();
+  flash('Passed');
+}
+window.likeProfile = likeProfile;
+window.passCard = passCard;
+
+async function boostProfile(){
+  const until = new Date();
+  until.setMinutes(until.getMinutes() + 30);
+  const { error } = await sb.from('profiles').update({ boost_until: until.toISOString() }).eq('user_id', appState.user.id);
+  if (error){
+    alert(error.message);
+    return;
+  }
+  flash('Boost activated 🚀');
+  await loadProfile();
+}
+document.getElementById('boostBtn').addEventListener('click', boostProfile);
+
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{
+  await initApp();
+  flash('Refreshed');
+});
+
+document.getElementById('addPostBtn').addEventListener('click', ()=>{
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*,video/*';
+  input.onchange = async e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const path = `${appState.user.id}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await sb.storage.from('posts').upload(path, file);
+    if (uploadError){
+      alert(uploadError.message);
+      return;
+    }
+    const publicUrl = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
+    const { error: postError } = await sb.from('posts').insert({
+      user_id: appState.user.id,
+      media_url: publicUrl,
+      media_type: file.type.includes('video') ? 'video' : 'image'
+    });
+    if (postError){
+      alert(postError.message);
+      return;
+    }
+    flash('Post uploaded');
+    await loadProfile();
+  };
+  input.click();
+});
+
+document.getElementById('signInBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ alert(error.message); return; }
+  appState.user = data.user;
+  authModal.classList.remove('show');
+  await initApp();
+});
+
+document.getElementById('signUpBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error){ alert(error.message); return; }
+  if (data.user){
+    appState.user = data.user;
+    authModal.classList.remove('show');
+    await initApp();
+  } else {
+    flash('Check your email to confirm sign up');
+  }
+});
+
+async function initApp(){
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user){
+    authModal.classList.add('show');
+    return;
+  }
+  appState.user = user;
+  authModal.classList.remove('show');
+  await ensureProfile(user);
+  await loadCards();
+  await loadProfile();
+}
+
+initApp();
 </script>
+
 </body>
 </html>
