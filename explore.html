@@ -12,84 +12,76 @@
 <style>
 body{
   margin:0;
-  background:linear-gradient(135deg,#0f0f0f,#1a102d,#2d1b69);
+  font-family:-apple-system;
+  background: radial-gradient(circle at top,#1a102d,#0f0f0f);
   color:white;
-  font-family:sans-serif;
   overflow:hidden;
 }
-
 .feed{
   height:100vh;
   overflow-y:scroll;
   scroll-snap-type:y mandatory;
 }
-
 .card{
   height:100vh;
   position:relative;
   scroll-snap-align:start;
 }
-
 .card-bg{
   position:absolute;
   inset:0;
   background-size:cover;
   background-position:center;
 }
-
 .overlay{
   position:absolute;
   inset:0;
   background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
 }
-
 .content{
   position:absolute;
-  bottom:120px;
-  left:15px;
+  bottom:140px;
+  left:20px;
 }
-
-.name{font-size:24px;font-weight:bold;}
+.name{font-size:26px;font-weight:bold;}
 .bio{font-size:14px;color:#ccc;}
-
 .actions{
   position:absolute;
   right:15px;
-  bottom:120px;
+  bottom:140px;
   display:flex;
   flex-direction:column;
-  gap:20px;
+  gap:18px;
 }
-
 .btn{
-  width:60px;height:60px;
-  border-radius:50%;
+  width:64px;height:64px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(12px);
   cursor:pointer;
-  font-size:20px;
 }
-
 .popup{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.9);
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
   opacity:0;
   pointer-events:none;
   transition:0.3s;
 }
-
-.popup.show{
-  opacity:1;
-  pointer-events:all;
-}
-
-.popup h1{
-  color:#9F7AEA;
+.popup.show{opacity:1;pointer-events:all;}
+.nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:70px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  background:rgba(0,0,0,0.6);
 }
 </style>
 
@@ -101,103 +93,191 @@ body{
 
 <div class="popup" id="popup">
   <h1>🔥 It's a Match</h1>
+  <button onclick="goToChat()">Start Chat</button>
+</div>
+
+<div class="popup" id="upgradePopup">
+  <h1>⚡ You're Out of Super Likes</h1>
+  <p>Upgrade to Premium → get 10 daily + Boost 🚀</p>
+  <button onclick="upgrade()">Go Premium</button>
+</div>
+
+<div class="nav">
+  <div>🔥</div>
+  <div onclick="location.href='messages.html'">💬</div>
+  <div onclick="boost()">🚀</div>
 </div>
 
 <script>
 const { createClient } = supabase;
-
-const sb = createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_KEY
-);
+const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
 const feed = document.getElementById("feed");
 
-// LOAD USERS
 async function loadUsers(){
+  const { data: { user } } = await sb.auth.getUser();
+
   const { data: users } = await sb
     .from("profiles")
-    .select("*");
+    .select("*")
+    .neq("user_id", user.id)
+    .order("boost_until", { ascending:false });
 
   feed.innerHTML = "";
 
-  users.forEach(user => {
+  users.forEach(u => {
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <div class="card-bg" style="background-image:url('${user.avatar_url || ''}')"></div>
+      <div class="card-bg" style="background-image:url('${u.avatar_url || ''}')"></div>
       <div class="overlay"></div>
 
       <div class="content">
-        <div class="name">${user.name || "User"}, ${user.age || ""}</div>
-        <div class="bio">${user.bio || ""}</div>
+        <div class="name">${u.name || "User"}</div>
+        <div class="bio">${u.bio || ""}</div>
       </div>
 
       <div class="actions">
         <div class="btn" onclick="pass()">✕</div>
-        <div class="btn" onclick="superLike('${user.user_id}')">⚡</div>
-        <div class="btn" onclick="like('${user.user_id}')">❤️</div>
-        <div class="btn" onclick="openProfile('${user.user_id}')">👤</div>
+        <div class="btn" onclick="superLike('${u.user_id}')">⚡</div>
+        <div class="btn" onclick="like('${u.user_id}')">❤</div>
       </div>
     `;
+
+    enableDrag(card, u.user_id);
+    enableDoubleTap(card, u.user_id);
 
     feed.appendChild(card);
   });
 }
 
-// LIKE
 async function like(id){
   const { data: { user } } = await sb.auth.getUser();
 
-  if (!user) return alert("Login first");
-
   await sb.from("likes").insert({
-    user_id: user.id,
-    target_user_id: id,
-    type: "like"
+    user_id:user.id,
+    target_user_id:id,
+    type:"like"
   });
 
-  checkMatch(user.id, id);
+  checkMatch(user.id,id);
+  swipeNext();
 }
 
-// SUPER LIKE
 async function superLike(targetId){
   const { data: { user } } = await sb.auth.getUser();
 
+  const { data: profile } = await sb
+    .from("profiles")
+    .select("is_premium")
+    .eq("user_id", user.id)
+    .single();
+
+  const limit = profile?.is_premium ? 10 : 3;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const { data: likes } = await sb
+    .from("likes")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("type", "super")
+    .gte("created_at", today.toISOString());
+
+  if (likes.length >= limit){
+    document.getElementById("upgradePopup").classList.add("show");
+    return;
+  }
+
   await sb.from("likes").insert({
-    user_id: user.id,
-    target_user_id: targetId,
-    type: "super"
+    user_id:user.id,
+    target_user_id:targetId,
+    type:"super"
   });
 
-  checkMatch(user.id, targetId);
+  checkMatch(user.id,targetId);
 }
 
-// MATCH
-async function checkMatch(me, them){
+async function checkMatch(me,them){
   const { data } = await sb
     .from("likes")
     .select("*")
-    .eq("user_id", them)
-    .eq("target_user_id", me);
+    .eq("user_id",them)
+    .eq("target_user_id",me);
 
-  if (data.length > 0){
+  if(data.length){
     document.getElementById("popup").classList.add("show");
+
+    // prevent duplicates
+    const { data: existing } = await sb
+      .from("conversations")
+      .select("*")
+      .or(`and(user_a.eq.${me},user_b.eq.${them}),and(user_a.eq.${them},user_b.eq.${me})`)
+      .maybeSingle();
+
+    if(!existing){
+      await sb.from("conversations").insert({
+        user_a:me,
+        user_b:them,
+        last_message:"You matched 💜",
+        last_message_at:new Date().toISOString()
+      });
+    }
   }
 }
 
-// PASS
-function pass(){
-  window.scrollBy(0, window.innerHeight);
+async function boost(){
+  const { data: { user } } = await sb.auth.getUser();
+
+  const time = new Date();
+  time.setMinutes(time.getMinutes()+30);
+
+  await sb.from("profiles").update({
+    boost_until:time
+  }).eq("user_id",user.id);
+
+  alert("🚀 Boost activated!");
 }
 
-// PROFILE
-function openProfile(id){
-  window.location.href = "profile.html?user=" + id;
+function pass(){ swipeNext(); }
+
+function swipeNext(){
+  const card = document.querySelector(".card");
+  if(card){
+    card.style.transform = "translateX(100%)";
+    setTimeout(()=>card.remove(),200);
+  }
 }
 
-// START
+function enableDrag(card,id){
+  let startX=0;
+  card.addEventListener("pointerdown",e=>startX=e.clientX);
+  card.addEventListener("pointerup",e=>{
+    let diff=e.clientX-startX;
+    if(diff>100) like(id);
+    if(diff<-100) pass();
+  });
+}
+
+function enableDoubleTap(card,id){
+  let last=0;
+  card.addEventListener("click",()=>{
+    let now=Date.now();
+    if(now-last<300) like(id);
+    last=now;
+  });
+}
+
+function goToChat(){
+  window.location.href="messages.html";
+}
+
+function upgrade(){
+  alert("💰 Stripe later");
+}
+
 loadUsers();
 </script>
 
