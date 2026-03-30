@@ -1,285 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<script src="./config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Miru — Explore</title>
-
-<style>
-body{
-  margin:0;
-  font-family:-apple-system;
-  background: radial-gradient(circle at top,#1a102d,#0f0f0f);
-  color:white;
-  overflow:hidden;
-}
-.feed{
-  height:100vh;
-  overflow-y:scroll;
-  scroll-snap-type:y mandatory;
-}
-.card{
-  height:100vh;
-  position:relative;
-  scroll-snap-align:start;
-}
-.card-bg{
-  position:absolute;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-}
-.overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
-}
-.content{
-  position:absolute;
-  bottom:140px;
-  left:20px;
-}
-.name{font-size:26px;font-weight:bold;}
-.bio{font-size:14px;color:#ccc;}
-.actions{
-  position:absolute;
-  right:15px;
-  bottom:140px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-.btn{
-  width:64px;height:64px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(12px);
-  cursor:pointer;
-}
-.popup{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.9);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-}
-.popup.show{opacity:1;pointer-events:all;}
-.nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:70px;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  background:rgba(0,0,0,0.6);
-}
-</style>
-
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miru — Explore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:#F8F6FF;color:#1A1528;padding-bottom:86px}
+    .nav{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E4DEFF;background:rgba(248,246,255,.95)}
+    .logo{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;font-weight:700}
+    .feed{padding:16px}
+    .card{border-radius:28px;overflow:hidden;background:linear-gradient(145deg,#ede6ff 0%,#d8ccff 50%,#c8b8f8 100%);min-height:75vh;position:relative;box-shadow:0 12px 40px rgba(124,92,191,.12)}
+    .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+    .fade{position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(to top,rgba(248,246,255,1),transparent)}
+    .prompt{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.9);border:1px solid #E4DEFF;border-radius:999px;padding:6px 12px;font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:#6B5F8A}
+    .score{position:absolute;top:16px;right:16px;background:#7C5CBF;color:#fff;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:700}
+    .content{position:absolute;left:0;right:0;bottom:0;padding:24px}
+    .name{font-family:'Playfair Display',serif;font-size:34px;font-weight:700}
+    .loc{font-size:13px;color:#6B5F8A;margin:6px 0 12px}
+    .bio{font-size:14px;color:#6B5F8A;line-height:1.5;margin-bottom:12px}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .tag{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.9);border:1px solid #E4DEFF;font-size:11px;color:#6B5F8A}
+    .actions{display:flex;gap:14px;justify-content:center}
+    .btn{width:62px;height:62px;border-radius:50%;border:1px solid #E4DEFF;background:rgba(255,255,255,.95);font-size:22px;cursor:pointer}
+    .empty{padding:40px;text-align:center;color:#6B5F8A}
+    .tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid #E4DEFF;display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
+    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#A99DC0;text-decoration:none}
+    .tab.on{color:#7C5CBF}
+    .tab div:last-child{font-size:9px;text-transform:uppercase}
+  </style>
 </head>
-
 <body>
+  <div class="nav">
+    <div class="logo">miru.</div>
+    <div>Explore</div>
+  </div>
 
-<div class="feed" id="feed"></div>
+  <div class="feed" id="feed"></div>
 
-<div class="popup" id="popup">
-  <h1>🔥 It's a Match</h1>
-  <button onclick="goToChat()">Start Chat</button>
-</div>
-
-<div class="popup" id="upgradePopup">
-  <h1>⚡ You're Out of Super Likes</h1>
-  <p>Upgrade to Premium → get 10 daily + Boost 🚀</p>
-  <button onclick="upgrade()">Go Premium</button>
-</div>
-
-<div class="nav">
-  <div>🔥</div>
-  <div onclick="location.href='messages.html'">💬</div>
-  <div onclick="boost()">🚀</div>
-</div>
+  <div class="tabs">
+    <a class="tab" href="index.html"><div>💜</div><div>Matches</div></a>
+    <a class="tab" href="messages.html"><div>💬</div><div>Messages</div></a>
+    <a class="tab on" href="explore.html"><div>🔍</div><div>Explore</div></a>
+    <a class="tab" href="profile.html"><div>👤</div><div>Profile</div></a>
+  </div>
 
 <script>
-const { createClient } = supabase;
-const sb = createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+const sb = supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+);
 
-const feed = document.getElementById("feed");
+let me = null;
+let profiles = [];
+let current = 0;
 
-async function loadUsers(){
+async function init(){
   const { data: { user } } = await sb.auth.getUser();
+  if (!user) return window.location.href = "auth.html";
+  me = user;
+  await loadProfiles();
+}
 
-  const { data: users } = await sb
+async function loadProfiles(){
+  const { data, error } = await sb
     .from("profiles")
-    .select("*")
-    .neq("user_id", user.id)
+    .select("user_id,name,age,bio,avatar_url,is_premium,boost_until")
+    .neq("user_id", me.id)
     .order("boost_until", { ascending:false });
 
-  feed.innerHTML = "";
-
-  users.forEach(u => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <div class="card-bg" style="background-image:url('${u.avatar_url || ''}')"></div>
-      <div class="overlay"></div>
-
-      <div class="content">
-        <div class="name">${u.name || "User"}</div>
-        <div class="bio">${u.bio || ""}</div>
-      </div>
-
-      <div class="actions">
-        <div class="btn" onclick="pass()">✕</div>
-        <div class="btn" onclick="superLike('${u.user_id}')">⚡</div>
-        <div class="btn" onclick="like('${u.user_id}')">❤</div>
-      </div>
-    `;
-
-    enableDrag(card, u.user_id);
-    enableDoubleTap(card, u.user_id);
-
-    feed.appendChild(card);
-  });
-}
-
-async function like(id){
-  const { data: { user } } = await sb.auth.getUser();
-
-  await sb.from("likes").insert({
-    user_id:user.id,
-    target_user_id:id,
-    type:"like"
-  });
-
-  checkMatch(user.id,id);
-  swipeNext();
-}
-
-async function superLike(targetId){
-  const { data: { user } } = await sb.auth.getUser();
-
-  const { data: profile } = await sb
-    .from("profiles")
-    .select("is_premium")
-    .eq("user_id", user.id)
-    .single();
-
-  const limit = profile?.is_premium ? 10 : 3;
-
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const { data: likes } = await sb
-    .from("likes")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("type", "super")
-    .gte("created_at", today.toISOString());
-
-  if (likes.length >= limit){
-    document.getElementById("upgradePopup").classList.add("show");
+  if (error) {
+    document.getElementById("feed").innerHTML = `<div class="empty">${error.message}</div>`;
     return;
   }
 
-  await sb.from("likes").insert({
-    user_id:user.id,
-    target_user_id:targetId,
-    type:"super"
-  });
-
-  checkMatch(user.id,targetId);
+  profiles = data || [];
+  renderCurrent();
 }
 
-async function checkMatch(me,them){
-  const { data } = await sb
+function renderCurrent(){
+  const feed = document.getElementById("feed");
+  const p = profiles[current];
+
+  if (!p) {
+    feed.innerHTML = `<div class="empty">No more profiles right now.</div>`;
+    return;
+  }
+
+  feed.innerHTML = `
+    <div class="card">
+      ${p.avatar_url ? `<div class="bg" style="background-image:url('${p.avatar_url}')"></div>` : ``}
+      <div class="prompt">"Make me laugh..."</div>
+      <div class="score">97% match</div>
+      <div class="fade"></div>
+      <div class="content">
+        <div class="name">${p.name || "Match"}${p.age ? `, ${p.age}` : ""}</div>
+        <div class="loc">📍 Nearby · ${p.is_premium ? "Premium" : "Miru"}</div>
+        <div class="bio">${p.bio || "No bio yet."}</div>
+        <div class="tags">
+          <div class="tag">real</div>
+          <div class="tag">video-first</div>
+          ${p.is_premium ? `<div class="tag">premium</div>` : ``}
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="passUser()">✕</button>
+          <button class="btn" onclick="superLikeUser()">⚡</button>
+          <button class="btn" onclick="likeUser()">❤️</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function nextProfile(){
+  current += 1;
+  renderCurrent();
+}
+
+function passUser(){
+  nextProfile();
+}
+
+async function likeUser(){
+  const p = profiles[current];
+  if (!p) return;
+
+  const { data: existing } = await sb
     .from("likes")
-    .select("*")
-    .eq("user_id",them)
-    .eq("target_user_id",me);
+    .select("id")
+    .eq("user_id", me.id)
+    .eq("target_user_id", p.user_id)
+    .eq("type", "like")
+    .maybeSingle();
 
-  if(data.length){
-    document.getElementById("popup").classList.add("show");
+  if (!existing) {
+    await sb.from("likes").insert({
+      user_id: me.id,
+      target_user_id: p.user_id,
+      type: "like"
+    });
+    await maybeCreateConversation(me.id, p.user_id);
+  }
 
-    // prevent duplicates
-    const { data: existing } = await sb
-      .from("conversations")
-      .select("*")
-      .or(`and(user_a.eq.${me},user_b.eq.${them}),and(user_a.eq.${them},user_b.eq.${me})`)
-      .maybeSingle();
+  nextProfile();
+}
 
-    if(!existing){
-      await sb.from("conversations").insert({
-        user_a:me,
-        user_b:them,
-        last_message:"You matched 💜",
-        last_message_at:new Date().toISOString()
-      });
-    }
+async function superLikeUser(){
+  const p = profiles[current];
+  if (!p) return;
+
+  const { data: existing } = await sb
+    .from("likes")
+    .select("id")
+    .eq("user_id", me.id)
+    .eq("target_user_id", p.user_id)
+    .eq("type", "super")
+    .maybeSingle();
+
+  if (!existing) {
+    await sb.from("likes").insert({
+      user_id: me.id,
+      target_user_id: p.user_id,
+      type: "super"
+    });
+    await maybeCreateConversation(me.id, p.user_id);
+  }
+
+  nextProfile();
+}
+
+async function maybeCreateConversation(myId, targetId){
+  const { data: mutual } = await sb
+    .from("likes")
+    .select("id")
+    .eq("user_id", targetId)
+    .eq("target_user_id", myId)
+    .limit(1);
+
+  if (!mutual || !mutual.length) return;
+
+  const { data: existing } = await sb
+    .from("conversations")
+    .select("id")
+    .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
+    .maybeSingle();
+
+  if (!existing) {
+    await sb.from("conversations").insert({
+      user_a: myId,
+      user_b: targetId,
+      last_message: "You matched 💜",
+      last_message_at: new Date().toISOString()
+    });
+    alert("It’s a match 💜");
   }
 }
 
-async function boost(){
-  const { data: { user } } = await sb.auth.getUser();
-
-  const time = new Date();
-  time.setMinutes(time.getMinutes()+30);
-
-  await sb.from("profiles").update({
-    boost_until:time
-  }).eq("user_id",user.id);
-
-  alert("🚀 Boost activated!");
-}
-
-function pass(){ swipeNext(); }
-
-function swipeNext(){
-  const card = document.querySelector(".card");
-  if(card){
-    card.style.transform = "translateX(100%)";
-    setTimeout(()=>card.remove(),200);
-  }
-}
-
-function enableDrag(card,id){
-  let startX=0;
-  card.addEventListener("pointerdown",e=>startX=e.clientX);
-  card.addEventListener("pointerup",e=>{
-    let diff=e.clientX-startX;
-    if(diff>100) like(id);
-    if(diff<-100) pass();
-  });
-}
-
-function enableDoubleTap(card,id){
-  let last=0;
-  card.addEventListener("click",()=>{
-    let now=Date.now();
-    if(now-last<300) like(id);
-    last=now;
-  });
-}
-
-function goToChat(){
-  window.location.href="messages.html";
-}
-
-function upgrade(){
-  alert("💰 Stripe later");
-}
-
-loadUsers();
+init();
 </script>
-
 </body>
 </html>
