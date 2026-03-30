@@ -3,203 +3,969 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <title>Miru — Explore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;background:#F8F6FF;color:#1A1528;padding-bottom:86px}
-    .nav{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #E4DEFF;background:rgba(248,246,255,.95)}
-    .logo{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;font-weight:700}
-    .feed{padding:16px}
-    .card{border-radius:28px;overflow:hidden;background:linear-gradient(145deg,#ede6ff 0%,#d8ccff 50%,#c8b8f8 100%);min-height:75vh;position:relative;box-shadow:0 12px 40px rgba(124,92,191,.12)}
-    .bg{position:absolute;inset:0;background-size:cover;background-position:center}
-    .fade{position:absolute;left:0;right:0;bottom:0;height:55%;background:linear-gradient(to top,rgba(248,246,255,1),transparent)}
-    .prompt{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.9);border:1px solid #E4DEFF;border-radius:999px;padding:6px 12px;font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:#6B5F8A}
-    .score{position:absolute;top:16px;right:16px;background:#7C5CBF;color:#fff;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:700}
-    .content{position:absolute;left:0;right:0;bottom:0;padding:24px}
-    .name{font-family:'Playfair Display',serif;font-size:34px;font-weight:700}
-    .loc{font-size:13px;color:#6B5F8A;margin:6px 0 12px}
-    .bio{font-size:14px;color:#6B5F8A;line-height:1.5;margin-bottom:12px}
-    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-    .tag{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.9);border:1px solid #E4DEFF;font-size:11px;color:#6B5F8A}
-    .actions{display:flex;gap:14px;justify-content:center}
-    .btn{width:62px;height:62px;border-radius:50%;border:1px solid #E4DEFF;background:rgba(255,255,255,.95);font-size:22px;cursor:pointer}
-    .empty{padding:40px;text-align:center;color:#6B5F8A}
-    .tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid #E4DEFF;display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
-    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#A99DC0;text-decoration:none}
-    .tab.on{color:#7C5CBF}
-    .tab div:last-child{font-size:9px;text-transform:uppercase}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0A1A;
+      --bg-2: #130F2A;
+      --surface: #1C1640;
+      --surface-2: #241C4C;
+      --border: rgba(196, 184, 240, 0.14);
+      --border-strong: rgba(196, 184, 240, 0.22);
+      --violet: #4A3F8A;
+      --lavender: #8B7EC8;
+      --lilac: #C4B8F0;
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --success: #7EEDB0;
+      --danger: #FF8EA1;
+      --warning: #FFD98E;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.22), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    body { padding-bottom: 100px; }
+
+    .ambient::before,
+    .ambient::after {
+      content: "";
+      position: fixed;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .ambient::before {
+      top: -60px;
+      left: -90px;
+      background: rgba(139, 126, 200, 0.16);
+    }
+
+    .ambient::after {
+      right: -100px;
+      top: 260px;
+      background: rgba(74, 63, 138, 0.24);
+    }
+
+    .shell {
+      max-width: 460px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(18px);
+      background: rgba(13, 10, 26, 0.72);
+      border-bottom: 1px solid rgba(196,184,240,0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 27px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-chip,
+    .ghost-btn,
+    .filter-chip,
+    .sub-chip,
+    .mini-pill,
+    .profile-badge,
+    .quick-btn,
+    .action-btn,
+    .tab {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-chip {
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 700;
+    }
+
+    .ghost-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .page {
+      padding: 18px;
+    }
+
+    .hero {
+      border-radius: 34px;
+      padding: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -30px;
+      top: -20px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, rgba(196,184,240,0.2), transparent 65%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      color: var(--lilac);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-family: var(--serif);
+      font-size: 34px;
+      line-height: 0.97;
+      letter-spacing: -0.8px;
+      color: var(--white);
+    }
+
+    .title em { color: var(--lilac); font-style: italic; }
+
+    .subcopy {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 300px;
+    }
+
+    .stack-box {
+      min-width: 102px;
+      text-align: right;
+      padding: 12px 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stack-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .stack-value {
+      color: var(--white);
+      font-weight: 800;
+      font-size: 22px;
+    }
+
+    .filter-row,
+    .subfilter-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-row::-webkit-scrollbar,
+    .subfilter-row::-webkit-scrollbar { display: none; }
+
+    .filter-chip,
+    .sub-chip {
+      white-space: nowrap;
+      padding: 11px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .filter-chip.on,
+    .sub-chip.on {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+    }
+
+    .subfilter-row {
+      margin-top: 10px;
+    }
+
+    .feed-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .feed-copy {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .mini-pill {
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .card-wrap {
+      position: relative;
+      min-height: 78vh;
+    }
+
+    .ghost-card {
+      position: absolute;
+      inset: 12px 8px auto 8px;
+      height: calc(100% - 8px);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      transform: scale(0.98);
+      z-index: 0;
+    }
+
+    .ghost-card.second {
+      inset-top: 20px;
+      transform: scale(0.96);
+      opacity: 0.72;
+    }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      border-radius: 30px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #352B6B, #1E1745);
+      min-height: 78vh;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(196,184,240,0.14);
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.02);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7,5,15,0.18) 10%, rgba(7,5,15,0.88) 100%);
+    }
+
+    .top-layer,
+    .content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .top-layer {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .profile-badge,
+    .compat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+    }
+
+    .profile-badge {
+      background: rgba(255,255,255,0.84);
+      color: #21194A;
+      border: 1px solid rgba(255,255,255,0.45);
+      font-family: var(--serif);
+      font-style: italic;
+    }
+
+    .compat-pill {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .content {
+      min-height: 78vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .headline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .name {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .loc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.5;
+    }
+
+    .signal {
+      min-width: 96px;
+      text-align: right;
+    }
+
+    .signal-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .signal-score {
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .bio {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 14px;
+      max-width: 95%;
+    }
+
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .insight {
+      padding: 12px 13px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .insight small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .insight strong {
+      color: var(--white);
+      font-size: 13px;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .quick-btn {
+      padding: 13px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .action-btn {
+      min-height: 62px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .action-btn.pass {
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .action-btn.super {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .action-btn.like {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+    }
+
+    .empty {
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--text-soft);
+      line-height: 1.7;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px));
+      padding: 12px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(18, 13, 37, 0.88);
+      border: 1px solid rgba(196,184,240,0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(18px);
+      z-index: 70;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .tab {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 54px;
+      border-radius: 18px;
+      color: var(--text-muted);
+      transition: 0.2s ease;
+    }
+
+    .tab-icon { font-size: 20px; }
+
+    .tab-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      font-weight: 700;
+    }
+
+    .tab.on {
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+    }
+
+    @media (max-width: 390px) {
+      .title { font-size: 30px; }
+      .headline-row { flex-direction: column; align-items: flex-start; }
+      .signal { text-align: left; }
+      .insights { grid-template-columns: 1fr; }
+      .quick-row { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <div class="logo">miru.</div>
-    <div>Explore</div>
-  </div>
+  <div class="ambient"></div>
 
-  <div class="feed" id="feed"></div>
-
-  <div class="tabs">
-    <a class="tab" href="index.html"><div>💜</div><div>Matches</div></a>
-    <a class="tab" href="messages.html"><div>💬</div><div>Messages</div></a>
-    <a class="tab on" href="explore.html"><div>🔍</div><div>Explore</div></a>
-    <a class="tab" href="profile.html"><div>👤</div><div>Profile</div></a>
-  </div>
-
-<script>
-const sb = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
-);
-
-let me = null;
-let profiles = [];
-let current = 0;
-
-async function init(){
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return window.location.href = "auth.html";
-  me = user;
-  await loadProfiles();
-}
-
-async function loadProfiles(){
-  const { data, error } = await sb
-    .from("profiles")
-    .select("user_id,name,age,bio,avatar_url,is_premium,boost_until")
-    .neq("user_id", me.id)
-    .order("boost_until", { ascending:false });
-
-  if (error) {
-    document.getElementById("feed").innerHTML = `<div class="empty">${error.message}</div>`;
-    return;
-  }
-
-  profiles = data || [];
-  renderCurrent();
-}
-
-function renderCurrent(){
-  const feed = document.getElementById("feed");
-  const p = profiles[current];
-
-  if (!p) {
-    feed.innerHTML = `<div class="empty">No more profiles right now.</div>`;
-    return;
-  }
-
-  feed.innerHTML = `
-    <div class="card">
-      ${p.avatar_url ? `<div class="bg" style="background-image:url('${p.avatar_url}')"></div>` : ``}
-      <div class="prompt">"Make me laugh..."</div>
-      <div class="score">97% match</div>
-      <div class="fade"></div>
-      <div class="content">
-        <div class="name">${p.name || "Match"}${p.age ? `, ${p.age}` : ""}</div>
-        <div class="loc">📍 Nearby · ${p.is_premium ? "Premium" : "Miru"}</div>
-        <div class="bio">${p.bio || "No bio yet."}</div>
-        <div class="tags">
-          <div class="tag">real</div>
-          <div class="tag">video-first</div>
-          ${p.is_premium ? `<div class="tag">premium</div>` : ``}
-        </div>
-        <div class="actions">
-          <button class="btn" onclick="passUser()">✕</button>
-          <button class="btn" onclick="superLikeUser()">⚡</button>
-          <button class="btn" onclick="likeUser()">❤️</button>
-        </div>
+  <div class="shell">
+    <div class="nav">
+      <div class="brand">
+        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <div class="logo">miru.</div>
+      </div>
+      <div class="nav-right">
+        <div class="nav-chip" id="deckCount">12 nearby</div>
+        <button class="ghost-btn" onclick="window.location.href='profile.html'">⚙️</button>
       </div>
     </div>
-  `;
-}
 
-function nextProfile(){
-  current += 1;
-  renderCurrent();
-}
+    <div class="page">
+      <div class="hero">
+        <div class="eyebrow">Explore with intention</div>
+        <div class="title-row">
+          <div>
+            <div class="title">A better <em>discovery</em><br />engine.</div>
+            <div class="subcopy">Skip the dead-end swipes. Explore richer profiles, stronger signals, and people who actually fit your energy.</div>
+          </div>
+          <div class="stack-box">
+            <div class="stack-label">In deck</div>
+            <div class="stack-value" id="stackValue">12</div>
+          </div>
+        </div>
 
-function passUser(){
-  nextProfile();
-}
+        <div class="filter-row">
+          <button class="filter-chip on">For you</button>
+          <button class="filter-chip">Nearby now</button>
+          <button class="filter-chip">Premium</button>
+          <button class="filter-chip">New faces</button>
+          <button class="filter-chip">Video-first</button>
+        </div>
 
-async function likeUser(){
-  const p = profiles[current];
-  if (!p) return;
+        <div class="subfilter-row">
+          <button class="sub-chip on">Relationship</button>
+          <button class="sub-chip">Fun tonight</button>
+          <button class="sub-chip">Deep talks</button>
+          <button class="sub-chip">Creative</button>
+        </div>
+      </div>
 
-  const { data: existing } = await sb
-    .from("likes")
-    .select("id")
-    .eq("user_id", me.id)
-    .eq("target_user_id", p.user_id)
-    .eq("type", "like")
-    .maybeSingle();
+      <div class="feed-meta">
+        <div class="feed-copy">Curated profiles that match your vibe, availability, and what you actually want right now.</div>
+        <div class="mini-pill" id="positionPill">1 / 12</div>
+      </div>
 
-  if (!existing) {
-    await sb.from("likes").insert({
-      user_id: me.id,
-      target_user_id: p.user_id,
-      type: "like"
-    });
-    await maybeCreateConversation(me.id, p.user_id);
-  }
+      <div class="card-wrap" id="feed"></div>
+    </div>
+  </div>
 
-  nextProfile();
-}
+  <div class="tabs">
+    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab on" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
+  </div>
 
-async function superLikeUser(){
-  const p = profiles[current];
-  if (!p) return;
+  <script>
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
 
-  const { data: existing } = await sb
-    .from("likes")
-    .select("id")
-    .eq("user_id", me.id)
-    .eq("target_user_id", p.user_id)
-    .eq("type", "super")
-    .maybeSingle();
+    let me = null;
+    let profiles = [];
+    let current = 0;
 
-  if (!existing) {
-    await sb.from("likes").insert({
-      user_id: me.id,
-      target_user_id: p.user_id,
-      type: "super"
-    });
-    await maybeCreateConversation(me.id, p.user_id);
-  }
+    const prompts = [
+      'Make me laugh...',
+      'Something weird...',
+      'Tell me a story...',
+      'What are you really like?',
+      'What do you want this week?'
+    ];
 
-  nextProfile();
-}
+    const insightPool = [
+      ['Best first date', 'Late-night dessert and a walk'],
+      ['Current energy', 'Looking for something intentional'],
+      ['Conversation style', 'Playful, curious, a little chaotic'],
+      ['Weekend vibe', 'Rooftops, coffee, and disappearing into a bookstore'],
+      ['Green flag', 'Actually follows through'],
+      ['Small obsession', 'Music that feels cinematic']
+    ];
 
-async function maybeCreateConversation(myId, targetId){
-  const { data: mutual } = await sb
-    .from("likes")
-    .select("id")
-    .eq("user_id", targetId)
-    .eq("target_user_id", myId)
-    .limit(1);
+    function esc(v) {
+      return String(v ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-  if (!mutual || !mutual.length) return;
+    function gradientFor(index) {
+      if (index % 3 === 1) return 'linear-gradient(145deg,#5F4EB3,#231A54)';
+      if (index % 3 === 2) return 'linear-gradient(145deg,#7B5FDB,#2A2255)';
+      return 'linear-gradient(145deg,#46388E,#1D1642)';
+    }
 
-  const { data: existing } = await sb
-    .from("conversations")
-    .select("id")
-    .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
-    .maybeSingle();
+    function bgStyle(profile, index) {
+      if (profile.avatar_url) {
+        return `background-image:url('${esc(profile.avatar_url)}');background-size:cover;background-position:center;`;
+      }
+      return `background:${gradientFor(index)};`;
+    }
 
-  if (!existing) {
-    await sb.from("conversations").insert({
-      user_a: myId,
-      user_b: targetId,
-      last_message: "You matched 💜",
-      last_message_at: new Date().toISOString()
-    });
-    alert("It’s a match 💜");
-  }
-}
+    function compatibility(index) {
+      return Math.max(82, 97 - (index * 3));
+    }
 
-init();
-</script>
+    function getPrompt(index) {
+      return prompts[index % prompts.length];
+    }
+
+    function buildInsights(index) {
+      const first = insightPool[index % insightPool.length];
+      const second = insightPool[(index + 2) % insightPool.length];
+      return [first, second];
+    }
+
+    function updateDeckMeta() {
+      const total = profiles.length;
+      const left = Math.max(total - current, 0);
+      const deckCount = document.getElementById('deckCount');
+      const stackValue = document.getElementById('stackValue');
+      const positionPill = document.getElementById('positionPill');
+
+      if (deckCount) deckCount.textContent = `${left} nearby`;
+      if (stackValue) stackValue.textContent = left;
+      if (positionPill) positionPill.textContent = total ? `${Math.min(current + 1, total)} / ${total}` : '0 / 0';
+    }
+
+    async function init() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+      me = user;
+      bindFilterChips();
+      await loadProfiles();
+    }
+
+    function bindFilterChips() {
+      document.querySelectorAll('.filter-chip, .sub-chip').forEach((chip) => {
+        chip.addEventListener('click', () => {
+          const row = chip.parentElement;
+          row.querySelectorAll('button').forEach((btn) => btn.classList.remove('on'));
+          chip.classList.add('on');
+        });
+      });
+    }
+
+    async function loadProfiles() {
+      const { data, error } = await sb
+        .from('profiles')
+        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until')
+        .neq('user_id', me.id)
+        .order('boost_until', { ascending: false });
+
+      if (error) {
+        document.getElementById('feed').innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+        return;
+      }
+
+      profiles = data || [];
+      current = 0;
+      updateDeckMeta();
+      renderCurrent();
+    }
+
+    function renderCurrent() {
+      const feed = document.getElementById('feed');
+      const p = profiles[current];
+      updateDeckMeta();
+
+      if (!p) {
+        feed.innerHTML = `
+          <div class="empty">
+            You’ve cleared your deck for now.<br />
+            Check back later for new faces or open Matches to revisit your strongest connections.
+          </div>
+        `;
+        return;
+      }
+
+      const insights = buildInsights(current);
+      const prompt = getPrompt(current);
+      const score = compatibility(current);
+
+      feed.innerHTML = `
+        <div class="ghost-card second"></div>
+        <div class="ghost-card"></div>
+        <div class="card">
+          ${p.avatar_url ? `<div class="bg" style="${bgStyle(p, current)}"></div>` : `<div class="bg" style="${bgStyle(p, current)}"></div>`}
+          <div class="overlay"></div>
+
+          <div class="top-layer">
+            <div class="profile-badge">"${esc(prompt)}"</div>
+            <div class="compat-pill">${score}% match</div>
+          </div>
+
+          <div class="content">
+            <div class="headline-row">
+              <div>
+                <div class="name">${esc(p.name || 'Match')}${p.age ? `, ${esc(p.age)}` : ''}</div>
+                <div class="loc">📍 Nearby · ${p.is_premium ? 'Premium' : 'Miru'} · live in Phoenix</div>
+              </div>
+              <div class="signal">
+                <div class="signal-label">Signal</div>
+                <div class="signal-score">Strong</div>
+              </div>
+            </div>
+
+            <div class="bio">${esc(p.bio || 'No bio yet. But the vibe is promising.')}</div>
+
+            <div class="insights">
+              <div class="insight">
+                <small>${esc(insights[0][0])}</small>
+                <strong>${esc(insights[0][1])}</strong>
+              </div>
+              <div class="insight">
+                <small>${esc(insights[1][0])}</small>
+                <strong>${esc(insights[1][1])}</strong>
+              </div>
+            </div>
+
+            <div class="tags">
+              <div class="tag">real</div>
+              <div class="tag">video-first</div>
+              ${p.is_premium ? `<div class="tag">premium</div>` : ''}
+              <div class="tag">intentional</div>
+              <div class="tag">miru</div>
+            </div>
+
+            <div class="quick-row">
+              <button class="quick-btn" onclick="window.location.href='profile.html'">Edit vibe<br />settings</button>
+              <button class="quick-btn" onclick="window.location.href='messages.html'">Open your<br />messages</button>
+              <button class="quick-btn" onclick="window.location.href='index.html'">Back to<br />daily matches</button>
+            </div>
+
+            <div class="actions">
+              <button class="action-btn pass" onclick="passUser()">✕ Pass</button>
+              <button class="action-btn super" onclick="superLikeUser()">⚡ Super</button>
+              <button class="action-btn like" onclick="likeUser()">💜 Connect</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function nextProfile() {
+      current += 1;
+      renderCurrent();
+    }
+
+    function passUser() {
+      nextProfile();
+    }
+
+    async function likeUser() {
+      const p = profiles[current];
+      if (!p) return;
+
+      const { data: existing } = await sb
+        .from('likes')
+        .select('id')
+        .eq('user_id', me.id)
+        .eq('target_user_id', p.user_id)
+        .eq('type', 'like')
+        .maybeSingle();
+
+      if (!existing) {
+        const { error } = await sb.from('likes').insert({
+          user_id: me.id,
+          target_user_id: p.user_id,
+          type: 'like'
+        });
+
+        if (error) {
+          alert(error.message);
+          return;
+        }
+
+        await maybeCreateConversation(me.id, p.user_id);
+      }
+
+      nextProfile();
+    }
+
+    async function superLikeUser() {
+      const p = profiles[current];
+      if (!p) return;
+
+      const { data: existing } = await sb
+        .from('likes')
+        .select('id')
+        .eq('user_id', me.id)
+        .eq('target_user_id', p.user_id)
+        .eq('type', 'super')
+        .maybeSingle();
+
+      if (!existing) {
+        const { error } = await sb.from('likes').insert({
+          user_id: me.id,
+          target_user_id: p.user_id,
+          type: 'super'
+        });
+
+        if (error) {
+          alert(error.message);
+          return;
+        }
+
+        await maybeCreateConversation(me.id, p.user_id);
+      }
+
+      nextProfile();
+    }
+
+    async function maybeCreateConversation(myId, targetId) {
+      const { data: mutual } = await sb
+        .from('likes')
+        .select('id')
+        .eq('user_id', targetId)
+        .eq('target_user_id', myId)
+        .limit(1);
+
+      if (!mutual || !mutual.length) return;
+
+      const { data: existing } = await sb
+        .from('conversations')
+        .select('id')
+        .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
+        .maybeSingle();
+
+      if (!existing) {
+        await sb.from('conversations').insert({
+          user_a: myId,
+          user_b: targetId,
+          last_message: 'You matched 💜',
+          last_message_at: new Date().toISOString()
+        });
+        alert('It’s a match 💜');
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
