@@ -3,72 +3,596 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <title>Miru — Premium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;background:linear-gradient(160deg,#F8F6FF 0%,#EDE8FF 60%,#D8CCFF 100%);color:#1A1528;padding:20px 20px 100px}
-    .nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-    .logo{font-family:'Playfair Display',serif;font-size:24px;font-style:italic;font-weight:700}
-    .card{max-width:520px;margin:0 auto}
-    .icon{font-size:56px;text-align:center;margin-bottom:16px}
-    h1{font-family:'Playfair Display',serif;font-size:42px;line-height:1.05;text-align:center;margin-bottom:8px}
-    h1 em{font-style:italic;color:#7C5CBF}
-    .sub{text-align:center;color:#6B5F8A;line-height:1.6;margin-bottom:18px}
-    .compare{background:#fff;border-radius:18px;border:1px solid #E4DEFF;overflow:hidden;margin-bottom:16px}
-    .row{display:grid;grid-template-columns:1fr 80px 100px;padding:12px 14px;border-bottom:1px solid #E4DEFF}
-    .row:last-child{border-bottom:none}
-    .row.h{background:#F0ECFF;font-size:11px;text-transform:uppercase;color:#A99DC0;font-weight:700}
-    .prem{text-align:center;color:#7C5CBF;font-weight:700}
-    .free{text-align:center;color:#A99DC0}
-    .price{background:#EDE8FF;border:2px solid #7C5CBF;border-radius:18px;padding:18px;position:relative;margin-bottom:16px}
-    .badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F5A623,#E8920A);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px}
-    .pname{font-weight:700}
-    .pamt{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#7C5CBF;margin-top:6px}
-    .btn{width:100%;padding:16px;border:none;border-radius:999px;background:#7C5CBF;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
-    .note{text-align:center;font-size:12px;color:#A99DC0;margin-top:10px}
-    .tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid #E4DEFF;display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
-    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#A99DC0;text-decoration:none}
-    .tab.on{color:#7C5CBF}
-    .tab div:last-child{font-size:9px;text-transform:uppercase}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0A1A;
+      --bg-2: #130F2A;
+      --surface: #171131;
+      --surface-2: #21194A;
+      --border: rgba(196, 184, 240, 0.14);
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --lilac: #C4B8F0;
+      --gold-1: #FFD98E;
+      --gold-2: #F5A623;
+      --gold-3: #E8920A;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    body { padding-bottom: 102px; }
+
+    .ambient::before,
+    .ambient::after {
+      content: "";
+      position: fixed;
+      width: 250px;
+      height: 250px;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .ambient::before {
+      top: -60px;
+      left: -90px;
+      background: rgba(139, 126, 200, 0.16);
+    }
+
+    .ambient::after {
+      right: -110px;
+      top: 260px;
+      background: rgba(232, 146, 10, 0.14);
+    }
+
+    .shell {
+      max-width: 460px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      backdrop-filter: blur(18px);
+      background: rgba(13, 10, 26, 0.74);
+      border-bottom: 1px solid rgba(196,184,240,0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 27px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn,
+    .chip,
+    .plan-card,
+    .cta-btn,
+    .ghost-btn,
+    .tab {
+      font-family: inherit;
+    }
+
+    .icon-btn,
+    .cta-btn,
+    .ghost-btn {
+      border: none;
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .page { padding: 18px; }
+
+    .hero {
+      border-radius: 34px;
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -20px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(245,166,35,0.22), transparent 62%);
+      border-radius: 999px;
+    }
+
+    .eyebrow {
+      color: var(--gold-1);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 42px;
+      line-height: 0.96;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 em {
+      color: var(--gold-1);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .easy-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chip {
+      padding: 12px 10px;
+      border-radius: 18px;
+      text-align: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .chip strong {
+      display: block;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .chip span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .panel {
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(196,184,240,0.1);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .panel-sub {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .mini-badge {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--gold-1);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .compare {
+      display: grid;
+      gap: 10px;
+    }
+
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 80px 100px;
+      gap: 10px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .compare-row.head {
+      background: rgba(255,255,255,0.03);
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 800;
+    }
+
+    .compare-row div:first-child {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .free {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .prem {
+      text-align: center;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .plans {
+      display: grid;
+      gap: 12px;
+    }
+
+    .plan-card {
+      border-radius: 26px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plan-card.featured {
+      background:
+        linear-gradient(180deg, rgba(255,217,142,0.08), rgba(255,255,255,0.03)),
+        rgba(255,255,255,0.04);
+      border-color: rgba(255,217,142,0.28);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--gold-2), var(--gold-3));
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(232,146,10,0.28);
+    }
+
+    .plan-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .plan-name {
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .plan-copy {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .price {
+      font-family: var(--serif);
+      font-size: 34px;
+      color: var(--gold-1);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .price small {
+      font-family: var(--sans);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .plan-features {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .plan-features div {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .cta-btn,
+    .ghost-btn {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .cta-btn {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+    }
+
+    .ghost-btn {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .foot-note {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px));
+      padding: 12px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(18, 13, 37, 0.88);
+      border: 1px solid rgba(196,184,240,0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(18px);
+      z-index: 70;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .tab {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 54px;
+      border-radius: 18px;
+      color: var(--text-muted);
+      transition: 0.2s ease;
+    }
+
+    .tab-icon { font-size: 20px; }
+
+    .tab-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      font-weight: 700;
+    }
+
+    .tab.on {
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+    }
+
+    @media (max-width: 390px) {
+      .hero h1 { font-size: 36px; }
+      .easy-row { grid-template-columns: 1fr; }
+      .compare-row { grid-template-columns: 1fr 68px 88px; }
+      .plan-top { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <div class="logo">miru.</div>
-    <div>Premium</div>
-  </div>
+  <div class="ambient"></div>
 
-  <div class="card">
-    <div class="icon">⭐</div>
-    <h1>Unlock<br><em>Miru Premium.</em></h1>
-    <div class="sub">More swipes. More super likes. Priority matching. For now, this page is live but billing is not connected yet.</div>
-
-    <div class="compare">
-      <div class="row h"><div></div><div class="free">Free</div><div class="prem">Premium</div></div>
-      <div class="row"><div>Daily swipes</div><div class="free">40</div><div class="prem">Unlimited</div></div>
-      <div class="row"><div>Super likes/day</div><div class="free">3</div><div class="prem">10</div></div>
-      <div class="row"><div>Priority matching</div><div class="free">✕</div><div class="prem">✓</div></div>
-      <div class="row"><div>See who liked you</div><div class="free">✕</div><div class="prem">✓</div></div>
+  <div class="shell">
+    <div class="top-bar">
+      <div class="brand">
+        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <div class="logo">miru.</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" onclick="window.location.href='profile.html'">←</button>
+        <button class="icon-btn" onclick="window.location.href='messages.html'">💬</button>
+      </div>
     </div>
 
-    <div class="price">
-      <div class="badge">⭐ Most popular</div>
-      <div class="pname">Monthly Premium</div>
-      <div class="pamt">$3.99<span style="font-size:14px;color:#A99DC0">/mo</span></div>
-    </div>
+    <div class="page">
+      <div class="hero">
+        <div class="eyebrow">Premium that still feels easy</div>
+        <h1>Unlock <em>more</em><br />without the clutter.</h1>
+        <div class="hero-sub">This upgrade page uses the same simple flow as the rest of the app: clear top actions, one main decision, easy comparison, and obvious navigation back out.</div>
 
-    <button class="btn" onclick="activatePremium()">Start Premium — $3.99/month</button>
-    <div class="note">Temporary demo button. Stripe can be added next.</div>
+        <div class="easy-row">
+          <div class="chip"><strong>1 tap</strong><span>to upgrade</span></div>
+          <div class="chip"><strong>clear</strong><span>feature layout</span></div>
+          <div class="chip"><strong>fast</strong><span>back navigation</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Free vs premium</div>
+            <div class="panel-sub">Kept simple so users instantly know what changes when they subscribe.</div>
+          </div>
+          <div class="mini-badge">easy compare</div>
+        </div>
+
+        <div class="compare">
+          <div class="compare-row head"><div></div><div class="free">Free</div><div class="prem">Premium</div></div>
+          <div class="compare-row"><div>Daily likes</div><div class="free">40</div><div class="prem">Unlimited</div></div>
+          <div class="compare-row"><div>Super likes per day</div><div class="free">3</div><div class="prem">10</div></div>
+          <div class="compare-row"><div>Priority matching</div><div class="free">✕</div><div class="prem">✓</div></div>
+          <div class="compare-row"><div>See who liked you</div><div class="free">✕</div><div class="prem">✓</div></div>
+          <div class="compare-row"><div>Profile boost feel</div><div class="free">Standard</div><div class="prem">Higher reach</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Choose your plan</div>
+            <div class="panel-sub">One main plan, one backup option, no confusing flow.</div>
+          </div>
+          <div class="mini-badge">clean checkout</div>
+        </div>
+
+        <div class="plans">
+          <div class="plan-card featured">
+            <div class="featured-badge">Most popular</div>
+            <div class="plan-top">
+              <div>
+                <div class="plan-name">Monthly Premium</div>
+                <div class="plan-copy">Best for users who want more reach, more control, and a better profile presence right now.</div>
+              </div>
+              <div class="price">$3.99<small>/mo</small></div>
+            </div>
+            <div class="plan-features">
+              <div>✓ Unlimited likes</div>
+              <div>✓ More super likes</div>
+              <div>✓ Better visibility and premium profile feel</div>
+            </div>
+            <button class="cta-btn" onclick="activatePremium()">Start Premium — $3.99/month</button>
+          </div>
+
+          <div class="plan-card">
+            <div class="plan-top">
+              <div>
+                <div class="plan-name">Stay on free</div>
+                <div class="plan-copy">Keep using Miru with the standard experience and upgrade later whenever you want.</div>
+              </div>
+              <div class="price">$0<small>now</small></div>
+            </div>
+            <div class="plan-features">
+              <div>✓ Daily limited likes</div>
+              <div>✓ Basic matching flow</div>
+              <div>✓ Upgrade any time</div>
+            </div>
+            <button class="ghost-btn" onclick="window.location.href='profile.html'">Back to profile</button>
+          </div>
+        </div>
+
+        <div class="foot-note">Demo billing flow for now. Stripe or app billing can be connected next without changing the layout.</div>
+      </div>
+    </div>
   </div>
 
   <div class="tabs">
-    <a class="tab" href="index.html"><div>💜</div><div>Matches</div></a>
-    <a class="tab" href="messages.html"><div>💬</div><div>Messages</div></a>
-    <a class="tab" href="explore.html"><div>🔍</div><div>Explore</div></a>
-    <a class="tab on" href="profile.html"><div>👤</div><div>Profile</div></a>
+    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
 
 <script>
@@ -79,16 +603,23 @@ const sb = supabase.createClient(
 
 async function activatePremium(){
   const { data: { user } } = await sb.auth.getUser();
-  if (!user) return window.location.href = "auth.html";
+  if (!user) {
+    window.location.href = 'auth.html';
+    return;
+  }
 
   const { error } = await sb
-    .from("profiles")
+    .from('profiles')
     .update({ is_premium: true })
-    .eq("user_id", user.id);
+    .eq('user_id', user.id);
 
-  if (error) return alert(error.message);
-  alert("Premium activated for demo ⭐");
-  window.location.href = "profile.html";
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert('Premium activated for demo ⭐');
+  window.location.href = 'profile.html';
 }
 </script>
 </body>
