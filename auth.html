@@ -318,17 +318,48 @@ function setLoading(btnId, loading) {
 }
 
 // LOGIN
+// LOGIN
 async function login() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  if (!email || !password) { showError('Please fill in all fields.'); return; }
+
+  if (!email || !password) {
+    showError('Please fill in all fields.');
+    return;
+  }
+
   clearMessages();
   setLoading('loginBtn', true);
+
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
   setLoading('loginBtn', false);
-  if (error) { showError(error.message); return; }
-  // Save session and redirect
-  localStorage.setItem('miru_profile',JSON.stringify({name:data.user.email.split('@')[0]}));window.location.href='app.html';
+
+  if (error) {
+    showError(error.message);
+    return;
+  }
+
+  const user = data.user;
+
+  // 🔥 CREATE PROFILE IF NOT EXISTS
+  const { data: existing } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!existing) {
+    await sb.from("profiles").insert({
+      user_id: user.id,
+      name: user.email.split('@')[0],
+      bio: "",
+      avatar_url: ""
+    });
+  }
+
+  // ✅ REDIRECT TO EXPLORE
+  window.location.href = "explore.html";
 }
 
 // SIGNUP
