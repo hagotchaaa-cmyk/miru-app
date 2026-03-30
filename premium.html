@@ -600,17 +600,31 @@ const sb = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
 );
+</script>
 
-async function activatePremium() {
+<script async src="https://js.stripe.com/v3/buy-button.js"></script>
+
+<div style="margin-top:16px;">
+  <stripe-buy-button
+    id="miruStripeButton"
+    buy-button-id="buy_btn_1TGpAUQ0ZcRbTeoTELl7b4QL"
+    publishable-key="pk_live_51TGo11Q0ZcRbTeoT1dB3WFRF28io31vR7lrZvuy8IWECDVwxEq4Z92lwvI0qUSQtWnh5S3UhEbAQPqWfvLbr3gf700S7gJt7Rs">
+  </stripe-buy-button>
+</div>
+
+<script>
+(async () => {
   const { data: { user } } = await sb.auth.getUser();
+  if (!user) return;
 
-  if (!user) {
-    window.location.href = 'auth.html';
-    return;
+  const btn = document.getElementById('miruStripeButton');
+  if (!btn) return;
+
+  btn.setAttribute('client-reference-id', user.id);
+  if (user.email) {
+    btn.setAttribute('customer-email', user.email);
   }
-
-  window.location.href = 'https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';
-}
+})();
 </script>
 </body>
 </html>
