@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miru — Double Date</title>
+  <style>
+    /* Add some styling for the double date page */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #7C5CBF;
+      color: white;
+      padding: 0;
+      margin: 0;
+    }
+    .container {
+      padding: 20px;
+    }
+    .friend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .friend-item {
+      padding: 10px;
+      background: #fff;
+      color: black;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .friend-item:hover {
+      background: #EDE8FF;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Invite a Friend for a Double Date</h2>
+    <div class="friend-list" id="friendList"></div>
+  </div>
+
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    let me = null;
+
+    async function getUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        window.location.href = "auth.html";
+        return null;
+      }
+      return user;
+    }
+
+    async function loadFriends() {
+      me = await getUser();
+      const { data: friends } = await sb
+        .from("profiles")
+        .select("user_id, name")
+        .neq("user_id", me.id);
+
+      const friendListContainer = document.getElementById("friendList");
+      friends.forEach(friend => {
+        const div = document.createElement("div");
+        div.className = "friend-item";
+        div.innerText = friend.name;
+        div.onclick = () => startDoubleDate(friend.user_id);
+        friendListContainer.appendChild(div);
+      });
+    }
+
+    async function startDoubleDate(friendId) {
+      const { error } = await sb
+        .from("group_chats")
+        .insert([
+          { user_a_id: me.id, user_b_id: friendId }
+        ]);
+
+      if (error) {
+        alert("Error creating double date group chat: " + error.message);
+        return;
+      }
+
+      window.location.href = `messages.html?group_chat=${me.id}_${friendId}`;
+    }
+
+    loadFriends();
+  </script>
+</body>
+</html>

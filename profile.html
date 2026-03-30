@@ -8,170 +8,93 @@
   <title>Miru — Profile</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top,#1a102d,#0f0f0f);color:white;padding-bottom:86px}
-    .profile{text-align:center;padding:40px 20px 20px}
-    .avatar{width:140px;height:140px;margin:auto;border-radius:50%;overflow:hidden;border:3px solid #9F7AEA;box-shadow:0 10px 30px rgba(159,122,234,0.3);background:#222}
-    .avatar img{width:100%;height:100%;object-fit:cover;display:block}
-    .name{font-size:26px;font-weight:700;margin-top:12px}
-    .bio{color:#aaa;margin-top:6px;max-width:420px;margin-left:auto;margin-right:auto}
-    .stats{display:flex;justify-content:space-around;margin-top:20px;padding:15px 0;background:rgba(255,255,255,0.03)}
-    .actions{display:flex;gap:10px;padding:15px}
-    .btn{flex:1;padding:12px;border-radius:25px;background:linear-gradient(45deg,#9F7AEA,#6EE7B7);text-align:center;cursor:pointer;font-weight:600;color:black;border:none}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-    .grid img,.grid video{width:100%;height:130px;object-fit:cover;background:#111}
-    .tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid #E4DEFF;display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
-    .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:#A99DC0;text-decoration:none}
-    .tab.on{color:#7C5CBF}
-    .tab div:last-child{font-size:9px;text-transform:uppercase}
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #7C5CBF;
+      color: white;
+      padding: 0;
+      margin: 0;
+    }
+    .profile {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      margin: 20px auto;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(159, 122, 234, 0.3);
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+    .bio {
+      color: #bbb;
+      margin-top: 6px;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .actions {
+      padding: 20px;
+    }
+    .btn {
+      padding: 12px;
+      background-color: #7C5CBF;
+      color: white;
+      width: 100%;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
+  <div class="profile">
+    <div class="avatar">
+      <img id="avatar" src="" alt="Profile avatar">
+    </div>
+    <div class="name" id="name">Loading...</div>
+    <div class="bio" id="bio">Loading bio...</div>
+    <button onclick="uploadMedia()">Upload Media</button>
+  </div>
 
-<div class="profile">
-  <div class="avatar"><img id="avatar" src="" alt="avatar"></div>
-  <div class="name" id="name">Loading profile...</div>
-  <div class="bio" id="bio"></div>
-</div>
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-<div class="stats">
-  <div><span id="mediaCount">0</span><br><small>MEDIA</small></div>
-  <div><span id="matchCount">0</span><br><small>MATCHES</small></div>
-  <div><span id="convoCount">0</span><br><small>CONVOS</small></div>
-</div>
-
-<div class="actions">
-  <button class="btn" onclick="addPost()">➕ Add</button>
-  <button class="btn" onclick="window.location.href='premium.html'">⭐ Premium</button>
-</div>
-
-<div class="grid" id="grid"></div>
-
-<div class="tabs">
-  <a class="tab" href="index.html"><div>💜</div><div>Matches</div></a>
-  <a class="tab" href="messages.html"><div>💬</div><div>Messages</div></a>
-  <a class="tab" href="explore.html"><div>🔍</div><div>Explore</div></a>
-  <a class="tab on" href="profile.html"><div>👤</div><div>Profile</div></a>
-</div>
-
-<script>
-const sb = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
-);
-
-let me = null;
-
-async function getUser(){
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) {
-    window.location.href = "auth.html";
-    return null;
-  }
-  return user;
-}
-
-async function loadProfile(){
-  me = await getUser();
-  if (!me) return;
-
-  const { data } = await sb.from("profiles").select("*").eq("user_id", me.id).maybeSingle();
-
-  if (!data) {
-    await sb.from("profiles").insert({
-      user_id: me.id,
-      name: me.email ? me.email.split("@")[0] : "New User",
-      bio: "",
-      avatar_url: ""
-    });
-  }
-
-  const { data: profile } = await sb.from("profiles").select("*").eq("user_id", me.id).maybeSingle();
-
-  document.getElementById("name").textContent = profile?.name || "User";
-  document.getElementById("bio").textContent = profile?.bio || "No bio yet";
-  document.getElementById("avatar").src = profile?.avatar_url || "";
-}
-
-async function loadPosts(){
-  const { data } = await sb
-    .from("posts")
-    .select("*")
-    .eq("user_id", me.id)
-    .order("created_at", { ascending:false });
-
-  const posts = data || [];
-  document.getElementById("mediaCount").textContent = posts.length;
-
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-
-  posts.forEach(p => {
-    let el;
-    if (p.media_type === "video") {
-      el = document.createElement("video");
-      el.src = p.media_url;
-      el.autoplay = true;
-      el.loop = true;
-      el.muted = true;
-      el.playsInline = true;
-    } else {
-      el = document.createElement("img");
-      el.src = p.media_url;
+    async function loadProfile() {
+      const { data, error } = await sb.from("profiles").select("*").eq("user_id", me.id).maybeSingle();
+      if (data) {
+        document.getElementById("name").textContent = data.name;
+        document.getElementById("bio").textContent = data.bio || "No bio yet";
+        document.getElementById("avatar").src = data.avatar_url || "default-avatar.jpg";
+      }
     }
-    grid.appendChild(el);
-  });
-}
 
-async function loadStats(){
-  const { count: matchCount } = await sb
-    .from("likes")
-    .select("*", { count:"exact", head:true })
-    .eq("target_user_id", me.id);
+    async function uploadMedia() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*,video/*";
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        const path = `${me.id}/${Date.now()}_${file.name}`;
+        await sb.storage.from("media").upload(path, file);
+        const url = `${window.SUPABASE_URL}/storage/v1/object/public/media/${path}`;
+        await sb.from("posts").insert({ user_id: me.id, media_url: url });
+      };
+      input.click();
+    }
 
-  const { count: convoCount } = await sb
-    .from("conversations")
-    .select("*", { count:"exact", head:true })
-    .or(`user_a.eq.${me.id},user_b.eq.${me.id}`);
-
-  document.getElementById("matchCount").textContent = matchCount || 0;
-  document.getElementById("convoCount").textContent = convoCount || 0;
-}
-
-async function addPost(){
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*,video/*";
-
-  input.onchange = async e => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const path = `${me.id}/${Date.now()}_${file.name}`;
-
-    const { error: uploadError } = await sb.storage.from("posts").upload(path, file);
-    if (uploadError) return alert(uploadError.message);
-
-    const url = `${window.SUPABASE_URL}/storage/v1/object/public/posts/${path}`;
-    const { error: insertError } = await sb.from("posts").insert({
-      user_id: me.id,
-      media_url: url,
-      media_type: file.type.includes("video") ? "video" : "image"
-    });
-
-    if (insertError) return alert(insertError.message);
-    await loadPosts();
-    await loadStats();
-  };
-
-  input.click();
-}
-
-async function init(){
-  await loadProfile();
-  await loadPosts();
-  await loadStats();
-}
-init();
-</script>
+    loadProfile();
+  </script>
 </body>
 </html>

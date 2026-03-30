@@ -4,286 +4,100 @@
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#F8F6FF">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Miru — Home</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#F8F6FF;--surface:#FFFFFF;--surface2:#F0ECFF;--border:#E4DEFF;
-      --purple:#7C5CBF;--text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
-      --serif:'Playfair Display',serif;--sans:'DM Sans',sans-serif;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #7C5CBF;
+      color: white;
+      padding: 0;
+      margin: 0;
     }
-    body{background:var(--bg);font-family:var(--sans);color:var(--text);padding-bottom:88px}
-    .nav{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:rgba(248,246,255,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
-    .logo{font-family:var(--serif);font-size:24px;font-style:italic;font-weight:700}
-    .nav-btn{padding:10px 18px;border:none;border-radius:999px;background:var(--purple);color:#fff;font-weight:700;cursor:pointer}
-    .hero{padding:28px 20px 18px;text-align:center}
-    .tag{display:inline-block;padding:6px 14px;border-radius:999px;background:#EDE8FF;border:1px solid var(--border);font-size:12px;color:var(--purple);font-weight:700;margin-bottom:16px}
-    h1{font-family:var(--serif);font-size:40px;line-height:1.05;margin-bottom:10px}
-    h1 em{font-style:italic;color:var(--purple)}
-    .sub{max-width:320px;margin:0 auto 18px;color:var(--text2);line-height:1.6}
-    .cards-preview{display:flex;gap:12px;overflow-x:auto;padding:0 12px 8px}
-    .mini-card{min-width:120px;border-radius:20px;background:#fff;border:1px solid var(--border);overflow:hidden;box-shadow:0 8px 24px rgba(124,92,191,.08)}
-    .mini-thumb{height:138px;background:linear-gradient(145deg,#ede6ff,#d8ccff);display:flex;align-items:center;justify-content:center;font-size:30px}
-    .mini-body{padding:10px}
-    .mini-name{font-family:var(--serif);font-size:16px;font-weight:700}
-    .mini-detail{font-size:11px;color:var(--text3);margin-top:2px}
-    .mini-tag{display:inline-block;margin-top:6px;padding:4px 8px;border-radius:999px;background:#EDE8FF;color:var(--purple);font-size:10px;font-weight:700}
-    .section{padding:18px 18px 0}
-    .greeting{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
-    .title{font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:12px}
-    .title em{font-style:italic;color:var(--purple)}
-    .bar{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--border);margin-bottom:14px}
-    .bar-left{display:flex;gap:14px;font-size:14px;font-weight:700}
-    .bar-left span small{display:block;font-size:10px;color:var(--text3);font-weight:500}
-    .pill{padding:6px 12px;border-radius:999px;background:linear-gradient(135deg,#F5A623,#E8920A);color:#fff;font-size:11px;font-weight:700}
-    .match-card{border-radius:20px;background:#fff;border:1px solid var(--border);overflow:hidden;box-shadow:0 8px 24px rgba(124,92,191,.08);margin-bottom:14px}
-    .hero-box{height:180px;background:linear-gradient(145deg,#ede6ff,#d8ccff);position:relative;display:flex;align-items:center;justify-content:center;font-size:34px}
-    .score{position:absolute;top:10px;right:10px;background:var(--purple);color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px}
-    .prompt{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.9);border:1px solid var(--border);color:var(--text2);font-size:11px;font-family:var(--serif);font-style:italic;padding:5px 10px;border-radius:999px}
-    .body{padding:14px}
-    .name{font-family:var(--serif);font-size:22px;font-weight:700}
-    .loc{font-size:12px;color:var(--text3);margin-top:3px}
-    .tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
-    .tag2{padding:5px 10px;border-radius:999px;background:#F0ECFF;border:1px solid var(--border);font-size:11px;color:var(--text2)}
-    .actions{display:flex;gap:8px}
-    .pass,.connect{flex:1;padding:12px;border-radius:999px;border:none;cursor:pointer;font-weight:700}
-    .pass{background:transparent;border:1px solid var(--border);color:var(--text3)}
-    .connect{background:var(--purple);color:#fff}
-    .empty{padding:24px;text-align:center;color:var(--text2)}
-    .bottom-tabs{position:fixed;left:0;right:0;bottom:0;height:76px;background:rgba(255,255,255,.96);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;padding-bottom:10px}
-    .btab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text3);text-decoration:none}
-    .btab.on{color:var(--purple)}
-    .btab div:last-child{font-size:9px;text-transform:uppercase}
+    .hero {
+      text-align: center;
+      padding: 50px;
+    }
+    .cards-preview {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .match-card {
+      width: 200px;
+      padding: 20px;
+      background-color: #fff;
+      color: black;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .match-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .match-card .name {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .actions button {
+      padding: 12px;
+      background-color: #7C5CBF;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <div class="logo">miru.</div>
-    <button class="nav-btn" id="joinBtn" onclick="goAuth()">Join free</button>
-  </div>
-
   <div class="hero">
-    <div class="tag">✦ The new standard in dating</div>
-    <h1>Stop swiping.<br><em>Start living.</em></h1>
-    <div class="sub">3 curated matches a day. No endless scroll. No fake energy. Just real people.</div>
-    <div class="cards-preview" id="previewCards"></div>
+    <h1>Welcome to Miru</h1>
+    <p>Stop swiping. Start living.</p>
   </div>
 
-  <div class="section">
-    <div class="greeting">Good morning, friend ✦</div>
-    <div class="title">Your <em>matches</em> are waiting.</div>
-    <div class="bar">
-      <div class="bar-left">
-        <span><span id="likeCount">0</span><small>likes</small></span>
-        <span><span id="superCount">0</span><small>super</small></span>
-      </div>
-      <div class="pill" id="premiumPill" style="display:none">⭐ Premium</div>
-    </div>
-    <div id="matchList"></div>
+  <div class="cards-preview" id="previewCards">
+    <!-- User profiles will appear here -->
   </div>
 
-  <div class="bottom-tabs">
-    <a class="btab on" href="index.html"><div>💜</div><div>Matches</div></a>
-    <a class="btab" href="messages.html"><div>💬</div><div>Messages</div></a>
-    <a class="btab" href="explore.html"><div>🔍</div><div>Explore</div></a>
-    <a class="btab" href="profile.html"><div>👤</div><div>Profile</div></a>
+  <div class="actions">
+    <button onclick="loadMatches()">See Matches</button>
   </div>
 
-<script>
-const sb = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
-);
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-let me = null;
-let myProfile = null;
-let profiles = [];
+    async function loadMatches(){
+      const { data, error } = await sb.from("profiles").select("*").limit(6);
+      if (error) return alert("Error loading matches");
 
-function goAuth(){ window.location.href = "auth.html"; }
+      const cardsContainer = document.getElementById("previewCards");
+      cardsContainer.innerHTML = "";
 
-async function getUser() {
-  const { data: { user } } = await sb.auth.getUser();
-  return user || null;
-}
+      data.forEach(profile => {
+        cardsContainer.innerHTML += `
+          <div class="match-card">
+            <img src="${profile.avatar_url || 'default-avatar.jpg'}" alt="Profile Picture">
+            <div class="name">${profile.name}</div>
+            <div>${profile.age} | ${profile.bio}</div>
+            <button onclick="likeUser('${profile.user_id}')">Like</button>
+          </div>
+        `;
+      });
+    }
 
-async function ensureProfile(user){
-  const { data: existing } = await sb.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
-  if (existing) return existing;
+    async function likeUser(targetId){
+      const { error } = await sb.from("likes").insert({
+        user_id: me.id,
+        target_user_id: targetId,
+        type: "like"
+      });
+      if (error) return alert("Error liking user");
+    }
 
-  await sb.from("profiles").insert({
-    user_id: user.id,
-    name: user.email ? user.email.split("@")[0] : "New User",
-    age: null,
-    bio: "",
-    avatar_url: "",
-    is_premium: false
-  });
-
-  const { data } = await sb.from("profiles").select("*").eq("user_id", user.id).maybeSingle();
-  return data;
-}
-
-async function init(){
-  me = await getUser();
-
-  if (!me) {
-    document.getElementById("joinBtn").style.display = "inline-block";
-    renderMarketingOnly();
-    return;
-  }
-
-  document.getElementById("joinBtn").textContent = "Log out";
-  document.getElementById("joinBtn").onclick = logout;
-
-  myProfile = await ensureProfile(me);
-  await loadCounts();
-  await loadMatches();
-}
-
-function renderMarketingOnly(){
-  document.getElementById("previewCards").innerHTML = `
-    <div class="mini-card"><div class="mini-thumb">🎥</div><div class="mini-body"><div class="mini-name">Alex</div><div class="mini-detail">2.4 mi · Tonight</div><div class="mini-tag">97% match</div></div></div>
-    <div class="mini-card"><div class="mini-thumb" style="background:linear-gradient(145deg,#ffe6f0,#ffd0e4)">🎥</div><div class="mini-body"><div class="mini-name">Jordan</div><div class="mini-detail">1.1 mi · Weekend</div><div class="mini-tag">91% match</div></div></div>
-    <div class="mini-card"><div class="mini-thumb" style="background:linear-gradient(145deg,#e6f0ff,#d0e4ff)">🎥</div><div class="mini-body"><div class="mini-name">Riley</div><div class="mini-detail">4.8 mi · Flexible</div><div class="mini-tag">88% match</div></div></div>
-  `;
-  document.getElementById("matchList").innerHTML = `<div class="empty">Create an account to see your real matches.</div>`;
-}
-
-async function loadCounts(){
-  const { count: likesCount } = await sb.from("likes").select("*", { count: "exact", head: true }).eq("user_id", me.id).eq("type", "like");
-  const { count: superCount } = await sb.from("likes").select("*", { count: "exact", head: true }).eq("user_id", me.id).eq("type", "super");
-  document.getElementById("likeCount").textContent = likesCount || 0;
-  document.getElementById("superCount").textContent = superCount || 0;
-  if (myProfile?.is_premium) document.getElementById("premiumPill").style.display = "inline-block";
-}
-
-async function loadMatches(){
-  const { data, error } = await sb
-    .from("profiles")
-    .select("user_id,name,age,bio,avatar_url,is_premium,boost_until")
-    .neq("user_id", me.id)
-    .order("boost_until", { ascending: false })
-    .limit(6);
-
-  if (error) {
-    document.getElementById("matchList").innerHTML = `<div class="empty">${error.message}</div>`;
-    return;
-  }
-
-  profiles = data || [];
-  renderPreviews(profiles.slice(0,3));
-  renderMatches(profiles.slice(0,3));
-}
-
-function renderPreviews(items){
-  const wrap = document.getElementById("previewCards");
-  if (!items.length) return renderMarketingOnly();
-
-  wrap.innerHTML = items.map((p,i)=>`
-    <div class="mini-card">
-      <div class="mini-thumb" style="${p.avatar_url ? `background-image:url('${p.avatar_url}');background-size:cover;background-position:center;` : i===1 ? `background:linear-gradient(145deg,#ffe6f0,#ffd0e4)` : i===2 ? `background:linear-gradient(145deg,#e6f0ff,#d0e4ff)` : `background:linear-gradient(145deg,#ede6ff,#d8ccff)`}">🎥</div>
-      <div class="mini-body">
-        <div class="mini-name">${p.name || "Match"}</div>
-        <div class="mini-detail">${p.age || "—"} · Real person</div>
-        <div class="mini-tag">New</div>
-      </div>
-    </div>
-  `).join("");
-}
-
-function renderMatches(items){
-  const wrap = document.getElementById("matchList");
-  if (!items.length) {
-    wrap.innerHTML = `<div class="empty">No profiles yet.</div>`;
-    return;
-  }
-
-  wrap.innerHTML = items.map((p,i)=>`
-    <div class="match-card">
-      <div class="hero-box" style="${p.avatar_url ? `background-image:url('${p.avatar_url}');background-size:cover;background-position:center;` : i===1 ? `background:linear-gradient(145deg,#ffe6f0,#ffd0e4)` : `background:linear-gradient(145deg,#ede6ff,#d8ccff)`}">
-        <div class="score">${97 - i*4}% match</div>
-        <div class="prompt">"${i===0 ? 'Make me laugh...' : i===1 ? 'Something weird...' : 'Tell me a story...'}"</div>
-      </div>
-      <div class="body">
-        <div class="name">${p.name || "Match"}${p.age ? `, ${p.age}` : ""}</div>
-        <div class="loc">${p.bio || "Say hi and see where it goes."}</div>
-        <div class="tags">
-          <div class="tag2">real</div>
-          <div class="tag2">video-first</div>
-          ${p.is_premium ? `<div class="tag2">premium</div>` : ``}
-        </div>
-        <div class="actions">
-          <button class="pass" onclick="skipToExplore()">Pass</button>
-          <button class="connect" onclick="likeUser('${p.user_id}')">✦ Connect</button>
-        </div>
-      </div>
-    </div>
-  `).join("");
-}
-
-function skipToExplore(){
-  window.location.href = "explore.html";
-}
-
-async function likeUser(targetId){
-  const { data: existing } = await sb
-    .from("likes")
-    .select("id")
-    .eq("user_id", me.id)
-    .eq("target_user_id", targetId)
-    .eq("type", "like")
-    .maybeSingle();
-
-  if (existing) return alert("Already liked.");
-
-  const { error } = await sb.from("likes").insert({
-    user_id: me.id,
-    target_user_id: targetId,
-    type: "like"
-  });
-
-  if (error) return alert(error.message);
-
-  await maybeCreateConversation(me.id, targetId);
-  alert("Liked 💜");
-  await loadCounts();
-}
-
-async function maybeCreateConversation(myId, targetId){
-  const { data: mutual } = await sb
-    .from("likes")
-    .select("id")
-    .eq("user_id", targetId)
-    .eq("target_user_id", myId)
-    .limit(1);
-
-  if (!mutual || !mutual.length) return;
-
-  const { data: existing } = await sb
-    .from("conversations")
-    .select("id")
-    .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
-    .maybeSingle();
-
-  if (!existing) {
-    await sb.from("conversations").insert({
-      user_a: myId,
-      user_b: targetId,
-      last_message: "You matched 💜",
-      last_message_at: new Date().toISOString()
-    });
-  }
-}
-
-async function logout(){
-  await sb.auth.signOut();
-  window.location.href = "auth.html";
-}
-
-init();
-</script>
+    loadMatches();
+  </script>
 </body>
 </html>

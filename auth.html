@@ -8,117 +8,97 @@
   <title>Miru — Join Free</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      min-height:100vh;
-      font-family:'DM Sans',sans-serif;
-      background:linear-gradient(160deg,#F8F6FF 0%,#EDE8FF 100%);
-      color:#1A1528;
-      display:flex;align-items:center;justify-content:center;
-      padding:24px;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #7C5CBF;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    .card{
-      width:100%;max-width:420px;background:#fff;border:1px solid #E4DEFF;
-      border-radius:24px;padding:28px;box-shadow:0 15px 50px rgba(124,92,191,.12);
+    .card {
+      background-color: white;
+      color: black;
+      border-radius: 8px;
+      padding: 40px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     }
-    .logo{
-      font-family:'Playfair Display',serif;font-size:32px;font-style:italic;
-      text-align:center;margin-bottom:8px;
+    .logo {
+      font-size: 30px;
+      font-weight: bold;
+      color: #7C5CBF;
     }
-    .sub{text-align:center;color:#6B5F8A;margin-bottom:22px}
-    .field{margin-bottom:12px}
-    input{
-      width:100%;padding:14px 16px;border-radius:14px;border:1px solid #E4DEFF;
-      background:#F8F6FF;font-size:15px;outline:none;
+    .sub {
+      color: gray;
+      margin-bottom: 20px;
     }
-    input:focus{border-color:#7C5CBF}
-    .btn{
-      width:100%;padding:14px;border:none;border-radius:999px;background:#7C5CBF;
-      color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;
+    .field {
+      margin-bottom: 15px;
     }
-    .ghost{background:#F0ECFF;color:#7C5CBF}
-    .note{text-align:center;font-size:13px;color:#A99DC0;margin-top:14px}
+    .field input {
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .btn {
+      padding: 12px;
+      background-color: #7C5CBF;
+      color: white;
+      width: 100%;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn.ghost {
+      background-color: transparent;
+      border: 1px solid #7C5CBF;
+      color: #7C5CBF;
+    }
+    .note {
+      color: red;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">miru.</div>
     <div class="sub">Join free and start meeting real people.</div>
-
-    <div class="field"><input id="email" type="email" placeholder="Email"></div>
-    <div class="field"><input id="password" type="password" placeholder="Password"></div>
-
+    <div class="field">
+      <input id="email" type="email" placeholder="Email" required>
+    </div>
+    <div class="field">
+      <input id="password" type="password" placeholder="Password" required>
+    </div>
     <button class="btn" onclick="signUp()">Create account</button>
     <button class="btn ghost" onclick="signIn()">Log in</button>
-
     <div class="note" id="msg"></div>
   </div>
 
-<script>
-const sb = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
-);
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) window.location.href = "index.html";
-})();
+    async function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) return alert(error.message);
+      alert("Account created. Check your email.");
+    }
 
-function setMsg(text, isError=false){
-  const el = document.getElementById("msg");
-  el.textContent = text;
-  el.style.color = isError ? "#c0392b" : "#6B5F8A";
-}
-
-async function ensureProfile(user){
-  const { data: existing } = await sb
-    .from("profiles")
-    .select("user_id")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (!existing) {
-    await sb.from("profiles").insert({
-      user_id: user.id,
-      name: user.email ? user.email.split("@")[0] : "New User",
-      age: null,
-      bio: "",
-      avatar_url: "",
-      is_premium: false
-    });
-  }
-}
-
-async function signUp(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if(!email || !password) return setMsg("Enter email and password.", true);
-
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) return setMsg(error.message, true);
-
-  if (data.user) {
-    await ensureProfile(data.user);
-  }
-
-  setMsg("Account created. Log in if needed, or check your email if confirmation is enabled.");
-}
-
-async function signIn(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if(!email || !password) return setMsg("Enter email and password.", true);
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) return setMsg(error.message, true);
-
-  await ensureProfile(data.user);
-  window.location.href = "index.html";
-}
-</script>
+    async function signIn() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return alert(error.message);
+      window.location.href = "index.html"; // Redirect to homepage after login
+    }
+  </script>
 </body>
 </html>
-
-
-
