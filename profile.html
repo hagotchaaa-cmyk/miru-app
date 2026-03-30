@@ -1337,45 +1337,74 @@
       document.getElementById('avatar').src = url;
     }
 
-    async function publishPost() {
-      if (!pendingPostFile) {
-        alert('Choose a photo or video first.');
-        return;
-      }
+async function publishPost() {
+  if (!me || !me.id) {
+    alert("You are not logged in.");
+    return;
+  }
 
-      const caption = document.getElementById('postCaption').value.trim();
-      const isVideo = pendingPostFile.type.startsWith('video/');
-      const mediaType = isVideo ? 'video' : 'image';
-      const safeName = pendingPostFile.name.replace(/\s+/g, '_');
-      const path = `${me.id}/${mediaType}/${Date.now()}_${safeName}`;
+  if (!pendingPostFile) {
+    alert("Choose a photo or video first.");
+    return;
+  }
 
-      const { error: uploadError } = await sb.storage.from('posts').upload(path, pendingPostFile, { upsert: false });
-      if (uploadError) {
-        alert(uploadError.message);
-        return;
-      }
+  const caption = document.getElementById("postCaption").value.trim();
+  const isVideo = pendingPostFile.type.startsWith("video/");
+  const mediaType = isVideo ? "video" : "image";
+  const safeName = pendingPostFile.name.replace(/\s+/g, "_");
+  const path = `${me.id}/${mediaType}/${Date.now()}_${safeName}`;
 
-      const { data: publicData } = sb.storage.from('posts').getPublicUrl(path);
-      const mediaUrl = publicData.publicUrl;
+  console.log("Uploading file to posts bucket:", path);
 
-      const { error: insertError } = await sb.from('user_posts').insert({
-        user_id: me.id,
-        media_url: mediaUrl,
-        media_type: mediaType,
-        caption,
-        created_at: new Date().toISOString()
-      });
+  const { error: uploadError } = await sb.storage
+    .from("posts")
+    .upload(path, pendingPostFile, { upsert: false });
 
-      if (insertError) {
-        alert(insertError.message);
-        return;
-      }
+  if (uploadError) {
+    console.error("Upload failed:", uploadError);
+    alert("Upload failed: " + uploadError.message);
+    return;
+  }
 
-      document.getElementById('postCaption').value = '';
-      setPreview(null);
-      closeComposer();
-      await loadPosts();
-      switchTab(document.querySelector('.tab-btn[data-tab="all"]'), 'all');
+  const { data: publicData } = sb.storage.from("posts").getPublicUrl(path);
+  const mediaUrl = publicData.publicUrl;
+
+  console.log("Public URL:", mediaUrl);
+  console.log("Inserting into user_posts...");
+
+  const { data: insertedPost, error: insertError } = await sb
+    .from("user_posts")
+    .insert({
+      user_id: me.id,
+      media_url: mediaUrl,
+      media_type: mediaType,
+      caption: caption || null
+    })
+    .select();
+
+  console.log("insertedPost:", insertedPost);
+  console.log("insertError:", insertError);
+
+  if (insertError) {
+    alert("Post insert failed: " + insertError.message);
+    return;
+  }
+
+  document.getElementById("postCaption").value = "";
+  pendingPostFile = null;
+
+  const previewBox = document.getElementById("previewBox");
+  previewBox.classList.remove("show");
+  previewBox.innerHTML = "";
+
+  closeComposer();
+  await loadPosts();
+
+  const allTab = document.querySelector('.tab-btn[data-tab="all"]');
+  if (allTab) switchTab(allTab, "all");
+
+  alert("Post published successfully.");
+
     }
 
     function showMenuAlert(message) {
