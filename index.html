@@ -1,1 +1,1168 @@
-```html <!DOCTYPE html> <html lang="en"> <head> <script src="./config.js"></script> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> <meta name="theme-color" content="#F8F6FF"> <title>Miru — Home</title> <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"> <style> *{box-sizing:border-box;margin:0;padding:0} :root{ --bg:#F8F6FF; --surface:#FFFFFF; --surface2:#F0ECFF; --border:#E4DEFF; --purple:#7C5CBF; --purple-mid:#9B7FD4; --purple-light:#C4B0F0; --purple-pale:#EDE8FF; --text:#1A1528; --text2:#6B5F8A; --text3:#A99DC0; --gold1:#F5A623; --gold2:#E8920A; --serif:'Playfair Display',serif; --sans:'DM Sans',sans-serif; } html,body{ min-height:100%; background:var(--bg); color:var(--text); font-family:var(--sans); } body{ padding-bottom:92px; } .top-bar{ height:56px; background:rgba(248,246,255,.96); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 18px; position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); } .logo{ font-family:var(--serif); font-size:24px; font-weight:700; font-style:italic; color:var(--text); } .top-right{ display:flex; align-items:center; gap:.55rem; } .join-btn{ padding:.7rem 1.1rem; border:none; border-radius:999px; background:var(--purple); color:#fff; font-size:13px; font-weight:700; cursor:pointer; } .icon-btn{ width:34px; height:34px; border-radius:50%; background:#fff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; box-shadow:0 2px 8px rgba(124,92,191,.06); } .avatar-pill{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--purple-mid),var(--purple)); color:#fff; font-family:var(--serif); font-size:14px; font-weight:700; border:none; cursor:pointer; overflow:hidden; } .avatar-pill img{ width:100%; height:100%; object-fit:cover; display:block; } .hero{ padding:2.4rem 1.25rem 1.25rem; text-align:center; background:linear-gradient(160deg,#F8F6FF 0%,#EDE8FF 100%); } .tag{ display:inline-block; padding:6px 16px; border-radius:999px; background:#EDE8FF; border:1px solid var(--border); font-size:12px; color:var(--purple); font-weight:700; margin-bottom:1.25rem; letter-spacing:.3px; } .hero h1{ font-family:var(--serif); font-size:42px; font-weight:700; line-height:1.05; color:var(--text); margin-bottom:.75rem; } .hero h1 em{ font-style:italic; color:var(--purple); } .hero-sub{ font-size:15px; color:var(--text2); line-height:1.65; max-width:290px; margin:0 auto 1.6rem; } .cards-preview{ display:flex; gap:.75rem; padding:0 .25rem .25rem; justify-content:center; overflow-x:auto; scrollbar-width:none; } .cards-preview::-webkit-scrollbar{ display:none; } .mini-card{ width:110px; flex-shrink:0; border-radius:20px; overflow:hidden; box-shadow:0 8px 30px rgba(124,92,191,.15); border:1px solid var(--border); background:white; } .mini-card:nth-child(2){ transform:translateY(-16px); } .mc-thumb{ height:140px; display:flex; align-items:center; justify-content:center; font-size:30px; background:linear-gradient(145deg,#ede6ff,#d8ccff); background-size:cover; background-position:center; position:relative; } .mc-body{ padding:.65rem .75rem; } .mc-name{ font-family:var(--serif); font-size:14px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .mc-detail{ font-size:10px; color:var(--text3); margin-top:2px; } .mc-tag{ display:inline-block; padding:2px 8px; border-radius:999px; font-size:9px; background:#EDE8FF; color:var(--purple); margin-top:6px; font-weight:700; } .section{ padding:1.1rem 1.2rem 0; } .shot-greeting{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:.25rem; } .shot-title{ font-family:var(--serif); font-size:24px; font-weight:700; color:var(--text); margin-bottom:.75rem; line-height:1.15; } .shot-title em{ font-style:italic; color:var(--purple); } .swipe-bar{ display:flex; align-items:center; justify-content:space-between; padding:.75rem .9rem; border-radius:14px; background:white; border:1px solid var(--border); margin-bottom:.9rem; box-shadow:0 2px 8px rgba(124,92,191,.06); gap:1rem; } .sb-left{ display:flex; align-items:center; gap:.95rem; flex-wrap:wrap; } .sb-count{ display:flex; align-items:center; gap:.35rem; font-size:15px; font-weight:700; color:var(--text); } .sb-label{ font-size:10px; color:var(--text3); font-weight:500; } .upgrade-pill{ padding:5px 12px; border-radius:999px; background:linear-gradient(135deg,var(--gold1),var(--gold2)); color:white; font-size:11px; font-weight:700; white-space:nowrap; border:none; cursor:pointer; } .utility-row{ display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.85rem; } .utility-btn{ border:none; background:#fff; border:1px solid var(--border); color:var(--text2); padding:.62rem .95rem; border-radius:999px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(124,92,191,.05); } .match-card{ border-radius:20px; overflow:hidden; border:1px solid var(--border); background:white; margin-bottom:.8rem; box-shadow:0 2px 12px rgba(124,92,191,.08); } .mcs-hero{ height:190px; display:flex; align-items:center; justify-content:center; font-size:36px; position:relative; background:linear-gradient(145deg,#ede6ff,#d8ccff); background-size:cover; background-position:center; } .mcs-score{ position:absolute; top:10px; right:10px; padding:4px 10px; border-radius:999px; font-size:10px; font-weight:700; background:var(--purple); color:white; } .mcs-prompt{ position:absolute; top:10px; left:10px; padding:4px 10px; border-radius:999px; font-size:10px; font-style:italic; font-family:var(--serif); background:rgba(255,255,255,.88); color:var(--text2); border:1px solid var(--border); } .mcs-body{ padding:.9rem; } .mcs-name{ font-family:var(--serif); font-size:20px; font-weight:700; color:var(--text); } .mcs-loc{ font-size:11px; color:var(--text3); margin-top:3px; line-height:1.45; } .mcs-tags{ display:flex; gap:.35rem; margin:.65rem 0; flex-wrap:wrap; } .mcs-tag{ padding:4px 9px; border-radius:999px; font-size:10px; background:#F0ECFF; border:1px solid var(--border); color:var(--text2); } .mcs-actions{ display:flex; gap:.55rem; margin-top:.7rem; } .mcs-pass, .mcs-connect{ flex:1; padding:.75rem; border-radius:999px; font-size:12px; font-weight:700; text-align:center; border:none; cursor:pointer; } .mcs-pass{ border:1px solid var(--border); background:transparent; color:var(--text3); } .mcs-connect{ background:var(--purple); color:white; flex:2; } .empty{ text-align:center; padding:1.6rem 1rem; color:var(--text2); font-size:14px; line-height:1.6; background:#fff; border:1px solid var(--border); border-radius:18px; } .bottom-tabs{ position:fixed; bottom:0; left:0; right:0; height:78px; background:rgba(255,255,255,.96); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; padding:0 .5rem .8rem; backdrop-filter:blur(12px); z-index:60; } .btab{ display:flex; flex-direction:column; align-items:center; gap:3px; text-decoration:none; padding:.35rem .6rem; border-radius:12px; } .btab-icon{ font-size:20px; color:var(--text3); } .btab-label{ font-size:8px; letter-spacing:.5px; text-transform:uppercase; color:var(--text3); } .btab.on .btab-icon, .btab.on .btab-label{ color:var(--purple); } </style> </head> <body> <div class="top-bar"> <div class="logo">miru.</div> <div class="top-right" id="topRight"> <button class="join-btn" onclick="goAuth()">Join free</button> </div> </div> <div class="hero"> <div class="tag">✦ The new standard in dating</div> <h1>Stop swiping.<br><em>Start living.</em></h1> <p class="hero-sub">3 curated video matches a day. No endless scroll. No fake photos. Just real people.</p> <div class="cards-preview" id="previewCards"></div> </div> <div class="section"> <div class="shot-greeting">Good morning, friend ✦</div> <div class="shot-title">Your <em>3 matches</em><br>are waiting.</div> <div class="swipe-bar"> <div class="sb-left"> <div class="sb-count"><span id="likeCount">40</span> 👆 <span class="sb-label">likes</span></div> <div class="sb-count"><span id="superCount">3</span> ⚡ <span class="sb-label">super</span></div> </div> <button class="upgrade-pill" id="premiumBtn" onclick="window.location.href='premium.html'">⭐ Premium</button> </div> <div class="utility-row"> <button class="utility-btn" onclick="window.location.href='explore.html'">🔍 Explore more</button> <button class="utility-btn" onclick="window.location.href='double_date.html'">👯 Add your friend</button> <button class="utility-btn" onclick="window.location.href='messages.html'">💬 Open messages</button> </div> <div id="matchList"></div> </div> <div class="bottom-tabs"> <a class="btab on" href="index.html"> <div class="btab-icon">💜</div> <div class="btab-label">Matches</div> </a> <a class="btab" href="messages.html"> <div class="btab-icon">💬</div> <div class="btab-label">Messages</div> </a> <a class="btab" href="explore.html"> <div class="btab-icon">🔍</div> <div class="btab-label">Explore</div> </a> <a class="btab" href="profile.html"> <div class="btab-icon">👤</div> <div class="btab-label">Profile</div> </a> </div> <script> const sb = supabase.createClient( window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY ); let me = null; let myProfile = null; let loadedProfiles = []; function esc(v){ return String(v ?? "") .replace(/&/g,"&amp;") .replace(/</g,"&lt;") .replace(/>/g,"&gt;") .replace(/"/g,"&quot;") .replace(/'/g,"&#39;"); } function goAuth(){ window.location.href = "auth.html"; } async function getUser(){ const { data:{ user } } = await sb.auth.getUser(); return user || null; } async function ensureProfile(user){ const { data: existing } = await sb .from("profiles") .select("*") .eq("user_id", user.id) .maybeSingle(); if (existing) return existing; const fallbackName = user.email ? user.email.split("@")[0] : "New User"; await sb.from("profiles").insert({ user_id: user.id, name: fallbackName, age: 25, bio: "Say something real.", avatar_url: "", is_premium: false }); const { data } = await sb .from("profiles") .select("*") .eq("user_id", user.id) .maybeSingle(); return data; } function renderLoggedOutNav(){ document.getElementById("topRight").innerHTML = ` <button class="join-btn" onclick="goAuth()">Join free</button> `; } function renderLoggedInNav(){ const initial = esc((myProfile?.name || me?.email || "M").trim().charAt(0).toUpperCase()); const avatarHTML = myProfile?.avatar_url ? `<button class="avatar-pill" onclick="window.location.href='profile.html'"><img src="${esc(myProfile.avatar_url)}" alt="avatar"></button>` : `<button class="avatar-pill" onclick="window.location.href='profile.html'">${initial}</button>`; document.getElementById("topRight").innerHTML = ` <button class="icon-btn" onclick="window.location.href='messages.html'">🔔</button> ${avatarHTML} <button class="icon-btn" onclick="logout()">↗</button> `; } function renderMarketingOnly(){ document.getElementById("premiumBtn").style.display = "inline-block"; document.getElementById("previewCards").innerHTML = ` <div class="mini-card"> <div class="mc-thumb">🎥</div> <div class="mc-body"> <div class="mc-name">Alex</div> <div class="mc-detail">2.4 mi · Tonight</div> <div class="mc-tag">97% match</div> </div> </div> <div class="mini-card"> <div class="mc-thumb" style="background:linear-gradient(145deg,#ffe6f0,#ffd0e4)">🎥</div> <div class="mc-body"> <div class="mc-name">Jordan</div> <div class="mc-detail">1.1 mi · Weekend</div> <div class="mc-tag">91% match</div> </div> </div> <div class="mini-card"> <div class="mc-thumb" style="background:linear-gradient(145deg,#e6f0ff,#d0e4ff)">🎥</div> <div class="mc-body"> <div class="mc-name">Riley</div> <div class="mc-detail">4.8 mi · Flexible</div> <div class="mc-tag">88% match</div> </div> </div> `; document.getElementById("matchList").innerHTML = ` <div class="match-card"> <div class="mcs-hero"> 🎥 <div class="mcs-score">97% match</div> <div class="mcs-prompt">"Make me laugh..."</div> </div> <div class="mcs-body"> <div class="mcs-name">Alex, 27</div> <div class="mcs-loc">📍 2.4 mi · Phoenix, AZ</div> <div class="mcs-tags"> <div class="mcs-tag">🛋️ chill</div> <div class="mcs-tag">🎨 artsy</div> <div class="mcs-tag">🕐 tonight</div> </div> <div class="mcs-actions"> <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button> <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button> </div> </div> </div> <div class="match-card"> <div class="mcs-hero" style="background:linear-gradient(145deg,#ffe6f0,#ffd0e4)"> 🎥 <div class="mcs-score">91% match</div> <div class="mcs-prompt">"Something weird..."</div> </div> <div class="mcs-body"> <div class="mcs-name">Jordan, 30</div> <div class="mcs-loc">📍 1.1 mi · Tempe, AZ</div> <div class="mcs-tags"> <div class="mcs-tag">🏄 adventurous</div> <div class="mcs-tag">☕ coffee</div> </div> <div class="mcs-actions"> <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button> <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button> </div> </div> </div> `; } async function loadCounts(){ const { count: likesCount } = await sb .from("likes") .select("*", { count:"exact", head:true }) .eq("user_id", me.id) .eq("type", "like"); const { count: superCount } = await sb .from("likes") .select("*", { count:"exact", head:true }) .eq("user_id", me.id) .eq("type", "super"); document.getElementById("likeCount").textContent = likesCount || 0; document.getElementById("superCount").textContent = superCount || 0; if (myProfile?.is_premium) { document.getElementById("premiumBtn").textContent = "⭐ Premium on"; } else { document.getElementById("premiumBtn").textContent = "⭐ Premium"; } } async function loadMatches(){ const { data, error } = await sb .from("profiles") .select("user_id,name,age,bio,avatar_url,is_premium,boost_until") .neq("user_id", me.id) .order("boost_until", { ascending:false }) .limit(12); if (error) { document.getElementById("matchList").innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; } loadedProfiles = data || []; renderPreviews(loadedProfiles.slice(0,3)); renderMatches(loadedProfiles.slice(0,3)); } function previewThumbStyle(profile, index){ if (profile.avatar_url) { return `background-image:url('${esc(profile.avatar_url)}');background-size:cover;background-position:center;`; } if (index === 1) return `background:linear-gradient(145deg,#ffe6f0,#ffd0e4)`; if (index === 2) return `background:linear-gradient(145deg,#e6f0ff,#d0e4ff)`; return `background:linear-gradient(145deg,#ede6ff,#d8ccff)`; } function renderPreviews(items){ const wrap = document.getElementById("previewCards"); if (!items.length) { wrap.innerHTML = ""; return; } wrap.innerHTML = items.map((p, i) => ` <div class="mini-card"> <div class="mc-thumb" style="${previewThumbStyle(p, i)}">${p.avatar_url ? "" : "🎥"}</div> <div class="mc-body"> <div class="mc-name">${esc(p.name || "Match")}</div> <div class="mc-detail">${esc(p.age || "—")} · Real person</div> <div class="mc-tag">${p.is_premium ? "Premium" : "New"}</div> </div> </div> `).join(""); } function renderMatches(items){ const wrap = document.getElementById("matchList"); if (!items.length) { wrap.innerHTML = `<div class="empty">No profiles yet. Come back after more people join.</div>`; return; } wrap.innerHTML = items.map((p, i) => ` <div class="match-card"> <div class="mcs-hero" style="${previewThumbStyle(p, i)}"> ${p.avatar_url ? "" : "🎥"} <div class="mcs-score">${97 - (i * 4)}% match</div> <div class="mcs-prompt">"${i === 0 ? "Make me laugh..." : i === 1 ? "Something weird..." : "Tell me a story..."}"</div> </div> <div class="mcs-body"> <div class="mcs-name">${esc(p.name || "Match")}${p.age ? `, ${esc(p.age)}` : ""}</div> <div class="mcs-loc">${esc(p.bio || "Say hi and see where it goes.")}</div> <div class="mcs-tags"> <div class="mcs-tag">real</div> <div class="mcs-tag">video-first</div> ${p.is_premium ? `<div class="mcs-tag">premium</div>` : ``} <div class="mcs-tag">miru</div> </div> <div class="mcs-actions"> <button class="mcs-pass" onclick="window.location.href='explore.html'">Pass</button> <button class="mcs-connect" onclick="likeUser('${esc(p.user_id)}')">✦ Connect</button> </div> </div> </div> `).join(""); } async function likeUser(targetId){ if (!me) return window.location.href = "auth.html"; const { data: existing } = await sb .from("likes") .select("id") .eq("user_id", me.id) .eq("target_user_id", targetId) .eq("type", "like") .maybeSingle(); if (existing) { alert("Already liked 💜"); return; } const { error } = await sb.from("likes").insert({ user_id: me.id, target_user_id: targetId, type: "like" }); if (error) { alert(error.message); return; } await maybeCreateConversation(me.id, targetId); await loadCounts(); alert("Liked 💜"); } async function maybeCreateConversation(myId, targetId){ const { data: mutual } = await sb .from("likes") .select("id") .eq("user_id", targetId) .eq("target_user_id", myId) .limit(1); if (!mutual || !mutual.length) return; const { data: existing } = await sb .from("conversations") .select("id") .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`) .maybeSingle(); if (!existing) { await sb.from("conversations").insert({ user_a: myId, user_b: targetId, last_message: "You matched 💜", last_message_at: new Date().toISOString() }); } } async function logout(){ await sb.auth.signOut(); window.location.href = "auth.html"; } async function init(){ me = await getUser(); if (!me) { renderLoggedOutNav(); renderMarketingOnly(); return; } myProfile = await ensureProfile(me); renderLoggedInNav(); await loadCounts(); await loadMatches(); } init(); </script> </body> </html> ```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <title>Miru — Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0A1A;
+      --bg-2: #130F2A;
+      --surface: #1C1640;
+      --surface-2: #241C4C;
+      --border: rgba(196, 184, 240, 0.14);
+      --border-strong: rgba(196, 184, 240, 0.22);
+      --violet: #4A3F8A;
+      --lavender: #8B7EC8;
+      --lilac: #C4B8F0;
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --success: #7EEDB0;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius-xl: 26px;
+      --radius-lg: 20px;
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.22), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    body { padding-bottom: 100px; }
+
+    .shell {
+      max-width: 460px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .ambient::before,
+    .ambient::after {
+      content: "";
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .ambient::before {
+      top: -70px;
+      left: -90px;
+      background: rgba(139, 126, 200, 0.16);
+    }
+
+    .ambient::after {
+      right: -110px;
+      top: 220px;
+      background: rgba(74, 63, 138, 0.2);
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      backdrop-filter: blur(16px);
+      background: rgba(13, 10, 26, 0.72);
+      border-bottom: 1px solid rgba(196, 184, 240, 0.08);
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+      font-style: italic;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .join-btn,
+    .primary-btn,
+    .secondary-btn,
+    .pill-btn,
+    .upgrade-pill,
+    .mcs-connect,
+    .mcs-pass,
+    .utility-btn,
+    .icon-btn,
+    .avatar-pill {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .join-btn,
+    .mcs-connect,
+    .upgrade-pill,
+    .primary-btn {
+      background: var(--white);
+      color: #120D25;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(255, 255, 255, 0.14);
+    }
+
+    .join-btn {
+      padding: 12px 18px;
+      font-size: 13px;
+    }
+
+    .icon-btn,
+    .avatar-pill {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .avatar-pill img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 999px;
+      display: block;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 24px 18px 12px;
+    }
+
+    .beta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .beta-pill,
+    .countdown-pill,
+    .mcs-score,
+    .mcs-prompt,
+    .mc-tag,
+    .sb-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .beta-pill {
+      color: var(--lilac);
+      border: 1px solid rgba(196, 184, 240, 0.18);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .beta-pill strong { color: var(--white); font-weight: 800; }
+
+    .hero-card {
+      border-radius: 34px;
+      padding: 26px 22px 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196, 184, 240, 0.12);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40px -50px auto;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(196,184,240,0.18), transparent 60%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      color: var(--lilac);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 14px;
+      font-weight: 800;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 44px;
+      line-height: 0.96;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--lilac);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-soft);
+      max-width: 310px;
+      margin-bottom: 18px;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      padding: 14px 16px;
+      font-size: 13px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .cards-preview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196, 184, 240, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .mini-card:nth-child(2) { transform: translateY(16px); }
+
+    .mc-thumb {
+      height: 132px;
+      background: linear-gradient(145deg, #352B6B, #1E1745);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      padding: 12px;
+      font-size: 28px;
+      position: relative;
+    }
+
+    .mc-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 30%, rgba(8, 6, 18, 0.65) 100%);
+    }
+
+    .mc-thumb span {
+      position: relative;
+      z-index: 1;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      backdrop-filter: blur(10px);
+    }
+
+    .mc-body {
+      padding: 12px;
+    }
+
+    .mc-name {
+      font-weight: 800;
+      font-size: 14px;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+
+    .mc-detail {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .mc-tag {
+      margin-top: 8px;
+      color: var(--white);
+      background: rgba(139, 126, 200, 0.18);
+      border: 1px solid rgba(196, 184, 240, 0.12);
+      padding: 5px 8px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 18px 0 6px;
+    }
+
+    .stat {
+      padding: 14px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(196, 184, 240, 0.1);
+      text-align: center;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      line-height: 1.3;
+      color: var(--text-muted);
+    }
+
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 16px 18px 0;
+    }
+
+    .dashboard-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .shot-greeting {
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .shot-title {
+      font-family: var(--serif);
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .shot-title em {
+      font-style: italic;
+      color: var(--lilac);
+    }
+
+    .countdown-pill {
+      color: var(--text-soft);
+      border: 1px solid rgba(196,184,240,0.12);
+      background: rgba(255,255,255,0.04);
+      white-space: nowrap;
+    }
+
+    .swipe-bar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(196,184,240,0.1);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .sb-left {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sb-chip {
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .sb-chip strong {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .upgrade-pill {
+      padding: 12px 16px;
+      font-size: 12px;
+      align-self: center;
+    }
+
+    .utility-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .utility-btn {
+      padding: 14px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.4;
+      min-height: 62px;
+    }
+
+    .match-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .match-card {
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(196,184,240,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow);
+    }
+
+    .mcs-hero {
+      height: 245px;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 18px;
+      background: linear-gradient(145deg, #352B6B, #1E1745);
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+    }
+
+    .mcs-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 5, 15, 0.1) 15%, rgba(7, 5, 15, 0.82) 100%);
+    }
+
+    .mcs-score,
+    .mcs-prompt {
+      position: absolute;
+      z-index: 1;
+      backdrop-filter: blur(14px);
+    }
+
+    .mcs-score {
+      top: 14px;
+      right: 14px;
+      color: var(--white);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .mcs-prompt {
+      top: 14px;
+      left: 14px;
+      color: var(--text);
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(255,255,255,0.55);
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .mcs-overlay {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .mcs-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .mcs-loc {
+      color: rgba(255,255,255,0.82);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .compat {
+      min-width: 96px;
+      text-align: right;
+    }
+
+    .compat-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .compat-score {
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--white);
+    }
+
+    .mcs-body {
+      padding: 16px;
+    }
+
+    .relation-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-soft);
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .relation-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--success);
+      box-shadow: 0 0 18px rgba(126, 237, 176, 0.45);
+    }
+
+    .mcs-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .mcs-tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .mcs-actions {
+      display: grid;
+      grid-template-columns: 0.95fr 1.45fr;
+      gap: 10px;
+    }
+
+    .mcs-pass,
+    .mcs-connect {
+      padding: 15px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mcs-pass {
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .empty {
+      border-radius: 24px;
+      padding: 24px 18px;
+      text-align: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      line-height: 1.7;
+    }
+
+    .bottom-tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px));
+      padding: 12px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(18, 13, 37, 0.88);
+      border: 1px solid rgba(196,184,240,0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(18px);
+      z-index: 70;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .btab {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 54px;
+      border-radius: 18px;
+      color: var(--text-muted);
+      transition: 0.2s ease;
+    }
+
+    .btab-icon { font-size: 20px; }
+    .btab-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      font-weight: 700;
+    }
+
+    .btab.on {
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+    }
+
+    @media (max-width: 390px) {
+      .hero h1 { font-size: 38px; }
+      .shot-title { font-size: 28px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .utility-row { grid-template-columns: 1fr; }
+      .cards-preview { grid-template-columns: 1fr 1fr 1fr; }
+      .mcs-overlay { flex-direction: column; align-items: flex-start; }
+      .compat { text-align: left; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+  <div class="shell">
+    <div class="top-bar">
+      <div class="logo">miru.</div>
+      <div class="top-right" id="topRight">
+        <button class="join-btn" onclick="goAuth()">Join free</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="beta-row">
+        <div class="beta-pill"><strong>Now in beta</strong> · Phoenix, AZ</div>
+      </div>
+
+      <div class="hero-card">
+        <div class="eyebrow">✦ The new standard in dating</div>
+        <h1>See the real them.<br><em>Finally.</em></h1>
+        <p class="hero-sub">No swiping. No fake photos. No burnout. Miru gives you 3 curated, video-first matches a day based on who you actually are.</p>
+
+        <div class="cta-row">
+          <button class="primary-btn" onclick="goAuth()">✦ Get early access</button>
+          <button class="secondary-btn" onclick="window.location.href='explore.html'">See how it works →</button>
+        </div>
+
+        <div class="cards-preview" id="previewCards"></div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-value">3</span>
+            <span class="stat-label">Matches per day</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">0</span>
+            <span class="stat-label">Fake photos</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">94%</span>
+            <span class="stat-label">Feel seen</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">∞</span>
+            <span class="stat-label">Real conversations</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="dashboard-head">
+        <div>
+          <div class="shot-greeting">Good morning, friend ✦</div>
+          <div class="shot-title">Your <em>3 matches</em><br />dropped today.</div>
+        </div>
+        <div class="countdown-pill">Next batch in <span id="countdown">13:22:41</span></div>
+      </div>
+
+      <div class="swipe-bar">
+        <div class="sb-left">
+          <div class="sb-chip"><strong id="likeCount">40</strong> likes</div>
+          <div class="sb-chip"><strong id="superCount">3</strong> ⚡ super</div>
+        </div>
+        <button class="upgrade-pill" id="premiumBtn" onclick="window.location.href='premium.html'">⭐ Premium</button>
+      </div>
+
+      <div class="utility-row">
+        <button class="utility-btn" onclick="window.location.href='explore.html'">🔍<br />Explore more</button>
+        <button class="utility-btn" onclick="window.location.href='double_date.html'">👯<br />Add your friend</button>
+        <button class="utility-btn" onclick="window.location.href='messages.html'">💬<br />Open messages</button>
+      </div>
+
+      <div class="match-grid" id="matchList"></div>
+    </div>
+  </div>
+
+  <div class="bottom-tabs">
+    <a class="btab on" href="index.html">
+      <div class="btab-icon">💜</div>
+      <div class="btab-label">Matches</div>
+    </a>
+    <a class="btab" href="messages.html">
+      <div class="btab-icon">💬</div>
+      <div class="btab-label">Messages</div>
+    </a>
+    <a class="btab" href="explore.html">
+      <div class="btab-icon">🔍</div>
+      <div class="btab-label">Explore</div>
+    </a>
+    <a class="btab" href="profile.html">
+      <div class="btab-icon">👤</div>
+      <div class="btab-label">Profile</div>
+    </a>
+  </div>
+
+  <script>
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
+
+    let me = null;
+    let myProfile = null;
+    let loadedProfiles = [];
+
+    function esc(v) {
+      return String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function goAuth() {
+      window.location.href = "auth.html";
+    }
+
+    async function getUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      return user || null;
+    }
+
+    async function ensureProfile(user) {
+      const { data: existing } = await sb
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (existing) return existing;
+
+      const fallbackName = user.email ? user.email.split("@")[0] : "New User";
+
+      await sb.from("profiles").insert({
+        user_id: user.id,
+        name: fallbackName,
+        age: 25,
+        bio: "Say something real.",
+        avatar_url: "",
+        is_premium: false
+      });
+
+      const { data } = await sb
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      return data;
+    }
+
+    function renderLoggedOutNav() {
+      document.getElementById("topRight").innerHTML = `
+        <button class="join-btn" onclick="goAuth()">Join free</button>
+      `;
+    }
+
+    function renderLoggedInNav() {
+      const initial = esc((myProfile?.name || me?.email || "M").trim().charAt(0).toUpperCase());
+      const avatarHTML = myProfile?.avatar_url
+        ? `<button class="avatar-pill" onclick="window.location.href='profile.html'"><img src="${esc(myProfile.avatar_url)}" alt="avatar"></button>`
+        : `<button class="avatar-pill" onclick="window.location.href='profile.html'">${initial}</button>`;
+
+      document.getElementById("topRight").innerHTML = `
+        <button class="icon-btn" onclick="window.location.href='messages.html'">🔔</button>
+        ${avatarHTML}
+        <button class="icon-btn" onclick="logout()">↗</button>
+      `;
+    }
+
+    function profilePrompt(index) {
+      if (index === 0) return 'Make me laugh...';
+      if (index === 1) return 'Something weird...';
+      return 'Tell me a story...';
+    }
+
+    function profileAccent(index) {
+      if (index === 1) return 'linear-gradient(145deg,#5F4EB3,#231A54)';
+      if (index === 2) return 'linear-gradient(145deg,#7B5FDB,#2A2255)';
+      return 'linear-gradient(145deg,#46388E,#1D1642)';
+    }
+
+    function previewThumbStyle(profile, index) {
+      if (profile.avatar_url) {
+        return `background-image:url('${esc(profile.avatar_url)}');background-size:cover;background-position:center;`;
+      }
+      return `background:${profileAccent(index)};`;
+    }
+
+    function renderMarketingOnly() {
+      document.getElementById("premiumBtn").style.display = "inline-block";
+      document.getElementById("previewCards").innerHTML = `
+        <div class="mini-card">
+          <div class="mc-thumb" style="${profileAccent(0)}"><span>"Make me laugh..."</span></div>
+          <div class="mc-body">
+            <div class="mc-name">Sofia R.</div>
+            <div class="mc-detail">2.4 mi · Tonight</div>
+            <div class="mc-tag">chill tonight</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-thumb" style="${profileAccent(1)}"><span>"Tell me a story..."</span></div>
+          <div class="mc-body">
+            <div class="mc-name">Marcus T.</div>
+            <div class="mc-detail">1.1 mi · Weekend</div>
+            <div class="mc-tag">deep adventure</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mc-thumb" style="${profileAccent(2)}"><span>"Something weird..."</span></div>
+          <div class="mc-body">
+            <div class="mc-name">Priya N.</div>
+            <div class="mc-detail">4.8 mi · Flexible</div>
+            <div class="mc-tag">artsy match</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("matchList").innerHTML = `
+        <div class="match-card">
+          <div class="mcs-hero" style="${profileAccent(0)}">
+            <div class="mcs-score">97% match</div>
+            <div class="mcs-prompt">"Make me laugh..."</div>
+            <div class="mcs-overlay">
+              <div>
+                <div class="mcs-name">Sofia R., 27</div>
+                <div class="mcs-loc">2.4 mi · Phoenix</div>
+              </div>
+              <div class="compat">
+                <div class="compat-label">Compatibility</div>
+                <div class="compat-score">97%</div>
+              </div>
+            </div>
+          </div>
+          <div class="mcs-body">
+            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
+            <div class="mcs-tags">
+              <div class="mcs-tag">chill</div>
+              <div class="mcs-tag">artsy</div>
+              <div class="mcs-tag">tonight</div>
+            </div>
+            <div class="mcs-actions">
+              <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button>
+              <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-card">
+          <div class="mcs-hero" style="${profileAccent(1)}">
+            <div class="mcs-score">91% match</div>
+            <div class="mcs-prompt">"Something weird..."</div>
+            <div class="mcs-overlay">
+              <div>
+                <div class="mcs-name">Marcus T., 30</div>
+                <div class="mcs-loc">1.1 mi · Tempe</div>
+              </div>
+              <div class="compat">
+                <div class="compat-label">Compatibility</div>
+                <div class="compat-score">91%</div>
+              </div>
+            </div>
+          </div>
+          <div class="mcs-body">
+            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
+            <div class="mcs-tags">
+              <div class="mcs-tag">adventurous</div>
+              <div class="mcs-tag">deep talks</div>
+            </div>
+            <div class="mcs-actions">
+              <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button>
+              <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadCounts() {
+      const { count: likesCount } = await sb
+        .from("likes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", me.id)
+        .eq("type", "like");
+
+      const { count: superCount } = await sb
+        .from("likes")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", me.id)
+        .eq("type", "super");
+
+      document.getElementById("likeCount").textContent = likesCount || 0;
+      document.getElementById("superCount").textContent = superCount || 0;
+      document.getElementById("premiumBtn").textContent = myProfile?.is_premium ? "⭐ Premium on" : "⭐ Premium";
+    }
+
+    async function loadMatches() {
+      const { data, error } = await sb
+        .from("profiles")
+        .select("user_id,name,age,bio,avatar_url,is_premium,boost_until")
+        .neq("user_id", me.id)
+        .order("boost_until", { ascending: false })
+        .limit(12);
+
+      if (error) {
+        document.getElementById("matchList").innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+        return;
+      }
+
+      loadedProfiles = data || [];
+      renderPreviews(loadedProfiles.slice(0, 3));
+      renderMatches(loadedProfiles.slice(0, 3));
+    }
+
+    function renderPreviews(items) {
+      const wrap = document.getElementById("previewCards");
+      if (!items.length) {
+        wrap.innerHTML = "";
+        return;
+      }
+
+      wrap.innerHTML = items.map((p, i) => `
+        <div class="mini-card">
+          <div class="mc-thumb" style="${previewThumbStyle(p, i)}"><span>"${esc(profilePrompt(i))}"</span></div>
+          <div class="mc-body">
+            <div class="mc-name">${esc(p.name || "Match")}</div>
+            <div class="mc-detail">${esc(p.age || "—")} · Real person</div>
+            <div class="mc-tag">${p.is_premium ? "premium" : "new drop"}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderMatches(items) {
+      const wrap = document.getElementById("matchList");
+      if (!items.length) {
+        wrap.innerHTML = `<div class="empty">No profiles yet. Come back after more people join.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = items.map((p, i) => `
+        <div class="match-card">
+          <div class="mcs-hero" style="${previewThumbStyle(p, i)}">
+            <div class="mcs-score">${97 - (i * 6)}% match</div>
+            <div class="mcs-prompt">"${esc(profilePrompt(i))}"</div>
+            <div class="mcs-overlay">
+              <div>
+                <div class="mcs-name">${esc(p.name || "Match")}${p.age ? `, ${esc(p.age)}` : ""}</div>
+                <div class="mcs-loc">${esc(p.bio || "2.4 mi · Phoenix")}</div>
+              </div>
+              <div class="compat">
+                <div class="compat-label">Compatibility</div>
+                <div class="compat-score">${97 - (i * 6)}%</div>
+              </div>
+            </div>
+          </div>
+          <div class="mcs-body">
+            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
+            <div class="mcs-tags">
+              <div class="mcs-tag">real</div>
+              <div class="mcs-tag">video-first</div>
+              ${p.is_premium ? `<div class="mcs-tag">premium</div>` : ``}
+              <div class="mcs-tag">miru</div>
+            </div>
+            <div class="mcs-actions">
+              <button class="mcs-pass" onclick="window.location.href='explore.html'">Pass</button>
+              <button class="mcs-connect" onclick="likeUser('${esc(p.user_id)}')">✦ Connect</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function likeUser(targetId) {
+      if (!me) {
+        window.location.href = "auth.html";
+        return;
+      }
+
+      const { data: existing } = await sb
+        .from("likes")
+        .select("id")
+        .eq("user_id", me.id)
+        .eq("target_user_id", targetId)
+        .eq("type", "like")
+        .maybeSingle();
+
+      if (existing) {
+        alert("Already liked 💜");
+        return;
+      }
+
+      const { error } = await sb.from("likes").insert({
+        user_id: me.id,
+        target_user_id: targetId,
+        type: "like"
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      await maybeCreateConversation(me.id, targetId);
+      await loadCounts();
+      alert("Liked 💜");
+    }
+
+    async function maybeCreateConversation(myId, targetId) {
+      const { data: mutual } = await sb
+        .from("likes")
+        .select("id")
+        .eq("user_id", targetId)
+        .eq("target_user_id", myId)
+        .limit(1);
+
+      if (!mutual || !mutual.length) return;
+
+      const { data: existing } = await sb
+        .from("conversations")
+        .select("id")
+        .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
+        .maybeSingle();
+
+      if (!existing) {
+        await sb.from("conversations").insert({
+          user_a: myId,
+          user_b: targetId,
+          last_message: "You matched 💜",
+          last_message_at: new Date().toISOString()
+        });
+      }
+    }
+
+    async function logout() {
+      await sb.auth.signOut();
+      window.location.href = "auth.html";
+    }
+
+    function startCountdown() {
+      let remaining = 13 * 3600 + 22 * 60 + 41;
+      const el = document.getElementById('countdown');
+      if (!el) return;
+
+      setInterval(() => {
+        const hrs = String(Math.floor(remaining / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+        const secs = String(remaining % 60).padStart(2, '0');
+        el.textContent = `${hrs}:${mins}:${secs}`;
+        remaining = remaining > 0 ? remaining - 1 : 13 * 3600 + 22 * 60 + 41;
+      }, 1000);
+    }
+
+    async function init() {
+      startCountdown();
+      me = await getUser();
+
+      if (!me) {
+        renderLoggedOutNav();
+        renderMarketingOnly();
+        return;
+      }
+
+      myProfile = await ensureProfile(me);
+      renderLoggedInNav();
+      await loadCounts();
+      await loadMatches();
+    }
+
+    init();
+  </script>
+</body>
+</html>
