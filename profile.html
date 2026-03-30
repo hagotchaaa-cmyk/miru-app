@@ -3,118 +3,1450 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
   <title>Miru — Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #7C5CBF;
-      color: white;
-      padding: 0;
-      margin: 0;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0A1A;
+      --bg-2: #130F2A;
+      --surface: #171131;
+      --surface-2: #21194A;
+      --surface-3: #2A225A;
+      --border: rgba(196, 184, 240, 0.14);
+      --border-strong: rgba(196, 184, 240, 0.22);
+      --violet: #4A3F8A;
+      --lavender: #8B7EC8;
+      --lilac: #C4B8F0;
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --success: #7EEDB0;
+      --danger: #FF8EA1;
+      --warning: #FFD98E;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
     }
-    .profile {
-      text-align: center;
-      padding: 40px 20px;
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
     }
-    .avatar {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      margin: 20px auto;
+
+    body { padding-bottom: 102px; }
+
+    .ambient::before,
+    .ambient::after {
+      content: "";
+      position: fixed;
+      width: 250px;
+      height: 250px;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    .ambient::before {
+      top: -60px;
+      left: -90px;
+      background: rgba(139, 126, 200, 0.16);
+    }
+
+    .ambient::after {
+      right: -100px;
+      top: 280px;
+      background: rgba(74, 63, 138, 0.24);
+    }
+
+    .shell {
+      max-width: 460px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      backdrop-filter: blur(18px);
+      background: rgba(13, 10, 26, 0.74);
+      border-bottom: 1px solid rgba(196,184,240,0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 27px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--white);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .icon-btn,
+    .ghost-btn,
+    .primary-btn,
+    .secondary-btn,
+    .pill-btn,
+    .sheet-btn,
+    .tab-btn,
+    .menu-item,
+    .quick-btn,
+    .fab,
+    .tab,
+    .grid-card button,
+    .save-btn {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .menu {
+      position: absolute;
+      top: 52px;
+      right: 0;
+      width: 220px;
+      border-radius: 22px;
+      background: rgba(23, 17, 49, 0.98);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      padding: 10px;
+      display: none;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(159, 122, 234, 0.3);
     }
+
+    .menu.show { display: block; }
+
+    .menu-title {
+      padding: 8px 10px 10px;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .menu-item {
+      width: 100%;
+      text-align: left;
+      padding: 13px 12px;
+      border-radius: 16px;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .menu-item:hover { background: rgba(255,255,255,0.05); }
+    .menu-item small { color: var(--text-muted); font-size: 11px; font-weight: 700; }
+
+    .page { padding: 18px; }
+
+    .hero {
+      border-radius: 34px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .cover {
+      height: 170px;
+      background:
+        radial-gradient(circle at top right, rgba(196,184,240,0.22), transparent 30%),
+        linear-gradient(135deg, #382D78 0%, #1A143D 45%, #120D25 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(196,184,240,0.22), transparent 62%);
+    }
+
+    .hero-content {
+      padding: 0 18px 18px;
+      margin-top: -52px;
+    }
+
+    .profile-head {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 112px;
+      height: 112px;
+      border-radius: 30px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      border: 3px solid rgba(13,10,26,0.92);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.32);
+    }
+
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
+
+    .avatar-edit {
+      position: absolute;
+      right: -6px;
+      bottom: -6px;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      border: 3px solid rgba(13,10,26,0.94);
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+    }
+
+    .identity {
+      flex: 1;
+      padding-bottom: 6px;
+    }
+
+    .identity-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 5px;
+    }
+
     .name {
-      font-size: 28px;
+      font-family: var(--serif);
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: -0.8px;
+      color: var(--white);
+    }
+
+    .verify,
+    .premium-chip,
+    .soft-chip,
+    .mini-chip,
+    .stat-label-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .verify {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+    }
+
+    .premium-chip {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+    }
+
+    .handle {
+      color: var(--text-muted);
+      font-size: 13px;
       font-weight: 700;
-      margin-top: 12px;
+      margin-bottom: 8px;
     }
+
     .bio {
-      color: #bbb;
-      margin-top: 6px;
-      max-width: 420px;
-      margin-left: auto;
-      margin-right: auto;
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.65;
+      margin-bottom: 12px;
     }
-    .actions {
-      padding: 20px;
+
+    .interest-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
     }
-    .btn {
-      padding: 12px;
-      background-color: #7C5CBF;
-      color: white;
+
+    .soft-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      padding: 8px 12px;
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border-radius: 999px;
+      padding: 15px 16px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .primary-btn {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      padding: 14px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .panel {
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid rgba(196,184,240,0.1);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .panel-sub {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .mini-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      padding: 9px 12px;
+    }
+
+    .creator-strip {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .create-card,
+    .premium-card {
+      border-radius: 24px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .create-card strong,
+    .premium-card strong {
+      display: block;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .create-card p,
+    .premium-card p {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .pill-btn {
+      padding: 12px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+    }
+
+    .tab-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .tab-btn {
+      padding: 12px 10px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tab-btn.on {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .grid-card {
+      position: relative;
+      aspect-ratio: 0.8;
+      border-radius: 22px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #3C317E, #1A143D);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+    }
+
+    .grid-card img,
+    .grid-card video {
       width: 100%;
-      border: none;
-      border-radius: 25px;
-      font-weight: bold;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #130F2A;
+    }
+
+    .grid-card.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .media-type,
+    .post-stamp {
+      position: absolute;
+      z-index: 1;
+      border-radius: 999px;
+      backdrop-filter: blur(14px);
+      font-weight: 800;
+    }
+
+    .media-type {
+      top: 10px;
+      left: 10px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.82);
+      color: #120D25;
+      font-size: 10px;
+    }
+
+    .post-stamp {
+      right: 10px;
+      bottom: 10px;
+      padding: 7px 10px;
+      background: rgba(17, 13, 37, 0.6);
+      color: var(--white);
+      font-size: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .section-copy {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: -4px;
+      margin-bottom: 14px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .about-card {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .about-card small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 5px;
+      font-weight: 800;
+    }
+
+    .about-card strong {
+      color: var(--white);
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 700;
+    }
+
+    .modal,
+    .sheet {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 110;
+    }
+
+    .modal.show,
+    .sheet.show { display: block; }
+
+    .backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(6, 4, 12, 0.68);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-card,
+    .sheet-card {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 18px));
+      border-radius: 28px;
+      background: rgba(23, 17, 49, 0.98);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-card {
+      top: 72px;
+      padding: 18px;
+    }
+
+    .sheet-card {
+      bottom: 12px;
+      padding: 18px;
+    }
+
+    .modal-head,
+    .sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .modal-title,
+    .sheet-title {
+      font-family: var(--serif);
+      font-size: 25px;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub,
+    .sheet-sub {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border-radius: 18px;
+      padding: 14px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+    }
+
+    .sheet-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sheet-btn {
+      width: 100%;
+      padding: 15px 14px;
+      border-radius: 18px;
+      text-align: left;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .sheet-btn small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .preview-box {
+      display: none;
+      margin-top: 12px;
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .preview-box.show { display: block; }
+
+    .preview-box img,
+    .preview-box video {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .helper {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 10px;
+    }
+
+    .fab {
+      position: fixed;
+      right: max(18px, calc(50% - 212px));
+      bottom: 102px;
+      width: 62px;
+      height: 62px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.26);
+      font-size: 28px;
+      font-weight: 800;
+      z-index: 75;
+    }
+
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px));
+      padding: 12px 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(18, 13, 37, 0.88);
+      border: 1px solid rgba(196,184,240,0.12);
+      border-radius: 24px;
+      backdrop-filter: blur(18px);
+      z-index: 70;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .tab {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 54px;
+      border-radius: 18px;
+      color: var(--text-muted);
+      transition: 0.2s ease;
+    }
+
+    .tab-icon { font-size: 20px; }
+
+    .tab-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      font-weight: 700;
+    }
+
+    .tab.on {
+      background: rgba(255,255,255,0.06);
+      color: var(--white);
+    }
+
+    @media (max-width: 390px) {
+      .profile-head { align-items: flex-start; flex-direction: column; }
+      .cta-row,
+      .creator-strip,
+      .tab-row,
+      .stats-row,
+      .about-grid { grid-template-columns: 1fr 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .fab { right: 16px; }
     }
   </style>
 </head>
 <body>
-  <div class="profile">
-    <div class="avatar">
-      <img id="avatar" src="" alt="Profile avatar">
+  <div class="ambient"></div>
+
+  <div class="shell">
+    <div class="top-bar">
+      <div class="brand">
+        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <div class="logo">miru.</div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" onclick="openComposer()">＋</button>
+        <button class="icon-btn" onclick="toggleMenu()">⋯</button>
+
+        <div class="menu" id="profileMenu">
+          <div class="menu-title">Profile menu</div>
+          <button class="menu-item" onclick="openEditProfile()">Edit profile <small>name, bio</small></button>
+          <button class="menu-item" onclick="openComposer()">Create post <small>photo or video</small></button>
+          <button class="menu-item" onclick="showPremiumAlert()">Subscribe <small>premium creator</small></button>
+          <button class="menu-item" onclick="showMenuAlert('Notifications center coming next.')">Notifications <small>push and activity</small></button>
+          <button class="menu-item" onclick="showMenuAlert('Privacy controls page coming next.')">Privacy <small>visibility and safety</small></button>
+          <button class="menu-item" onclick="showMenuAlert('Account center coming next.')">Account center <small>email and sessions</small></button>
+          <button class="menu-item" onclick="logout()">Log out <small>secure sign out</small></button>
+        </div>
+      </div>
     </div>
-    <div class="name" id="name">Loading...</div>
-    <div class="bio" id="bio">Loading bio...</div>
-    <button onclick="uploadProfilePic()">Upload Profile Picture</button>
+
+    <div class="page">
+      <div class="hero">
+        <div class="cover"></div>
+
+        <div class="hero-content">
+          <div class="profile-head">
+            <div class="avatar-wrap">
+              <div class="avatar">
+                <img id="avatar" src="default-avatar.jpg" alt="Profile avatar" />
+              </div>
+              <button class="avatar-edit" onclick="triggerAvatarUpload()">✦</button>
+            </div>
+
+            <div class="identity">
+              <div class="identity-top">
+                <div class="name" id="name">Loading...</div>
+                <div class="verify">Verified vibe</div>
+                <div class="premium-chip" id="premiumChip">Premium off</div>
+              </div>
+              <div class="handle" id="handle">@miruuser</div>
+              <div class="bio" id="bio">Loading bio...</div>
+              <div class="interest-row" id="interestRow">
+                <div class="soft-chip">video-first</div>
+                <div class="soft-chip">real energy</div>
+                <div class="soft-chip">miru</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-row">
+            <button class="primary-btn" onclick="openComposer()">Make post</button>
+            <button class="secondary-btn" onclick="openEditProfile()">Edit profile</button>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat">
+              <strong id="statPosts">0</strong>
+              <span>posts</span>
+            </div>
+            <div class="stat">
+              <strong id="statLikes">0</strong>
+              <span>admired</span>
+            </div>
+            <div class="stat">
+              <strong id="statMatches">0</strong>
+              <span>matches</span>
+            </div>
+            <div class="stat">
+              <strong id="statMedia">0</strong>
+              <span>media</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Creator mode</div>
+            <div class="panel-sub">Make your profile feel alive. Drop short videos, still photos, and visual updates directly from your phone.</div>
+          </div>
+          <div class="mini-chip">camera-ready</div>
+        </div>
+
+        <div class="creator-strip">
+          <div class="create-card">
+            <strong>Post from camera or library</strong>
+            <p>Use your phone camera for a quick photo or video, or upload something already in your gallery. Build a profile that feels real.</p>
+            <button class="pill-btn" onclick="openComposer()">Create new post</button>
+          </div>
+
+          <div class="premium-card">
+            <strong>Go premium</strong>
+            <p>Boost profile reach, unlock more drops, and make your page feel more exclusive.</p>
+            <button class="secondary-btn" style="width:100%;padding:12px 14px;" onclick="showPremiumAlert()">Subscribe</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-title">Your profile media</div>
+            <div class="panel-sub">Instagram energy, TikTok speed, but built for a cleaner and more premium Miru profile.</div>
+          </div>
+          <div class="mini-chip" id="postCountChip">0 drops</div>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab-btn on" data-tab="all" onclick="switchTab(this, 'all')">All</button>
+          <button class="tab-btn" data-tab="photos" onclick="switchTab(this, 'photos')">Photos</button>
+          <button class="tab-btn" data-tab="videos" onclick="switchTab(this, 'videos')">Videos</button>
+          <button class="tab-btn" data-tab="about" onclick="switchTab(this, 'about')">About</button>
+        </div>
+
+        <div id="mediaSection">
+          <div class="grid" id="postsGrid"></div>
+        </div>
+
+        <div id="aboutSection" style="display:none;">
+          <div class="section-copy">A polished profile should say more than a selfie. This section gives your page more depth without feeling cluttered.</div>
+          <div class="about-grid">
+            <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
+            <div class="about-card"><small>Best energy</small><strong>Intentional, playful, and actually communicative</strong></div>
+            <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, and a conversation that keeps going</strong></div>
+            <div class="about-card"><small>Status</small><strong id="premiumAbout">Standard profile</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openComposer()">＋</button>
+
+  <div class="modal" id="editModal">
+    <div class="backdrop" onclick="closeEditProfile()"></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="modal-title">Edit your profile</div>
+          <div class="modal-sub">Tighten your name, bio, and how your page feels when someone lands on it.</div>
+        </div>
+        <button class="close-btn" onclick="closeEditProfile()">✕</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="editName">Display name</label>
+          <input id="editName" type="text" maxlength="40" placeholder="Your display name" />
+        </div>
+        <div class="field">
+          <label for="editBio">Bio</label>
+          <textarea id="editBio" maxlength="240" placeholder="Write a bio that actually sounds like you."></textarea>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveProfileEdits()">Save changes</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="composerSheet">
+    <div class="backdrop" onclick="closeComposer()"></div>
+    <div class="sheet-card">
+      <div class="sheet-head">
+        <div>
+          <div class="sheet-title">Make a post</div>
+          <div class="sheet-sub">Choose a photo or video. On mobile, the camera options will open your phone camera directly.</div>
+        </div>
+        <button class="close-btn" onclick="closeComposer()">✕</button>
+      </div>
+
+      <div class="sheet-grid">
+        <button class="sheet-btn" onclick="openPhotoCamera()">
+          <div>📸 Photo from camera<small>Quick shot straight from your phone</small></div>
+          <span>→</span>
+        </button>
+        <button class="sheet-btn" onclick="openVideoCamera()">
+          <div>🎥 Video from camera<small>Record a short clip instantly</small></div>
+          <span>→</span>
+        </button>
+        <button class="sheet-btn" onclick="openLibraryPicker()">
+          <div>🖼️ Choose from library<small>Upload a photo or video you already have</small></div>
+          <span>→</span>
+        </button>
+      </div>
+
+      <div class="preview-box" id="previewBox"></div>
+
+      <div class="form-grid" style="margin-top:12px;">
+        <div class="field">
+          <label for="postCaption">Caption</label>
+          <textarea id="postCaption" maxlength="220" placeholder="Add a caption that feels like you."></textarea>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="publishPost()">Publish post</button>
+      <div class="helper">This profile page expects a Supabase storage bucket called <strong>posts</strong> and a table called <strong>user_posts</strong>.</div>
+    </div>
+  </div>
+
+  <input id="avatarInput" type="file" accept="image/*" hidden />
+  <input id="photoCameraInput" type="file" accept="image/*" capture="environment" hidden />
+  <input id="videoCameraInput" type="file" accept="video/*" capture="environment" hidden />
+  <input id="libraryInput" type="file" accept="image/*,video/*" hidden />
+
+  <div class="tabs">
+    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
 
   <script>
-    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+
     let me = null;
+    let myProfile = null;
+    let posts = [];
+    let activeFilter = 'all';
+    let pendingPostFile = null;
+
+    function esc(v) {
+      return String(v ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     async function getUser() {
       const { data: { user } } = await sb.auth.getUser();
       if (!user) {
-        window.location.href = "auth.html";
+        window.location.href = 'auth.html';
         return null;
       }
       return user;
     }
 
-    async function loadProfile() {
-      me = await getUser();
-      const { data, error } = await sb.from("profiles").select("*").eq("user_id", me.id).maybeSingle();
-      if (data) {
-        document.getElementById("name").textContent = data.name || "No name set";
-        document.getElementById("bio").textContent = data.bio || "No bio yet";
-        document.getElementById("avatar").src = data.avatar_url || "default-avatar.jpg";
-      } else {
-        // Insert default profile if not exists
-        await sb.from("profiles").insert({
-          user_id: me.id,
-          name: "New User",
-          age: 25,
-          bio: "This is a new user.",
-          avatar_url: "default-avatar.jpg"
-        });
+    async function ensureProfile(user) {
+      const { data: existing } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existing) return existing;
+
+      const fallbackName = user.email ? user.email.split('@')[0] : 'New User';
+      await sb.from('profiles').insert({
+        user_id: user.id,
+        name: fallbackName,
+        age: 25,
+        bio: 'This is a new user.',
+        avatar_url: 'default-avatar.jpg',
+        is_premium: false
+      });
+
+      const { data } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      return data;
+    }
+
+    function renderProfile(profile) {
+      document.getElementById('name').textContent = profile.name || 'No name set';
+      document.getElementById('bio').textContent = profile.bio || 'No bio yet';
+      document.getElementById('avatar').src = profile.avatar_url || 'default-avatar.jpg';
+      document.getElementById('handle').textContent = `@${(profile.name || 'miruuser').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'miruuser'}`;
+      document.getElementById('premiumChip').textContent = profile.is_premium ? 'Premium on' : 'Premium off';
+      document.getElementById('premiumAbout').textContent = profile.is_premium ? 'Premium creator profile' : 'Standard profile';
+      document.getElementById('editName').value = profile.name || '';
+      document.getElementById('editBio').value = profile.bio || '';
+    }
+
+    async function loadCounts() {
+      const { count: likesCount } = await sb
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('target_user_id', me.id)
+        .in('type', ['like', 'super']);
+
+      const { count: matchCount } = await sb
+        .from('conversations')
+        .select('*', { count: 'exact', head: true })
+        .or(`user_a.eq.${me.id},user_b.eq.${me.id}`);
+
+      document.getElementById('statLikes').textContent = likesCount || 0;
+      document.getElementById('statMatches').textContent = matchCount || 0;
+    }
+
+    async function loadPosts() {
+      const grid = document.getElementById('postsGrid');
+
+      const { data, error } = await sb
+        .from('user_posts')
+        .select('*')
+        .eq('user_id', me.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        posts = [];
+        grid.innerHTML = `
+          <div class="grid-card empty" style="grid-column: 1 / -1; aspect-ratio:auto; min-height:180px;">
+            Your profile is ready, but posts need a <strong>user_posts</strong> table and <strong>posts</strong> storage bucket in Supabase before media can appear here.
+          </div>
+        `;
+        updatePostStats();
+        return;
       }
+
+      posts = data || [];
+      updatePostStats();
+      renderPosts();
     }
 
-    async function uploadProfilePic() {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.onchange = async (e) => {
+    function updatePostStats() {
+      const mediaCount = posts.filter((p) => p.media_type === 'image' || p.media_type === 'video').length;
+      document.getElementById('statPosts').textContent = posts.length;
+      document.getElementById('statMedia').textContent = mediaCount;
+      document.getElementById('postCountChip').textContent = `${posts.length} drops`;
+    }
+
+    function renderPosts() {
+      const grid = document.getElementById('postsGrid');
+      let filtered = posts;
+
+      if (activeFilter === 'photos') filtered = posts.filter((p) => p.media_type === 'image');
+      if (activeFilter === 'videos') filtered = posts.filter((p) => p.media_type === 'video');
+
+      if (!filtered.length) {
+        grid.innerHTML = `
+          <div class="grid-card empty" style="grid-column: 1 / -1; aspect-ratio:auto; min-height:180px;">
+            No ${activeFilter === 'all' ? 'posts' : activeFilter} yet. Tap <strong>Make post</strong> and upload straight from your phone camera.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((post) => {
+        const typeLabel = post.media_type === 'video' ? 'video' : 'photo';
+        const media = post.media_type === 'video'
+          ? `<video src="${esc(post.media_url)}" muted playsinline preload="metadata"></video>`
+          : `<img src="${esc(post.media_url)}" alt="post media" />`;
+        return `
+          <div class="grid-card">
+            <div class="media-type">${typeLabel}</div>
+            ${media}
+            <div class="post-stamp">${post.caption ? esc(post.caption.slice(0, 18)) : 'miru drop'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function switchTab(button, tab) {
+      activeFilter = tab;
+      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.remove('on'));
+      button.classList.add('on');
+
+      document.getElementById('aboutSection').style.display = tab === 'about' ? 'block' : 'none';
+      document.getElementById('mediaSection').style.display = tab === 'about' ? 'none' : 'block';
+
+      if (tab !== 'about') renderPosts();
+    }
+
+    function toggleMenu() {
+      document.getElementById('profileMenu').classList.toggle('show');
+    }
+
+    function closeMenu() {
+      document.getElementById('profileMenu').classList.remove('show');
+    }
+
+    function openEditProfile() {
+      closeMenu();
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function closeEditProfile() {
+      document.getElementById('editModal').classList.remove('show');
+    }
+
+    async function saveProfileEdits() {
+      const name = document.getElementById('editName').value.trim();
+      const bio = document.getElementById('editBio').value.trim();
+
+      const { error } = await sb
+        .from('profiles')
+        .update({ name: name || 'New User', bio })
+        .eq('user_id', me.id);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      myProfile.name = name || 'New User';
+      myProfile.bio = bio;
+      renderProfile(myProfile);
+      closeEditProfile();
+    }
+
+    function openComposer() {
+      closeMenu();
+      document.getElementById('composerSheet').classList.add('show');
+    }
+
+    function closeComposer() {
+      document.getElementById('composerSheet').classList.remove('show');
+    }
+
+    function triggerAvatarUpload() {
+      document.getElementById('avatarInput').click();
+    }
+
+    function openPhotoCamera() {
+      document.getElementById('photoCameraInput').click();
+    }
+
+    function openVideoCamera() {
+      document.getElementById('videoCameraInput').click();
+    }
+
+    function openLibraryPicker() {
+      document.getElementById('libraryInput').click();
+    }
+
+    function setPreview(file) {
+      pendingPostFile = file;
+      const box = document.getElementById('previewBox');
+      if (!file) {
+        box.classList.remove('show');
+        box.innerHTML = '';
+        return;
+      }
+
+      const url = URL.createObjectURL(file);
+      const isVideo = file.type.startsWith('video/');
+      box.innerHTML = isVideo
+        ? `<video src="${url}" controls muted playsinline></video>`
+        : `<img src="${url}" alt="preview" />`;
+      box.classList.add('show');
+    }
+
+    async function uploadAvatar(file) {
+      if (!file) return;
+      const path = `${me.id}/avatar/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+      const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      const { data } = sb.storage.from('avatars').getPublicUrl(path);
+      const url = data.publicUrl;
+
+      const { error: updateError } = await sb
+        .from('profiles')
+        .update({ avatar_url: url })
+        .eq('user_id', me.id);
+
+      if (updateError) {
+        alert(updateError.message);
+        return;
+      }
+
+      myProfile.avatar_url = url;
+      document.getElementById('avatar').src = url;
+    }
+
+    async function publishPost() {
+      if (!pendingPostFile) {
+        alert('Choose a photo or video first.');
+        return;
+      }
+
+      const caption = document.getElementById('postCaption').value.trim();
+      const isVideo = pendingPostFile.type.startsWith('video/');
+      const mediaType = isVideo ? 'video' : 'image';
+      const safeName = pendingPostFile.name.replace(/\s+/g, '_');
+      const path = `${me.id}/${mediaType}/${Date.now()}_${safeName}`;
+
+      const { error: uploadError } = await sb.storage.from('posts').upload(path, pendingPostFile, { upsert: false });
+      if (uploadError) {
+        alert(uploadError.message);
+        return;
+      }
+
+      const { data: publicData } = sb.storage.from('posts').getPublicUrl(path);
+      const mediaUrl = publicData.publicUrl;
+
+      const { error: insertError } = await sb.from('user_posts').insert({
+        user_id: me.id,
+        media_url: mediaUrl,
+        media_type: mediaType,
+        caption,
+        created_at: new Date().toISOString()
+      });
+
+      if (insertError) {
+        alert(insertError.message);
+        return;
+      }
+
+      document.getElementById('postCaption').value = '';
+      setPreview(null);
+      closeComposer();
+      await loadPosts();
+      switchTab(document.querySelector('.tab-btn[data-tab="all"]'), 'all');
+    }
+
+    function showPremiumAlert() {
+      closeMenu();
+      alert('Premium page is the next screen to build. This button is ready to connect to premium.html.');
+    }
+
+    function showMenuAlert(message) {
+      closeMenu();
+      alert(message);
+    }
+
+    async function logout() {
+      await sb.auth.signOut();
+      window.location.href = 'auth.html';
+    }
+
+    function bindFileInputs() {
+      document.getElementById('avatarInput').addEventListener('change', (e) => {
         const file = e.target.files[0];
-        const path = `${me.id}/avatar/${Date.now()}_${file.name}`;
-        await sb.storage.from("avatars").upload(path, file);
-        const url = `${window.SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
-        await sb.from("profiles").update({ avatar_url: url }).eq("user_id", me.id);
-        document.getElementById("avatar").src = url;
-      };
-      input.click();
+        uploadAvatar(file);
+      });
+
+      document.getElementById('photoCameraInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
+      document.getElementById('videoCameraInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
+      document.getElementById('libraryInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
     }
 
-    loadProfile();
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('profileMenu');
+      const topActions = document.querySelector('.top-actions');
+      if (menu.classList.contains('show') && !topActions.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    async function init() {
+      bindFileInputs();
+      me = await getUser();
+      if (!me) return;
+
+      myProfile = await ensureProfile(me);
+      renderProfile(myProfile);
+      await loadCounts();
+      await loadPosts();
+    }
+
+    init();
   </script>
 </body>
 </html>
