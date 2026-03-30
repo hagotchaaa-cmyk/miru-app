@@ -92,6 +92,7 @@ body{
   color:#9F7AEA;
 }
 </style>
+
 </head>
 
 <body>
@@ -145,29 +146,20 @@ async function loadUsers(){
   });
 }
 
-window.like = async function(id){
+// LIKE
+async function like(id){
   const { data: { user } } = await sb.auth.getUser();
 
-  if (!user) {
-    alert("Login first");
-    return;
-  }
+  if (!user) return alert("Login first");
 
-  const { error } = await sb.from("likes").insert({
+  await sb.from("likes").insert({
     user_id: user.id,
     target_user_id: id,
     type: "like"
   });
 
-  if (error) {
-    console.log(error);
-    alert("Error saving like");
-    return;
-  }
-
-  alert("Liked 💜");
-};
-
+  checkMatch(user.id, id);
+}
 
 // SUPER LIKE
 async function superLike(targetId){
@@ -182,7 +174,7 @@ async function superLike(targetId){
   checkMatch(user.id, targetId);
 }
 
-// MATCH CHECK
+// MATCH
 async function checkMatch(me, them){
   const { data } = await sb
     .from("likes")
