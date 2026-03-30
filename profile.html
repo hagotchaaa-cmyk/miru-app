@@ -1,194 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profile</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #fafafa;
+  background: black;
+  color: white;
+  font-family: sans-serif;
 }
 
-/* HEADER */
-.header {
-  padding: 15px;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-/* PROFILE TOP */
 .top {
   display: flex;
-  align-items: center;
   padding: 20px;
 }
 
-.profile-pic {
+.avatar {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: #ddd;
-  overflow: hidden;
-  cursor: pointer;
+  background: #333;
 }
 
-.profile-pic img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.stats {
-  display: flex;
-  gap: 25px;
+.info {
   margin-left: 20px;
 }
 
-.stat {
-  text-align: center;
-}
-
-.stat b {
-  display: block;
-  font-size: 18px;
-}
-
-/* NAME */
-.name {
-  padding: 0 20px;
-  font-weight: bold;
-}
-
-/* BUTTON */
-.upload-btn {
-  margin: 15px 20px;
-  padding: 12px;
-  border-radius: 25px;
-  background: linear-gradient(90deg, #7C5CBF, #9F7AEA);
-  color: white;
-  border: none;
-  width: calc(100% - 40px);
-  cursor: pointer;
-}
-
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 3px;
 }
 
-.grid img,
-.grid video {
+.grid img {
   width: 100%;
-  height: 130px;
+  height: 120px;
   object-fit: cover;
-  background: black;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">Profile</div>
-
 <div class="top">
-  <div class="profile-pic" onclick="document.getElementById('profileUpload').click()">
-    <img id="profileImg" src="https://via.placeholder.com/100">
-  </div>
-
-  <div class="stats">
-    <div class="stat"><b id="postCount">0</b>Posts</div>
-    <div class="stat"><b>🔥</b>Vibe</div>
-    <div class="stat"><b>100%</b>Real</div>
+  <div class="avatar"></div>
+  <div class="info">
+    <h2 id="name">Profile</h2>
+    <p id="bio"></p>
   </div>
 </div>
 
-<div class="name">You</div>
-
-<button class="upload-btn" onclick="document.getElementById('postUpload').click()">
-  + Add Post
-</button>
-
-<input type="file" id="profileUpload" style="display:none">
-<input type="file" id="postUpload" style="display:none">
-
 <div class="grid" id="grid"></div>
-
-<script>
-const supabase = supabase.createClient(
-  "YOUR_URL_HERE",
-  "YOUR_ANON_KEY_HERE"
-);
-
-/* PROFILE PIC */
-document.getElementById("profileUpload").addEventListener("change", async function(){
-  let file = this.files[0];
-  if(!file) return;
-
-  const fileName = "profile_" + Date.now();
-
-  await supabase.storage.from("media").upload(fileName, file);
-
-  const { data } = supabase.storage.from("media").getPublicUrl(fileName);
-
-  document.getElementById("profileImg").src = data.publicUrl;
-});
-
-/* POST UPLOAD */
-document.getElementById("postUpload").addEventListener("change", async function(){
-  let file = this.files[0];
-  if(!file) return;
-
-  const fileName = Date.now() + "_" + file.name;
-
-  await supabase.storage.from("media").upload(fileName, file);
-
-  const { data } = supabase.storage.from("media").getPublicUrl(fileName);
-
-  await supabase.from("posts").insert({
-    media_url: data.publicUrl,
-    media_type: file.type.startsWith("video") ? "video" : "image"
-  });
-
-  loadPosts();
-});
-
-/* LOAD POSTS */
-async function loadPosts(){
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-
-  document.getElementById("postCount").innerText = data.length;
-
-  data.forEach(post => {
-    let el;
-
-    if(post.media_type === "video"){
-      el = document.createElement("video");
-      el.src = post.media_url;
-      el.controls = true;
-    } else {
-      el = document.createElement("img");
-      el.src = post.media_url;
-    }
-
-    grid.appendChild(el);
-  });
-}
-
-loadPosts();
-</script>
 
 </body>
 </html>
