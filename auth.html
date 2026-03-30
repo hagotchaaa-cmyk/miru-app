@@ -18,6 +18,7 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      flex-direction: column;
     }
     .card {
       background-color: white;
@@ -65,12 +66,40 @@
       color: red;
       margin-top: 15px;
     }
+    .social-btns {
+      margin-top: 20px;
+    }
+    .social-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #db4437;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      width: 100%;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .social-btn img {
+      margin-right: 10px;
+      width: 24px;
+      height: 24px;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">miru.</div>
+    <!-- Miru Logo -->
+    <div class="logo">
+      <img src="/path/to/your/icon.png" alt="Miru Logo" style="width: 50px; height: 50px;"> <!-- Add the icon -->
+      miru.
+    </div>
     <div class="sub">Join free and start meeting real people.</div>
+    
+    <!-- Email/Password Login -->
     <div class="field">
       <input id="email" type="email" placeholder="Email" required>
     </div>
@@ -79,12 +108,22 @@
     </div>
     <button class="btn" onclick="signUp()">Create account</button>
     <button class="btn ghost" onclick="signIn()">Log in</button>
+    
+    <!-- Social login (Google) -->
+    <div class="social-btns">
+      <button class="social-btn" onclick="signInWithGoogle()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" alt="Google logo"> 
+        Sign in with Google
+      </button>
+    </div>
+
     <div class="note" id="msg"></div>
   </div>
 
   <script>
     const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
+    // Sign up new user with email/password
     async function signUp() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
@@ -103,12 +142,22 @@
       alert("Account created. Check your email.");
     }
 
+    // Sign in user with email/password
     async function signIn() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) return alert(error.message);
       window.location.href = "index.html"; // Redirect to homepage after login
+    }
+
+    // Google Sign In
+    async function signInWithGoogle() {
+      const { data, error } = await sb.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) return alert(error.message);
+      window.location.href = "index.html"; // Redirect to homepage after Google login
     }
   </script>
 </body>
