@@ -6,7 +6,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Miru — Profile</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -65,31 +64,52 @@
     </div>
     <div class="name" id="name">Loading...</div>
     <div class="bio" id="bio">Loading bio...</div>
-    <button onclick="uploadMedia()">Upload Media</button>
+    <button onclick="uploadProfilePic()">Upload Profile Picture</button>
   </div>
 
   <script>
     const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+    let me = null;
+
+    async function getUser() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        window.location.href = "auth.html";
+        return null;
+      }
+      return user;
+    }
 
     async function loadProfile() {
+      me = await getUser();
       const { data, error } = await sb.from("profiles").select("*").eq("user_id", me.id).maybeSingle();
       if (data) {
-        document.getElementById("name").textContent = data.name;
+        document.getElementById("name").textContent = data.name || "No name set";
         document.getElementById("bio").textContent = data.bio || "No bio yet";
         document.getElementById("avatar").src = data.avatar_url || "default-avatar.jpg";
+      } else {
+        // Insert default profile if not exists
+        await sb.from("profiles").insert({
+          user_id: me.id,
+          name: "New User",
+          age: 25,
+          bio: "This is a new user.",
+          avatar_url: "default-avatar.jpg"
+        });
       }
     }
 
-    async function uploadMedia() {
+    async function uploadProfilePic() {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = "image/*,video/*";
+      input.accept = "image/*";
       input.onchange = async (e) => {
         const file = e.target.files[0];
-        const path = `${me.id}/${Date.now()}_${file.name}`;
-        await sb.storage.from("media").upload(path, file);
-        const url = `${window.SUPABASE_URL}/storage/v1/object/public/media/${path}`;
-        await sb.from("posts").insert({ user_id: me.id, media_url: url });
+        const path = `${me.id}/avatar/${Date.now()}_${file.name}`;
+        await sb.storage.from("avatars").upload(path, file);
+        const url = `${window.SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
+        await sb.from("profiles").update({ avatar_url: url }).eq("user_id", me.id);
+        document.getElementById("avatar").src = url;
       };
       input.click();
     }
