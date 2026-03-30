@@ -8,77 +8,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Miru — Explore</title>
+
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
-:root{
-  --bg1:#0f0f0f;
-  --bg2:#1a102d;
-  --bg3:#2d1b69;
-
-  --purple:#7C5CBF;
-  --purple2:#9F7AEA;
-  --accent:#B794F4;
-
-  --text:#ffffff;
-  --muted:rgba(255,255,255,0.6);
-}
-
-html,body{
-  height:100%;
-  overflow:hidden;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+body{
+  margin:0;
+  background:linear-gradient(135deg,#0f0f0f,#1a102d,#2d1b69);
+  color:white;
   font-family:sans-serif;
-  color:var(--text);
+  overflow:hidden;
 }
 
-/* FEED */
 .feed{
   height:100vh;
   overflow-y:scroll;
   scroll-snap-type:y mandatory;
 }
 
-/* CARD */
 .card{
   height:100vh;
-  scroll-snap-align:start;
   position:relative;
+  scroll-snap-align:start;
 }
 
-/* BACKGROUND */
 .card-bg{
   position:absolute;
   inset:0;
-  background:linear-gradient(160deg,#1a102d,#2d1b69,#7C5CBF);
+  background-size:cover;
+  background-position:center;
 }
 
-/* OVERLAY */
 .overlay{
   position:absolute;
   inset:0;
   background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);
 }
 
-/* CONTENT */
 .content{
   position:absolute;
   bottom:120px;
   left:15px;
 }
 
-.name{
-  font-size:26px;
-  font-weight:bold;
-}
+.name{font-size:24px;font-weight:bold;}
+.bio{font-size:14px;color:#ccc;}
 
-.bio{
-  font-size:14px;
-  color:var(--muted);
-  max-width:280px;
-}
-
-/* ACTIONS */
 .actions{
   position:absolute;
   right:15px;
@@ -89,32 +62,15 @@ html,body{
 }
 
 .btn{
-  width:60px;
-  height:60px;
+  width:60px;height:60px;
   border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  cursor:pointer;
-
-  background:rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,0.1);
   backdrop-filter:blur(10px);
-
-  border:1px solid rgba(255,255,255,0.2);
+  cursor:pointer;
+  font-size:20px;
 }
 
-.btn.like{color:#ff4d6d;}
-.btn.super{color:#4da6ff;}
-.btn.pass{color:#aaa;}
-.btn.profile{color:#fff;}
-
-.btn:hover{
-  box-shadow:0 0 15px rgba(159,122,234,0.6);
-  transform:scale(1.1);
-}
-
-/* MATCH POPUP */
 .popup{
   position:fixed;
   inset:0;
@@ -132,81 +88,114 @@ html,body{
   pointer-events:all;
 }
 
-.popup-inner{
-  text-align:center;
-}
-
 .popup h1{
-  color:var(--purple2);
-  font-size:40px;
-}
-
-.popup button{
-  margin-top:15px;
-  padding:10px 20px;
-  border:none;
-  border-radius:20px;
-  background:linear-gradient(90deg,var(--purple),var(--purple2));
-  color:white;
-  cursor:pointer;
+  color:#9F7AEA;
 }
 </style>
 </head>
 
 <body>
 
-<div class="feed" id="feed">
+<div class="feed" id="feed"></div>
 
-  <!-- USER CARD -->
-  <div class="card">
-    <div class="card-bg"></div>
-    <div class="overlay"></div>
-
-    <div class="content">
-      <div class="name">Sofia, 27</div>
-      <div class="bio">Funny, chill, loves late night food runs 🍔</div>
-    </div>
-
-    <div class="actions">
-      <div class="btn pass" onclick="pass()">✕</div>
-      <div class="btn super" onclick="superLike()">⚡</div>
-      <div class="btn like" onclick="like()">❤️</div>
-      <div class="btn profile" onclick="openProfile()">👤</div>
-    </div>
-  </div>
-
-</div>
-
-<!-- MATCH POPUP -->
 <div class="popup" id="popup">
-  <div class="popup-inner">
-    <h1>🔥 It's a Match</h1>
-    <button onclick="closePopup()">Continue</button>
-  </div>
+  <h1>🔥 It's a Match</h1>
 </div>
 
 <script>
-function like(){
-  if(Math.random() < 0.4){
+const { createClient } = supabase;
+
+const sb = createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_KEY
+);
+
+const feed = document.getElementById("feed");
+
+// LOAD USERS
+async function loadUsers(){
+  const { data: users } = await sb
+    .from("profiles")
+    .select("*");
+
+  feed.innerHTML = "";
+
+  users.forEach(user => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="card-bg" style="background-image:url('${user.avatar_url || ''}')"></div>
+      <div class="overlay"></div>
+
+      <div class="content">
+        <div class="name">${user.name || "User"}, ${user.age || ""}</div>
+        <div class="bio">${user.bio || ""}</div>
+      </div>
+
+      <div class="actions">
+        <div class="btn" onclick="pass()">✕</div>
+        <div class="btn" onclick="superLike('${user.user_id}')">⚡</div>
+        <div class="btn" onclick="like('${user.user_id}')">❤️</div>
+        <div class="btn" onclick="openProfile('${user.user_id}')">👤</div>
+      </div>
+    `;
+
+    feed.appendChild(card);
+  });
+}
+
+// LIKE
+async function like(targetId){
+  const { data: { user } } = await sb.auth.getUser();
+
+  await sb.from("likes").insert({
+    user_id: user.id,
+    target_user_id: targetId,
+    type: "like"
+  });
+
+  checkMatch(user.id, targetId);
+}
+
+// SUPER LIKE
+async function superLike(targetId){
+  const { data: { user } } = await sb.auth.getUser();
+
+  await sb.from("likes").insert({
+    user_id: user.id,
+    target_user_id: targetId,
+    type: "super"
+  });
+
+  checkMatch(user.id, targetId);
+}
+
+// MATCH CHECK
+async function checkMatch(me, them){
+  const { data } = await sb
+    .from("likes")
+    .select("*")
+    .eq("user_id", them)
+    .eq("target_user_id", me);
+
+  if (data.length > 0){
     document.getElementById("popup").classList.add("show");
   }
 }
 
+// PASS
 function pass(){
   window.scrollBy(0, window.innerHeight);
 }
 
-function superLike(){
-  document.getElementById("popup").classList.add("show");
+// PROFILE
+function openProfile(id){
+  window.location.href = "profile.html?user=" + id;
 }
 
-function openProfile(){
-  window.location.href = "profile.html";
-}
-
-function closePopup(){
-  document.getElementById("popup").classList.remove("show");
-}
+// START
+loadUsers();
 </script>
 
 </body>
