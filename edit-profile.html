@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Edit Profile</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!-- CONFIG + SUPABASE -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 body {
@@ -56,31 +58,50 @@ button {
 </div>
 
 <script>
-const supabase = supabase.createClient(
-  "https://rlmcwbaiuowbkgfzdlme.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8
-"
+const { createClient } = supabase;
+
+const sb = createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_KEY
 );
 
+// LOAD EXISTING PROFILE
+async function loadProfile(){
+  const { data: { user } } = await sb.auth.getUser();
+
+  const { data: profile } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (profile) {
+    document.getElementById("name").value = profile.name || "";
+    document.getElementById("age").value = profile.age || "";
+    document.getElementById("location").value = profile.location || "";
+    document.getElementById("bio").value = profile.bio || "";
+  }
+}
+
+// SAVE PROFILE
 async function saveProfile(){
-  await supabase.from("profiles").insert({
+  const { data: { user } } = await sb.auth.getUser();
+
+  await sb.from("profiles").upsert({
+    user_id: user.id,
     name: document.getElementById("name").value,
     age: document.getElementById("age").value,
     location: document.getElementById("location").value,
     bio: document.getElementById("bio").value
   });
 
-  alert("Saved");
-  window.location.href = "www/profile.html";
+  alert("Saved!");
+  window.location.href = "profile.html";
 }
+
+// RUN
+loadProfile();
 </script>
 
 </body>
 </html>
-<script src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js'></script>
-<script>
-const supabase = supabase.createClient(
-  "PASTE_URL_HERE",
-  "PASTE_ANON_KEY_HERE"
-);
-</script>
