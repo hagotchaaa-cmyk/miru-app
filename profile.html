@@ -257,6 +257,32 @@ async function loadPosts(){
   });
 }
 
+async function loadProfile(){
+  const { data: { user } } = await sb.auth.getUser();
+
+  // 🚨 NOT LOGGED IN
+  if(!user){
+    window.location.href = "auth.html";
+    return;
+  }
+
+  const { data } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (data){
+    name.innerHTML = data.name + ", " + (data.age || "");
+
+    if(data.is_premium){
+      name.innerHTML += " <span class='badge'>💎</span>";
+    }
+
+    bio.textContent = data.bio || "";
+    avatar.src = data.avatar_url || "";
+  }
+}
 loadProfile();
 loadPosts();
 </script>
