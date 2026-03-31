@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0714" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Miru — Discover</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0A0714;
+      --s1:       #100D22;
+      --border:   rgba(180,170,255,0.10);
+      --border-hi:rgba(180,170,255,0.20);
+      --white:    #FFFFFF;
+      --text:     #F0ECFF;
+      --soft:     #C4BCEE;
+      --muted:    #7A72AA;
+      --lilac:    #B8AEFF;
+      --gold:     #F5CE7A;
+      --green:    #7DFFC8;
+      --red:      #FF7090;
+      --shadow:   0 24px 60px rgba(0,0,0,0.50);
+      --serif:    'Cormorant Garamond', serif;
+      --sans:     'Cabinet Grotesk', sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    body {
+      padding-bottom: 90px;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 40% at 50% -5%, rgba(80,60,200,0.22), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      max-width: 440px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 13px 16px 11px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: rgba(10,7,20,0.82);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.4px;
+    }
+
+    .search-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 16px 11px 36px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus { border-color: var(--border-hi); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-family: var(--sans);
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.09); }
+
+    /* Category chips */
+    .cats {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .cats::-webkit-scrollbar { display: none; }
+
+    .cat {
+      flex-shrink: 0;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .cat.on {
+      background: var(--white);
+      color: #0A0714;
+      border-color: var(--white);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.14);
+    }
+
+    /* ── Grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 2px;
+    }
+
+    .grid-item {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .grid-item:nth-child(7n+1) {
+      grid-column: span 2;
+      aspect-ratio: auto;
+    }
+
+    .grid-item img,
+    .grid-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .grid-item:hover img,
+    .grid-item:hover video { transform: scale(1.04); }
+
+    /* Video indicator */
+    .vid-badge {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      background: rgba(0,0,0,0.55);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--white);
+      backdrop-filter: blur(6px);
+    }
+
+    /* Like count overlay on grid */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(5,3,15,0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: background 0.2s;
+    }
+
+    .grid-item:hover .grid-overlay {
+      background: rgba(5,3,15,0.45);
+    }
+
+    .grid-stat {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .grid-item:hover .grid-stat { opacity: 1; }
+
+    /* Skeleton */
+    .grid-skeleton {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.04);
+      animation: shimmer 1.5s infinite;
+    }
+
+    .grid-skeleton:nth-child(7n+1) { grid-column: span 2; aspect-ratio: auto; min-height: 180px; }
+
+    @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+    /* ── Post modal ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5,3,15,0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      max-height: 96dvh;
+      background: #100D22;
+      border-radius: 28px 28px 0 0;
+      border: 1px solid var(--border-hi);
+      border-bottom: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(40px);
+      transition: transform 0.35s cubic-bezier(0.34,1.3,0.64,1);
+      box-shadow: 0 -20px 60px rgba(0,0,0,0.6);
+    }
+
+    .modal-backdrop.open .modal {
+      transform: translateY(0);
+    }
+
+    /* Drag handle */
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.15);
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+
+    /* Modal post header */
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      flex-shrink: 0;
+    }
+
+    .modal-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #5F4EB3, #231A54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--white);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .modal-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+
+    .modal-username { font-size: 14px; font-weight: 800; color: var(--white); }
+    .modal-time     { font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 1px; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      flex-shrink: 0;
+    }
+
+    /* Modal media */
+    .modal-media {
+      flex-shrink: 0;
+      width: 100%;
+      max-height: 380px;
+      overflow: hidden;
+      background: #0A0714;
+      position: relative;
+    }
+
+    .modal-media img,
+    .modal-media video {
+      width: 100%;
+      max-height: 380px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Modal actions */
+    .modal-actions {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .action-icon-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--soft);
+      padding: 6px 0;
+      transition: color 0.15s, transform 0.15s;
+    }
+
+    .action-icon-btn:hover { color: var(--white); transform: scale(1.05); }
+
+    .action-icon-btn svg { transition: transform 0.15s; }
+    .action-icon-btn:active svg { transform: scale(0.85); }
+
+    .action-icon-btn.liked svg path,
+    .action-icon-btn.liked svg { color: var(--red); }
+
+    .like-count, .comment-count { font-size: 13px; font-weight: 800; }
+
+    /* Caption */
+    .modal-caption {
+      flex-shrink: 0;
+      padding: 10px 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--soft);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-caption strong { color: var(--white); font-weight: 800; margin-right: 6px; }
+
+    /* Comments section */
+    .comments-section {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .comments-section::-webkit-scrollbar { width: 3px; }
+    .comments-section::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+
+    .comment {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .comment-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #5F4EB3, #231A54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .comment-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+
+    .comment-body { flex: 1; min-width: 0; }
+    .comment-name { font-size: 12px; font-weight: 800; color: var(--white); margin-bottom: 2px; }
+    .comment-text { font-size: 13px; color: var(--soft); line-height: 1.5; }
+    .comment-time { font-size: 10px; color: var(--muted); font-weight: 700; margin-top: 3px; }
+
+    .no-comments {
+      text-align: center;
+      padding: 20px 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Comment composer */
+    .comment-composer {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 14px;
+      border-top: 1px solid var(--border);
+      background: #100D22;
+    }
+
+    .composer-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #5F4EB3, #231A54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+
+    .comment-input {
+      flex: 1;
+      padding: 11px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .comment-input:focus { border-color: var(--border-hi); }
+    .comment-input::placeholder { color: var(--muted); }
+
+    .send-comment-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--white);
+      color: #0A0714;
+      border: none;
+      font-size: 14px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-family: var(--sans);
+      box-shadow: 0 4px 14px rgba(255,255,255,0.14);
+      transition: transform 0.15s;
+    }
+    .send-comment-btn:hover { transform: scale(1.08); }
+    .send-comment-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* ── Tab bar ── */
+    .tabs {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(430px, calc(100% - 16px));
+      padding: 10px 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      background: rgba(10,7,20,0.90);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      z-index: 70;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.40);
+    }
+
+    .tab {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-height: 50px;
+      border-radius: 16px;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+
+    .tab-icon  { font-size: 19px; }
+    .tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; }
+    .tab.on    { background: rgba(255,255,255,0.06); color: var(--white); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      backdrop-filter: blur(16px);
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.22s, transform 0.22s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: rgba(125,255,200,0.12); border: 1px solid rgba(125,255,200,0.28); color: var(--green); }
+    .toast.info    { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--soft); }
+    .toast.error   { background: rgba(255,112,144,0.12); border: 1px solid rgba(255,112,144,0.28); color: var(--red); }
+
+    /* Heart animation */
+    @keyframes heartPop {
+      0%   { transform: scale(1); }
+      30%  { transform: scale(1.45); }
+      60%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    .heart-pop { animation: heartPop 0.35s ease both; }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="top-row">
+        <div class="logo">miru.</div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="searchInput" placeholder="Search posts…" autocomplete="off" />
+        </div>
+        <a class="icon-btn" href="profile.html" title="Profile">👤</a>
+      </div>
+
+      <div class="cats">
+        <button class="cat on" data-cat="all">All</button>
+        <button class="cat" data-cat="video">Videos</button>
+        <button class="cat" data-cat="photo">Photos</button>
+        <button class="cat" data-cat="new">New faces</button>
+        <button class="cat" data-cat="premium">Premium</button>
+      </div>
+    </div>
+
+    <!-- Post grid -->
+    <div class="grid" id="grid">
+      <!-- Skeletons -->
+      <div class="grid-skeleton" style="grid-column:span 2;min-height:180px;"></div>
+      <div class="grid-skeleton"></div>
+      <div class="grid-skeleton"></div>
+      <div class="grid-skeleton"></div>
+      <div class="grid-skeleton" style="grid-column:span 2;min-height:180px;"></div>
+      <div class="grid-skeleton"></div>
+      <div class="grid-skeleton"></div>
+    </div>
+
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabs">
+    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab on" href="discover.html"><div class="tab-icon">🔍</div><div class="tab-label">Discover</div></a>
+    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
+  </div>
+
+  <!-- Post modal -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
+    <div class="modal" id="modal">
+      <div class="modal-handle"></div>
+
+      <div class="modal-head">
+        <div class="modal-user">
+          <div class="modal-avatar" id="modalAvatar"></div>
+          <div>
+            <div class="modal-username" id="modalUsername">—</div>
+            <div class="modal-time" id="modalTime">—</div>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-media" id="modalMedia"></div>
+
+      <div class="modal-actions">
+        <button class="action-icon-btn" id="likeBtn" onclick="toggleLike()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path id="heartPath" d="M12 21C12 21 3 14.5 3 8.5C3 6 4.9 4 7.5 4C9.2 4 10.7 4.9 12 6.5C13.3 4.9 14.8 4 16.5 4C19.1 4 21 6 21 8.5C21 14.5 12 21 12 21Z" stroke="#C4BCEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          <span class="like-count" id="likeCount">0</span>
+        </button>
+
+        <button class="action-icon-btn" onclick="focusComment()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 15C21 16.1 20.1 17 19 17H7L3 21V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15Z" stroke="#C4BCEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          <span class="comment-count" id="commentCount">0</span>
+        </button>
+
+        <button class="action-icon-btn" onclick="sharePost()" style="margin-left:auto;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 12V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V12" stroke="#C4BCEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="16 6 12 2 8 6" stroke="#C4BCEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="12" y1="2" x2="12" y2="15" stroke="#C4BCEE" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-caption" id="modalCaption" style="display:none;"></div>
+
+      <div class="comments-section" id="commentsSection"></div>
+
+      <div class="comment-composer">
+        <div class="composer-avatar" id="myAvatar"></div>
+        <input class="comment-input" id="commentInput" placeholder="Add a comment…" autocomplete="off" />
+        <button class="send-comment-btn" id="sendCommentBtn" onclick="postComment()">↑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
+
+    // ── State ─────────────────────────────────────────────────
+    let me = null;
+    let myProfile = null;
+    let allPosts = [];
+    let filteredPosts = [];
+    let activePost = null;
+    let myLikes = new Set();
+    let postLikeCounts = {};
+    let postCommentCounts = {};
+    let activeCategory = 'all';
+    let profilesById = {};
+
+    // ── Helpers ───────────────────────────────────────────────
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, s =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s])
+      );
+    }
+
+    let toastTimer;
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function timeAgo(dateStr) {
+      const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+      if (diff < 60)   return 'just now';
+      if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+      if (diff < 86400)return `${Math.floor(diff/3600)}h ago`;
+      return `${Math.floor(diff/86400)}d ago`;
+    }
+
+    function initial(name) {
+      return (name || '?').trim().charAt(0).toUpperCase();
+    }
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { window.location.replace('auth.html'); return; }
+      me = user;
+
+      // Load my profile for avatar
+      const { data: prof } = await sb
+        .from('profiles')
+        .select('user_id,name,avatar_url,is_premium')
+        .eq('user_id', me.id)
+        .maybeSingle();
+      myProfile = prof || {};
+
+      renderMyAvatar();
+      bindCategories();
+      bindSearch();
+      bindCommentEnter();
+
+      await loadPosts();
+    }
+
+    function renderMyAvatar() {
+      const el = document.getElementById('myAvatar');
+      if (myProfile?.avatar_url) {
+        el.innerHTML = `<img src="${esc(myProfile.avatar_url)}" alt="" />`;
+      } else {
+        el.textContent = initial(myProfile?.name || me?.email);
+      }
+    }
+
+    // ── Load posts ────────────────────────────────────────────
+    async function loadPosts() {
+      // Get all posts excluding my own
+      const { data: posts, error } = await sb
+        .from('user_posts')
+        .select('id,user_id,media_url,media_type,caption,created_at')
+        .neq('user_id', me.id)
+        .order('created_at', { ascending: false })
+        .limit(60);
+
+      if (error) {
+        document.getElementById('grid').innerHTML =
+          `<div style="padding:24px;color:var(--muted);text-align:center;grid-column:span 3">${esc(error.message)}</div>`;
+        return;
+      }
+
+      allPosts = posts || [];
+
+      // Load profiles for all post authors
+      const userIds = [...new Set(allPosts.map(p => p.user_id))];
+      if (userIds.length) {
+        const { data: profs } = await sb
+          .from('profiles')
+          .select('user_id,name,avatar_url,is_premium')
+          .in('user_id', userIds);
+        profilesById = Object.fromEntries((profs || []).map(p => [p.user_id, p]));
+      }
+
+      // Load my likes
+      const { data: likes } = await sb
+        .from('post_likes')
+        .select('post_id')
+        .eq('user_id', me.id);
+      myLikes = new Set((likes || []).map(l => l.post_id));
+
+      // Load like counts
+      const { data: likeCounts } = await sb
+        .from('post_likes')
+        .select('post_id');
+      postLikeCounts = {};
+      (likeCounts || []).forEach(l => {
+        postLikeCounts[l.post_id] = (postLikeCounts[l.post_id] || 0) + 1;
+      });
+
+      // Load comment counts
+      const { data: commentCounts } = await sb
+        .from('post_comments')
+        .select('post_id');
+      postCommentCounts = {};
+      (commentCounts || []).forEach(c => {
+        postCommentCounts[c.post_id] = (postCommentCounts[c.post_id] || 0) + 1;
+      });
+
+      applyFilter();
+    }
+
+    // ── Filter & search ───────────────────────────────────────
+    function applyFilter() {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      filteredPosts = allPosts.filter(p => {
+        const prof = profilesById[p.user_id] || {};
+        const nameMatch = (prof.name || '').toLowerCase().includes(search);
+        const captionMatch = (p.caption || '').toLowerCase().includes(search);
+        if (search && !nameMatch && !captionMatch) return false;
+
+        if (activeCategory === 'video')   return p.media_type === 'video';
+        if (activeCategory === 'photo')   return p.media_type !== 'video';
+        if (activeCategory === 'premium') return !!prof.is_premium;
+        if (activeCategory === 'new') {
+          const diff = (Date.now() - new Date(p.created_at)) / 1000 / 3600;
+          return diff < 72; // last 3 days
+        }
+        return true;
+      });
+
+      renderGrid();
+    }
+
+    function bindCategories() {
+      document.querySelectorAll('.cat').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.cat').forEach(b => b.classList.remove('on'));
+          btn.classList.add('on');
+          activeCategory = btn.dataset.cat;
+          applyFilter();
+        });
+      });
+    }
+
+    function bindSearch() {
+      let debounce;
+      document.getElementById('searchInput').addEventListener('input', () => {
+        clearTimeout(debounce);
+        debounce = setTimeout(applyFilter, 300);
+      });
+    }
+
+    // ── Render grid ───────────────────────────────────────────
+    function renderGrid() {
+      const grid = document.getElementById('grid');
+
+      if (!filteredPosts.length) {
+        grid.innerHTML = `
+          <div style="grid-column:span 3;padding:40px 20px;text-align:center;">
+            <div style="font-size:36px;margin-bottom:12px;">✨</div>
+            <div style="font-family:var(--serif);font-style:italic;font-size:24px;color:var(--white);margin-bottom:8px;">Nothing here yet.</div>
+            <div style="font-size:13px;color:var(--muted);">Try a different filter or check back when more people post.</div>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filteredPosts.map((post, i) => {
+        const isVideo = post.media_type === 'video';
+        const likes   = postLikeCounts[post.id] || 0;
+        const comments= postCommentCounts[post.id] || 0;
+        const isLarge = i % 7 === 0; // every 7th post is large
+
+        const mediaHTML = isVideo
+          ? `<video src="${esc(post.media_url)}" muted playsinline preload="metadata"></video>`
+          : `<img src="${esc(post.media_url)}" alt="${esc(post.caption || '')}" loading="lazy" />`;
+
+        return `
+          <div class="grid-item${isLarge ? ' large' : ''}" onclick="openPost('${esc(post.id)}')">
+            ${mediaHTML}
+            ${isVideo ? '<div class="vid-badge">▶ Video</div>' : ''}
+            <div class="grid-overlay">
+              <div class="grid-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 21C12 21 3 14.5 3 8.5C3 6 4.9 4 7.5 4C9.2 4 10.7 4.9 12 6.5C13.3 4.9 14.8 4 16.5 4C19.1 4 21 6 21 8.5C21 14.5 12 21 12 21Z"/></svg>
+                ${likes}
+              </div>
+              <div class="grid-stat">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M21 15C21 16.1 20.1 17 19 17H7L3 21V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5V15Z"/></svg>
+                ${comments}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── Open post modal ───────────────────────────────────────
+    async function openPost(postId) {
+      activePost = filteredPosts.find(p => p.id === postId) ||
+                   allPosts.find(p => p.id === postId);
+      if (!activePost) return;
+
+      const prof = profilesById[activePost.user_id] || {};
+
+      // Avatar
+      const avatarEl = document.getElementById('modalAvatar');
+      avatarEl.innerHTML = prof.avatar_url
+        ? `<img src="${esc(prof.avatar_url)}" alt="" />`
+        : esc(initial(prof.name));
+
+      document.getElementById('modalUsername').textContent = prof.name || 'Miru user';
+      document.getElementById('modalTime').textContent     = timeAgo(activePost.created_at);
+
+      // Media
+      const mediaEl = document.getElementById('modalMedia');
+      if (activePost.media_type === 'video') {
+        mediaEl.innerHTML = `<video src="${esc(activePost.media_url)}" controls playsinline preload="metadata" style="width:100%;max-height:380px;object-fit:cover;display:block;"></video>`;
+      } else {
+        mediaEl.innerHTML = `<img src="${esc(activePost.media_url)}" alt="${esc(activePost.caption || '')}" style="width:100%;max-height:380px;object-fit:cover;display:block;" />`;
+      }
+
+      // Caption
+      const captionEl = document.getElementById('modalCaption');
+      if (activePost.caption) {
+        captionEl.style.display = 'block';
+        captionEl.innerHTML = `<strong>${esc(prof.name || 'User')}</strong>${esc(activePost.caption)}`;
+      } else {
+        captionEl.style.display = 'none';
+      }
+
+      // Like state
+      updateLikeBtn();
+
+      // Load comments
+      await loadComments(postId);
+
+      // Open modal
+      document.getElementById('modalBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateLikeBtn() {
+      if (!activePost) return;
+      const btn       = document.getElementById('likeBtn');
+      const heartPath = document.getElementById('heartPath');
+      const liked     = myLikes.has(activePost.id);
+      const count     = postLikeCounts[activePost.id] || 0;
+
+      document.getElementById('likeCount').textContent = count;
+
+      if (liked) {
+        heartPath.setAttribute('fill', '#FF7090');
+        heartPath.setAttribute('stroke', '#FF7090');
+        btn.classList.add('liked');
+      } else {
+        heartPath.setAttribute('fill', 'none');
+        heartPath.setAttribute('stroke', '#C4BCEE');
+        btn.classList.remove('liked');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+      // Pause any video
+      const vid = document.querySelector('#modalMedia video');
+      if (vid) vid.pause();
+      activePost = null;
+    }
+
+    function handleBackdropClick(e) {
+      if (e.target === document.getElementById('modalBackdrop')) closeModal();
+    }
+
+    // ── Like / unlike ─────────────────────────────────────────
+    async function toggleLike() {
+      if (!activePost) return;
+
+      const heartEl = document.getElementById('likeBtn').querySelector('svg');
+      heartEl.classList.add('heart-pop');
+      setTimeout(() => heartEl.classList.remove('heart-pop'), 400);
+
+      const postId = activePost.id;
+      const liked  = myLikes.has(postId);
+
+      if (liked) {
+        // Unlike
+        myLikes.delete(postId);
+        postLikeCounts[postId] = Math.max((postLikeCounts[postId] || 1) - 1, 0);
+        updateLikeBtn();
+
+        await sb.from('post_likes')
+          .delete()
+          .eq('post_id', postId)
+          .eq('user_id', me.id);
+      } else {
+        // Like
+        myLikes.add(postId);
+        postLikeCounts[postId] = (postLikeCounts[postId] || 0) + 1;
+        updateLikeBtn();
+
+        await sb.from('post_likes').insert({ post_id: postId, user_id: me.id });
+      }
+
+      // Refresh grid cell counts
+      renderGrid();
+    }
+
+    // ── Comments ──────────────────────────────────────────────
+    async function loadComments(postId) {
+      const section = document.getElementById('commentsSection');
+      section.innerHTML = '<div class="no-comments">Loading…</div>';
+
+      const { data, error } = await sb
+        .from('post_comments')
+        .select('id,user_id,content,created_at')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        section.innerHTML = `<div class="no-comments">${esc(error.message)}</div>`;
+        return;
+      }
+
+      document.getElementById('commentCount').textContent = data?.length || 0;
+
+      if (!data?.length) {
+        section.innerHTML = '<div class="no-comments">No comments yet. Be the first!</div>';
+        return;
+      }
+
+      // Load commenter profiles
+      const ids = [...new Set(data.map(c => c.user_id))];
+      const { data: profs } = await sb
+        .from('profiles')
+        .select('user_id,name,avatar_url')
+        .in('user_id', ids);
+      const commentProfs = Object.fromEntries((profs || []).map(p => [p.user_id, p]));
+
+      section.innerHTML = data.map(c => {
+        const prof = commentProfs[c.user_id] || {};
+        const avatarHTML = prof.avatar_url
+          ? `<img src="${esc(prof.avatar_url)}" alt="" />`
+          : esc(initial(prof.name));
+        return `
+          <div class="comment">
+            <div class="comment-avatar">${avatarHTML}</div>
+            <div class="comment-body">
+              <div class="comment-name">${esc(prof.name || 'User')}</div>
+              <div class="comment-text">${esc(c.content)}</div>
+              <div class="comment-time">${timeAgo(c.created_at)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      section.scrollTop = section.scrollHeight;
+    }
+
+    function focusComment() {
+      document.getElementById('commentInput').focus();
+    }
+
+    function bindCommentEnter() {
+      document.getElementById('commentInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          postComment();
+        }
+      });
+    }
+
+    async function postComment() {
+      if (!activePost) return;
+      const input   = document.getElementById('commentInput');
+      const content = input.value.trim();
+      if (!content) return;
+
+      const btn = document.getElementById('sendCommentBtn');
+      btn.disabled = true;
+      input.value  = '';
+
+      const { error } = await sb.from('post_comments').insert({
+        post_id:    activePost.id,
+        user_id:    me.id,
+        content,
+        created_at: new Date().toISOString()
+      });
+
+      if (error) {
+        showToast(error.message, 'error');
+        btn.disabled = false;
+        return;
+      }
+
+      postCommentCounts[activePost.id] = (postCommentCounts[activePost.id] || 0) + 1;
+      document.getElementById('commentCount').textContent = postCommentCounts[activePost.id];
+
+      await loadComments(activePost.id);
+      btn.disabled = false;
+      renderGrid();
+    }
+
+    function sharePost() {
+      if (navigator.share && activePost) {
+        navigator.share({ title: 'Check this out on Miru', url: window.location.href })
+          .catch(() => {});
+      } else {
+        showToast('Share copied!', 'success');
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
