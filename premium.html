@@ -595,60 +595,45 @@
     <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
 
-<<button id="startPremiumCheckout" class="cta-btn">Start Premium — $3.99/month</button>
-
 <script>
 const sb = supabase.createClient(
   SUPABASE_URL,
-  window.SUPABASE_KEY || window.SUPABASE_ANON_KEY
+  SUPABASE_ANON_KEY
 );
 
 document.addEventListener('DOMContentLoaded', () => {
   const premiumBtn = document.getElementById('startPremiumCheckout');
 
   if (!premiumBtn) {
-    alert('Premium button not found');
+    console.error('Premium button not found: startPremiumCheckout');
     return;
   }
 
   premiumBtn.addEventListener('click', async () => {
     try {
+      console.log('Premium button clicked');
+
       const { data: { user }, error } = await sb.auth.getUser();
+      console.log('Supabase user result:', { user, error });
 
       if (error || !user) {
         alert('Please sign in first.');
         return;
       }
 
-      const res = await fetch('https://rlmcwbaiuowbkgfzdlme.supabase.co/functions/v1/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': window.SUPABASE_KEY || window.SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + (window.SUPABASE_KEY || window.SUPABASE_ANON_KEY)
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          email: user.email || null
-        })
-      });
+      const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
 
-      const data = await res.json();
-      console.log('create-checkout-session raw response:', res.status, data);
+      const checkoutUrl = new URL(baseUrl);
+      checkoutUrl.searchParams.set('client_reference_id', user.id);
 
-      if (!res.ok) {
-        alert('Checkout failed: ' + (data.error || 'unknown error'));
-        return;
+      if (user.email) {
+        checkoutUrl.searchParams.set('prefilled_email', user.email);
       }
 
-      if (!data.url) {
-        alert('Checkout URL missing');
-        return;
-      }
-
-      window.location.href = data.url;
+      console.log('Redirecting to:', checkoutUrl.toString());
+      window.location.href = checkoutUrl.toString();
     } catch (err) {
-      console.error(err);
+      console.error('Premium checkout error:', err);
       alert('Something went wrong starting checkout.');
     }
   });
