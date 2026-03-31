@@ -5,80 +5,78 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0D0A1A" />
+  <meta name="theme-color" content="#0A0714" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <title>Miru — Profile</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0D0A1A;
-      --bg-2: #130F2A;
-      --surface: #171131;
-      --surface-2: #21194A;
-      --surface-3: #2A225A;
-      --border: rgba(196, 184, 240, 0.14);
-      --border-strong: rgba(196, 184, 240, 0.22);
-      --violet: #4A3F8A;
-      --lavender: #8B7EC8;
-      --lilac: #C4B8F0;
-      --white: #FFFFFF;
-      --text: #F7F4FF;
-      --text-soft: #D3CBF2;
-      --text-muted: #9E95C9;
-      --success: #7EEDB0;
-      --gold: #FFD98E;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-      --serif: 'Playfair Display', serif;
-      --sans: 'DM Sans', sans-serif;
+      --bg:        #0A0714;
+      --s1:        #100D22;
+      --s2:        #181430;
+      --border:    rgba(180,170,255,0.10);
+      --border-hi: rgba(180,170,255,0.22);
+      --white:     #FFFFFF;
+      --text:      #F0ECFF;
+      --soft:      #C4BCEE;
+      --muted:     #7A72AA;
+      --lilac:     #B8AEFF;
+      --gold:      #F5CE7A;
+      --green:     #7DFFC8;
+      --red:       #FF7090;
+      --shadow:    0 24px 60px rgba(0,0,0,0.55);
+      --serif:     'Cormorant Garamond', serif;
+      --sans:      'Cabinet Grotesk', sans-serif;
     }
 
     html, body {
       min-height: 100%;
-      background:
-        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
-        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
+      overflow-x: hidden;
     }
 
-    body { padding-bottom: 102px; }
+    body {
+      padding-bottom: 100px;
+      position: relative;
+    }
 
-    .ambient::before,
-    .ambient::after {
+    body::before {
       content: "";
       position: fixed;
-      width: 250px;
-      height: 250px;
-      border-radius: 999px;
-      filter: blur(90px);
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.26), transparent),
+        radial-gradient(ellipse 40% 40% at 85% 55%, rgba(120,90,255,0.08), transparent);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.6;
     }
 
-    .ambient::before {
-      top: -60px;
-      left: -90px;
-      background: rgba(139, 126, 200, 0.16);
-    }
-
-    .ambient::after {
-      right: -100px;
-      top: 280px;
-      background: rgba(74, 63, 138, 0.24);
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
     }
 
     .shell {
-      max-width: 460px;
+      max-width: 440px;
       margin: 0 auto;
-      min-height: 100vh;
       position: relative;
       z-index: 1;
     }
 
+    /* ── Top bar ── */
     .top-bar {
       position: sticky;
       top: 0;
@@ -86,90 +84,86 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 18px;
-      backdrop-filter: blur(18px);
-      background: rgba(13, 10, 26, 0.74);
-      border-bottom: 1px solid rgba(196,184,240,0.08);
+      padding: 14px 18px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(10,7,20,0.80);
+      border-bottom: 1px solid var(--border);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
     .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
     .logo {
       font-family: var(--serif);
-      font-size: 27px;
+      font-size: 26px;
       font-style: italic;
       font-weight: 700;
-      letter-spacing: -0.5px;
       color: var(--white);
+      letter-spacing: -0.4px;
     }
 
     .top-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       position: relative;
     }
 
-    .icon-btn,
-    .primary-btn,
-    .secondary-btn,
-    .pill-btn,
-    .sheet-btn,
-    .tab-btn,
-    .menu-item,
-    .fab,
-    .tab,
-    .save-btn {
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
     .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 15px;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.15s;
     }
+    .icon-btn:hover { background: rgba(255,255,255,0.09); }
 
+    /* ── Dropdown menu ── */
     .menu {
       position: absolute;
-      top: 52px;
+      top: calc(100% + 10px);
       right: 0;
       width: 220px;
       border-radius: 22px;
-      background: rgba(23, 17, 49, 0.98);
-      border: 1px solid rgba(196,184,240,0.12);
+      background: rgba(16,13,34,0.98);
+      border: 1px solid var(--border-hi);
       box-shadow: var(--shadow);
-      padding: 10px;
+      padding: 8px;
       display: none;
-      overflow: hidden;
+      z-index: 100;
+      animation: menuIn 0.18s ease both;
+    }
+
+    @keyframes menuIn {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
     .menu.show { display: block; }
 
     .menu-title {
-      padding: 8px 10px 10px;
-      color: var(--text-muted);
-      font-size: 11px;
+      padding: 8px 10px 6px;
+      color: var(--muted);
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 800;
@@ -178,82 +172,116 @@
     .menu-item {
       width: 100%;
       text-align: left;
-      padding: 13px 12px;
-      border-radius: 16px;
+      padding: 12px 12px;
+      border-radius: 14px;
       background: transparent;
+      border: none;
       color: var(--text);
-      font-size: 14px;
+      font-family: var(--sans);
+      font-size: 13px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.12s;
     }
 
-    .menu-item:hover { background: rgba(255,255,255,0.05); }
-    .menu-item small { color: var(--text-muted); font-size: 11px; font-weight: 700; }
+    .menu-item:hover { background: rgba(255,255,255,0.06); }
+    .menu-item small { color: var(--muted); font-size: 11px; font-weight: 700; }
 
-    .page { padding: 18px; }
-
-    .hero {
-      border-radius: 34px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-        linear-gradient(180deg, #171131 0%, #120D25 100%);
-      border: 1px solid rgba(196,184,240,0.12);
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
-      position: relative;
+    .menu-item.premium {
+      color: var(--gold);
     }
 
+    .menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 4px;
+    }
+
+    .menu-item.danger { color: var(--red); }
+
+    /* ── Cover ── */
     .cover {
-      height: 170px;
+      height: 200px;
       background:
-        radial-gradient(circle at top right, rgba(196,184,240,0.22), transparent 30%),
-        linear-gradient(135deg, #382D78 0%, #1A143D 45%, #120D25 100%);
+        radial-gradient(circle at 70% 30%, rgba(184,174,255,0.22), transparent 50%),
+        linear-gradient(135deg, #2A2060 0%, #160E32 50%, #0A0714 100%);
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
 
     .cover::after {
       content: "";
       position: absolute;
-      right: -40px;
-      bottom: -60px;
-      width: 220px;
-      height: 220px;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(10,7,20,0.95) 100%);
+    }
+
+    .cover-edit {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      z-index: 2;
+      padding: 8px 14px;
       border-radius: 999px;
-      background: radial-gradient(circle, rgba(196,184,240,0.22), transparent 62%);
+      background: rgba(10,7,20,0.65);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--soft);
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: background 0.15s;
+    }
+    .cover-edit:hover { background: rgba(255,255,255,0.12); }
+
+    .cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
-    .hero-content {
-      padding: 0 18px 18px;
-      margin-top: -52px;
-    }
-
-    .profile-head {
-      display: flex;
-      align-items: flex-end;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .avatar-wrap {
+    /* ── Profile hero ── */
+    .profile-hero {
+      padding: 0 18px 20px;
+      margin-top: -70px;
       position: relative;
-      width: 112px;
-      height: 112px;
-      flex-shrink: 0;
+      z-index: 2;
+    }
+
+    /* Big centered avatar */
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .avatar-ring {
+      position: relative;
+      width: 130px;
+      height: 130px;
     }
 
     .avatar {
-      width: 112px;
-      height: 112px;
-      border-radius: 30px;
+      width: 130px;
+      height: 130px;
+      border-radius: 38px;
       overflow: hidden;
-      background: rgba(255,255,255,0.08);
-      border: 3px solid rgba(13,10,26,0.92);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.32);
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      border: 4px solid var(--bg);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.50), 0 0 0 1px rgba(184,174,255,0.20);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--white);
     }
 
     .avatar img {
@@ -263,561 +291,427 @@
       display: block;
     }
 
-    .avatar-edit {
+    .avatar-edit-btn {
       position: absolute;
       right: -6px;
       bottom: -6px;
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       background: var(--white);
-      color: #120D25;
-      border: 3px solid rgba(13,10,26,0.94);
-      font-size: 16px;
-      font-weight: 800;
+      color: #0A0714;
+      border: 3px solid var(--bg);
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+      font-family: var(--sans);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.30);
+      transition: transform 0.15s;
     }
+    .avatar-edit-btn:hover { transform: scale(1.08); }
 
-    .identity {
-      flex: 1;
-      padding-bottom: 6px;
-    }
-
-    .identity-top {
+    .banner-edit-btn {
+      position: absolute;
+      left: -6px;
+      bottom: -6px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(10,7,20,0.80);
+      color: var(--white);
+      border: 3px solid var(--bg);
+      font-size: 14px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.30);
+      backdrop-filter: blur(8px);
+      transition: transform 0.15s, background 0.15s;
+    }
+    .banner-edit-btn:hover { transform: scale(1.08); background: rgba(255,255,255,0.15); }
+
+    /* Identity info — centered */
+    .identity {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .name-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .name {
       font-family: var(--serif);
-      font-size: 32px;
-      line-height: 1;
+      font-size: 34px;
+      font-weight: 700;
       letter-spacing: -0.8px;
+      line-height: 1;
       color: var(--white);
     }
 
-    .verify,
-    .premium-chip,
-    .soft-chip,
-    .mini-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .premium-badge {
+      display: none;
+      padding: 5px 10px;
       border-radius: 999px;
-      padding: 7px 11px;
-      font-size: 11px;
-      font-weight: 800;
+      background: linear-gradient(135deg, rgba(245,206,122,0.18), rgba(232,146,10,0.10));
+      border: 1px solid rgba(245,206,122,0.30);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
     }
 
-    .verify {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text);
-    }
-
-    .premium-chip {
-      background: var(--white);
-      color: #120D25;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
-    }
+    .premium-badge.show { display: inline-flex; align-items: center; gap: 4px; }
 
     .handle {
-      color: var(--text-muted);
       font-size: 13px;
+      color: var(--muted);
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .bio {
-      color: var(--text-soft);
       font-size: 14px;
+      color: var(--soft);
       line-height: 1.65;
-      margin-bottom: 12px;
+      max-width: 320px;
+      margin: 0 auto 12px;
     }
 
-    .interest-row {
+    .vibe-chips {
       display: flex;
-      gap: 8px;
+      gap: 7px;
+      justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 14px;
     }
 
-    .soft-chip {
+    .vibe-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      padding: 8px 12px;
+      border: 1px solid var(--border);
+      color: var(--soft);
+      font-size: 11px;
+      font-weight: 700;
     }
 
-    .cta-row {
+    /* Action row */
+    .action-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
-    .primary-btn,
-    .secondary-btn {
+    .edit-btn {
+      padding: 13px;
       border-radius: 999px;
-      padding: 15px 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      font-family: var(--sans);
       font-size: 13px;
       font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .edit-btn:hover { background: rgba(255,255,255,0.11); }
 
-    .primary-btn {
-      background: var(--white);
-      color: #120D25;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
-    }
-
-    .secondary-btn {
+    .share-btn {
+      padding: 13px;
+      border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .share-btn:hover { background: rgba(255,255,255,0.07); }
 
+    /* Stats row */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .stat {
-      padding: 14px 10px;
+      padding: 13px 8px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
       text-align: center;
     }
 
     .stat strong {
       display: block;
-      color: var(--white);
       font-size: 22px;
-      font-weight: 800;
-      margin-bottom: 4px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.3px;
+      margin-bottom: 3px;
     }
 
     .stat span {
-      display: block;
-      color: var(--text-muted);
-      font-size: 11px;
-      line-height: 1.3;
+      font-size: 10px;
+      color: var(--muted);
       font-weight: 700;
+      line-height: 1.3;
     }
 
-    .panel {
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
-      border: 1px solid rgba(196,184,240,0.1);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      margin-bottom: 14px;
+    /* ── Posts section ── */
+    .posts-section {
+      padding: 0 14px;
     }
 
-    .panel-head {
+    .posts-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
+      padding: 16px 4px 12px;
     }
 
-    .panel-title {
+    .posts-title {
       font-family: var(--serif);
-      font-size: 24px;
-      line-height: 1;
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 700;
       color: var(--white);
+      letter-spacing: -0.4px;
     }
 
-    .panel-sub {
-      color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
+    .posts-title em { color: var(--lilac); }
 
-    .mini-chip {
+    .post-count-chip {
+      padding: 7px 12px;
+      border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      padding: 9px 12px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
     }
 
-    .tab-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
       margin-bottom: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .filter-tabs::-webkit-scrollbar { display: none; }
 
-    .tab-btn {
-      padding: 12px 10px;
-      border-radius: 16px;
+    .filter-tab {
+      flex-shrink: 0;
+      padding: 9px 16px;
+      border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
       font-size: 12px;
       font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .tab-btn.on {
+    .filter-tab.on {
       background: var(--white);
-      color: #120D25;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+      color: #0A0714;
+      border-color: var(--white);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.12);
     }
 
-    .grid {
+    /* Posts grid */
+    .posts-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .grid-card {
-      position: relative;
-      aspect-ratio: 0.8;
-      border-radius: 22px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      border-radius: 20px;
       overflow: hidden;
-      background: linear-gradient(145deg, #3C317E, #1A143D);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.22);
     }
 
-    .grid-card img,
-    .grid-card video {
+    .grid-cell {
+      aspect-ratio: 1;
+      position: relative;
+      background: rgba(255,255,255,0.04);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .grid-cell img,
+    .grid-cell video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      background: #130F2A;
+      transition: transform 0.25s;
     }
 
-    .grid-card.empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      color: var(--text-muted);
-      font-size: 12px;
-      text-align: center;
-      line-height: 1.5;
-    }
+    .grid-cell:hover img,
+    .grid-cell:hover video { transform: scale(1.05); }
 
-    .media-type,
-    .post-stamp {
+    .cell-badge {
       position: absolute;
-      z-index: 1;
+      top: 6px;
+      left: 6px;
+      padding: 3px 8px;
       border-radius: 999px;
-      backdrop-filter: blur(14px);
-      font-weight: 800;
-    }
-
-    .media-type {
-      top: 10px;
-      left: 10px;
-      padding: 6px 10px;
-      background: rgba(255,255,255,0.82);
-      color: #120D25;
-      font-size: 10px;
-    }
-
-    .post-stamp {
-      right: 10px;
-      bottom: 10px;
-      padding: 7px 10px;
-      background: rgba(17, 13, 37, 0.6);
+      background: rgba(10,7,20,0.65);
       color: var(--white);
       font-size: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 800;
+      backdrop-filter: blur(6px);
     }
 
-    .section-copy {
-      color: var(--text-muted);
+    .cell-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 8px 7px;
+      background: linear-gradient(transparent, rgba(5,3,15,0.80));
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Empty state */
+    .grid-empty {
+      grid-column: span 3;
+      padding: 40px 20px;
+      text-align: center;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--border-hi);
+    }
+
+    .grid-empty-emoji { font-size: 36px; margin-bottom: 12px; }
+
+    .grid-empty-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .grid-empty-body {
       font-size: 13px;
+      color: var(--muted);
       line-height: 1.6;
-      margin-top: -4px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
-    .about-grid,
-    .creator-strip {
+    .grid-empty-btn {
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,255,255,0.14);
+    }
+
+    /* About section */
+    .about-section { display: none; padding: 4px 0; }
+
+    .about-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
 
-    .about-card,
-    .create-card,
-    .premium-card {
+    .about-card {
       padding: 14px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
     }
 
     .about-card small {
       display: block;
-      color: var(--text-muted);
       font-size: 10px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
+      color: var(--muted);
       margin-bottom: 5px;
-      font-weight: 800;
     }
 
     .about-card strong {
-      color: var(--white);
       font-size: 13px;
+      font-weight: 700;
+      color: var(--white);
       line-height: 1.5;
-      font-weight: 700;
     }
 
-    .create-card strong,
-    .premium-card strong {
-      display: block;
-      color: var(--white);
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      line-height: 1.3;
-    }
-
-    .create-card p,
-    .premium-card p {
-      color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .pill-btn {
-      padding: 12px 14px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #120D25;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
-    }
-
-    .modal,
-    .sheet {
-      position: fixed;
-      inset: 0;
-      display: none;
-      z-index: 110;
-    }
-
-    .modal.show,
-    .sheet.show { display: block; }
-
-    .backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(6, 4, 12, 0.68);
-      backdrop-filter: blur(8px);
-    }
-
-    .modal-card,
-    .sheet-card {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(430px, calc(100% - 18px));
-      border-radius: 28px;
-      background: rgba(23, 17, 49, 0.98);
-      border: 1px solid rgba(196,184,240,0.12);
-      box-shadow: var(--shadow);
-    }
-
-    .modal-card {
-      top: 72px;
-      padding: 18px;
-    }
-
-    .sheet-card {
-      bottom: 12px;
-      padding: 18px;
-    }
-
-    .modal-head,
-    .sheet-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .modal-title,
-    .sheet-title {
-      font-family: var(--serif);
-      font-size: 25px;
-      color: var(--white);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-
-    .modal-sub,
-    .sheet-sub {
-      color: var(--text-muted);
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .close-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 15px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .field {
-      display: grid;
-      gap: 7px;
-    }
-
-    .field label {
-      color: var(--text-soft);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-    }
-
-    .field input,
-    .field textarea {
-      width: 100%;
-      border-radius: 18px;
-      padding: 14px 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-    }
-
-    .field textarea {
-      min-height: 110px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-
-    .save-btn {
-      width: 100%;
-      padding: 15px 16px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #120D25;
-      font-size: 14px;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.12);
-    }
-
-    .sheet-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .sheet-btn {
-      width: 100%;
-      padding: 15px 14px;
-      border-radius: 18px;
-      text-align: left;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .sheet-btn small {
-      display: block;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .preview-box {
-      display: none;
-      margin-top: 12px;
-      border-radius: 22px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .preview-box.show { display: block; }
-
-    .preview-box img,
-    .preview-box video {
-      width: 100%;
-      max-height: 320px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .helper {
-      color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.6;
-      margin-top: 10px;
-    }
-
+    /* ── FAB — plus button ── */
     .fab {
       position: fixed;
-      right: max(18px, calc(50% - 212px));
-      bottom: 102px;
-      width: 62px;
-      height: 62px;
-      border-radius: 999px;
+      right: max(18px, calc(50% - 202px));
+      bottom: 84px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
       background: var(--white);
-      color: #120D25;
-      box-shadow: 0 18px 36px rgba(0,0,0,0.26);
-      font-size: 28px;
-      font-weight: 800;
+      color: #0A0714;
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(255,255,255,0.18), 0 4px 12px rgba(0,0,0,0.30);
       z-index: 75;
+      font-family: var(--sans);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
 
+    .fab:hover {
+      transform: scale(1.08) translateY(-2px);
+      box-shadow: 0 18px 40px rgba(255,255,255,0.24);
+    }
+
+    .fab:active { transform: scale(0.94); }
+
+    /* ── Tab bar ── */
     .tabs {
       position: fixed;
       left: 50%;
       bottom: 12px;
       transform: translateX(-50%);
       width: min(430px, calc(100% - 16px));
-      padding: 12px 10px;
+      padding: 10px 10px 12px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      background: rgba(18, 13, 37, 0.88);
-      border: 1px solid rgba(196,184,240,0.12);
+      gap: 5px;
+      background: rgba(10,7,20,0.90);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
       z-index: 70;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.40);
     }
 
     .tab {
@@ -826,412 +720,618 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      min-height: 54px;
-      border-radius: 18px;
-      color: var(--text-muted);
-      transition: 0.2s ease;
+      gap: 4px;
+      min-height: 50px;
+      border-radius: 16px;
+      color: var(--muted);
+      transition: all 0.15s;
     }
 
-    .tab-icon { font-size: 20px; }
+    .tab-icon  { font-size: 19px; }
+    .tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; }
+    .tab.on    { background: rgba(255,255,255,0.06); color: var(--white); }
 
-    .tab-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.9px;
+    /* ── Edit Profile Modal ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      background: rgba(5,3,15,0.80);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 70px 14px 20px;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 420px;
+      background: #100D22;
+      border-radius: 28px;
+      border: 1px solid var(--border-hi);
+      padding: 22px 20px;
+      box-shadow: var(--shadow);
+      animation: slideDown 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: italic;
       font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
     }
 
-    .tab.on {
-      background: rgba(255,255,255,0.06);
+    .close-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.15s;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.09); }
+
+    .form-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus,
+    .field textarea:focus { border-color: var(--border-hi); }
+
+    .field textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+
+    .save-btn {
+      width: 100%;
+      padding: 15px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.14);
+      transition: transform 0.15s;
+    }
+    .save-btn:hover { transform: translateY(-1px); }
+
+    /* ── Post Composer Sheet ── */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 110;
+      background: rgba(5,3,15,0.85);
+      backdrop-filter: blur(16px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .sheet-backdrop.show { display: flex; }
+
+    .sheet-card {
+      width: 100%;
+      max-width: 440px;
+      background: #100D22;
+      border-radius: 28px 28px 0 0;
+      border: 1px solid var(--border-hi);
+      border-bottom: none;
+      padding: 0 0 24px;
+      box-shadow: 0 -20px 60px rgba(0,0,0,0.60);
+      max-height: 90dvh;
+      overflow-y: auto;
+      animation: sheetUp 0.35s cubic-bezier(0.34,1.3,0.64,1) both;
+    }
+
+    @keyframes sheetUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.14);
+      margin: 12px auto 0;
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px 12px;
+    }
+
+    .sheet-title {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 700;
       color: var(--white);
     }
 
-    @media (max-width: 390px) {
-      .profile-head { align-items: flex-start; flex-direction: column; }
-      .cta-row,
-      .stats-row,
-      .about-grid,
-      .creator-strip { grid-template-columns: 1fr 1fr; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .fab { right: 16px; }
+    .sheet-post-btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255,255,255,0.14);
+      transition: opacity 0.15s;
     }
+
+    .sheet-post-btn:disabled { opacity: 0.40; cursor: not-allowed; }
+
+    /* Composer author row */
+    .composer-author {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 18px 12px;
+    }
+
+    .composer-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #5F4EB3, #231A54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--white);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+
+    .composer-name { font-size: 14px; font-weight: 800; color: var(--white); }
+    .composer-sub  { font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 1px; }
+
+    /* Caption */
+    .caption-input {
+      width: 100%;
+      min-height: 80px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      outline: none;
+      resize: none;
+      padding: 0 18px 14px;
+      caret-color: var(--lilac);
+    }
+
+    .caption-input::placeholder { color: var(--muted); }
+
+    /* Media pick area */
+    .media-pick-zone {
+      margin: 0 18px 14px;
+      border-radius: 20px;
+      border: 2px dashed var(--border-hi);
+      background: rgba(255,255,255,0.025);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .media-pick-zone:hover {
+      border-color: rgba(184,174,255,0.38);
+      background: rgba(255,255,255,0.045);
+    }
+
+    .media-pick-zone.has-media { border-style: solid; border-color: var(--border); cursor: default; }
+
+    .pick-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 28px 20px;
+      text-align: center;
+    }
+
+    .pick-empty-icon { font-size: 28px; }
+    .pick-empty-label { font-size: 13px; font-weight: 800; color: var(--soft); }
+    .pick-empty-sub   { font-size: 11px; color: var(--muted); }
+
+    .pick-type-row { display: flex; gap: 8px; margin-top: 4px; }
+
+    .pick-type-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .pick-type-btn:hover { background: rgba(255,255,255,0.10); }
+
+    .preview-wrap { position: relative; }
+
+    .preview-wrap img,
+    .preview-wrap video {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-remove {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(10,7,20,0.70);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--white);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Composer toolbar */
+    .composer-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .toolbar-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--sans);
+    }
+    .toolbar-btn:hover { background: rgba(255,255,255,0.08); color: var(--soft); }
+
+    .toolbar-hint { font-size: 11px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      backdrop-filter: blur(16px);
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.22s, transform 0.22s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.success { background:rgba(125,255,200,0.12); border:1px solid rgba(125,255,200,0.28); color:var(--green); }
+    .toast.info    { background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--soft); }
+    .toast.error   { background:rgba(255,112,144,0.12); border:1px solid rgba(255,112,144,0.28); color:var(--red); }
   </style>
 </head>
+
 <body>
-  <div class="ambient"></div>
+  <!-- Hidden inputs -->
+  <input type="file" id="avatarInput"       accept="image/*"         hidden />
+  <input type="file" id="bannerInput"       accept="image/*"         hidden />
+  <input type="file" id="photoCameraInput"  accept="image/*"         hidden />
+  <input type="file" id="videoInput"        accept="video/*"         hidden />
+  <input type="file" id="libraryInput"      accept="image/*,video/*" hidden />
 
   <div class="shell">
+
+    <!-- Top bar -->
     <div class="top-bar">
       <div class="brand">
-        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <img class="brand-icon" src="icon.svg" alt="Miru" />
         <div class="logo">miru.</div>
       </div>
-
       <div class="top-actions">
-        <button class="icon-btn" onclick="toggleMenu()">⋯</button>
-
+        <button class="icon-btn" id="menuBtn" onclick="toggleMenu()">⋯</button>
         <div class="menu" id="profileMenu">
-          <div class="menu-title">Profile menu</div>
-          <button class="menu-item" onclick="openEditProfile()">Edit profile <small>name, bio</small></button>
-          <button class="menu-item" onclick="openComposer()">Create post <small>photo or video</small></button>
-          <button class="menu-item" onclick="window.location.href='premium.html'">Subscribe <small>premium creator</small></button>
-          <button class="menu-item" onclick="showMenuAlert('Notifications center coming next.')">Notifications <small>push and activity</small></button>
-          <button class="menu-item" onclick="showMenuAlert('Privacy controls page coming next.')">Privacy <small>visibility and safety</small></button>
-          <button class="menu-item" onclick="showMenuAlert('Account center coming next.')">Account center <small>email and sessions</small></button>
-          <button class="menu-item" onclick="logout()">Log out <small>secure sign out</small></button>
+          <div class="menu-title">Profile</div>
+          <button class="menu-item" onclick="openEdit()">✏️ Edit profile <small>name &amp; bio</small></button>
+          <button class="menu-item" onclick="triggerAvatarUpload()">🖼️ Change photo <small>update avatar</small></button>
+          <button class="menu-item" onclick="triggerBannerUpload()">🏞️ Change banner <small>update cover image</small></button>
+          <div class="menu-divider"></div>
+          <button class="menu-item premium" onclick="goTo('premium.html')">⭐ Go Premium <small>unlock more</small></button>
+          <div class="menu-divider"></div>
+          <button class="menu-item" onclick="goTo('matchmaker.html')">🤖 AI Matchmaker <small>let AI find you</small></button>
+          <button class="menu-item" onclick="showToast('Notifications coming soon.', 'info')">🔔 Notifications <small>alerts &amp; activity</small></button>
+          <button class="menu-item" onclick="showToast('Privacy controls coming soon.', 'info')">🔒 Privacy <small>visibility &amp; safety</small></button>
+          <div class="menu-divider"></div>
+          <button class="menu-item danger" onclick="logout()">↗ Sign out <small>secure log out</small></button>
         </div>
       </div>
     </div>
 
-    <div class="page">
-      <div class="hero">
-        <div class="cover"></div>
+    <!-- Cover / Banner photo -->
+    <div class="cover" id="coverEl">
+      <img id="bannerImg" src="" alt="Banner" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
+      <button class="cover-edit" onclick="triggerBannerUpload()">🖼️ Change banner</button>
+    </div>
 
-        <div class="hero-content">
-          <div class="profile-head">
-            <div class="avatar-wrap">
-              <div class="avatar">
-                <img id="avatar" src="default-avatar.jpg" alt="Profile avatar" />
-              </div>
-              <button class="avatar-edit" onclick="triggerAvatarUpload()">✦</button>
-            </div>
+    <!-- Profile hero -->
+    <div class="profile-hero">
 
-            <div class="identity">
-              <div class="identity-top">
-                <div class="name" id="name">Loading...</div>
-                <div class="verify">Verified vibe</div>
-                <div class="premium-chip" id="premiumChip">Premium off</div>
-              </div>
-              <div class="handle" id="handle">@miruuser</div>
-              <div class="bio" id="bio">Loading bio...</div>
-              <div class="interest-row" id="interestRow">
-                <div class="soft-chip">video-first</div>
-                <div class="soft-chip">real energy</div>
-                <div class="soft-chip">miru</div>
-              </div>
-            </div>
+      <!-- Big centered avatar -->
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar" id="avatarEl">
+            <img id="avatarImg" src="" alt="Avatar" style="display:none;" />
+            <span id="avatarInitial">?</span>
           </div>
-
-          <div class="cta-row">
-            <button class="primary-btn" onclick="openEditProfile()">Edit profile</button>
-            <button class="secondary-btn" onclick="window.location.href='premium.html'">See premium</button>
-          </div>
-
-          <div class="stats-row">
-            <div class="stat">
-              <strong id="statPosts">0</strong>
-              <span>posts</span>
-            </div>
-            <div class="stat">
-              <strong id="statLikes">0</strong>
-              <span>admired</span>
-            </div>
-            <div class="stat">
-              <strong id="statMatches">0</strong>
-              <span>matches</span>
-            </div>
-            <div class="stat">
-              <strong id="statMedia">0</strong>
-              <span>media</span>
-            </div>
-          </div>
+          <!-- Change profile photo -->
+          <button class="avatar-edit-btn" onclick="triggerAvatarUpload()" title="Change photo">✦</button>
+          <!-- Change banner — sits to the left of the avatar -->
+          <button class="banner-edit-btn" onclick="triggerBannerUpload()" title="Change banner">🏞️</button>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">Your profile media</div>
-            <div class="panel-sub">Media comes first. Let people see the photos and videos before they ever think about tools.</div>
-          </div>
-          <div class="mini-chip" id="postCountChip">0 drops</div>
+      <!-- Identity -->
+      <div class="identity">
+        <div class="name-row">
+          <div class="name" id="nameEl">Loading…</div>
+          <div class="premium-badge" id="premiumBadge">⭐ Premium</div>
         </div>
-
-        <div class="tab-row">
-          <button class="tab-btn on" data-tab="all" onclick="switchTab(this, 'all')">All</button>
-          <button class="tab-btn" data-tab="photos" onclick="switchTab(this, 'photos')">Photos</button>
-          <button class="tab-btn" data-tab="videos" onclick="switchTab(this, 'videos')">Videos</button>
-          <button class="tab-btn" data-tab="about" onclick="switchTab(this, 'about')">About</button>
-        </div>
-
-        <div id="mediaSection">
-          <div class="grid" id="postsGrid"></div>
-        </div>
-
-        <div id="aboutSection" style="display:none;">
-          <div class="section-copy">A polished profile should say more than a selfie. This section gives your page more depth without feeling cluttered.</div>
-          <div class="about-grid">
-            <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
-            <div class="about-card"><small>Best energy</small><strong>Intentional, playful, and actually communicative</strong></div>
-            <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, and a conversation that keeps going</strong></div>
-            <div class="about-card"><small>Status</small><strong id="premiumAbout">Standard profile</strong></div>
-          </div>
+        <div class="handle" id="handleEl">@miruuser</div>
+        <div class="bio" id="bioEl">Say something real.</div>
+        <div class="vibe-chips">
+          <div class="vibe-chip">video-first</div>
+          <div class="vibe-chip">real energy</div>
+          <div class="vibe-chip">miru</div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <div>
-            <div class="panel-title">Creator tools</div>
-            <div class="panel-sub">Keep posting secondary. One clear creation area is enough after people have seen the profile.</div>
-          </div>
-          <div class="mini-chip">simple flow</div>
-        </div>
+      <!-- Actions -->
+      <div class="action-row">
+        <button class="edit-btn" onclick="openEdit()">✏️ Edit profile</button>
+        <button class="share-btn" onclick="shareProfile()">↗ Share</button>
+      </div>
 
-        <div class="creator-strip">
-          <div class="create-card">
-            <strong>Create your next drop</strong>
-            <p>The main visible create action lives in one place: the floating + button. This section just explains it and keeps the page organized.</p>
-            <button class="pill-btn" onclick="openComposer()">Create post</button>
-          </div>
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat"><strong id="statPosts">0</strong><span>posts</span></div>
+        <div class="stat"><strong id="statLikes">0</strong><span>liked</span></div>
+        <div class="stat"><strong id="statMatches">0</strong><span>matches</span></div>
+        <div class="stat"><strong id="statMedia">0</strong><span>media</span></div>
+      </div>
 
-          <div class="premium-card">
-            <strong>Go premium</strong>
-            <p>Boost profile reach, unlock more drops, and make your page feel more exclusive.</p>
-            <button class="secondary-btn" style="width:100%;padding:12px 14px;" onclick="window.location.href='premium.html'">Subscribe</button>
-          </div>
+    </div>
+
+    <!-- Posts section -->
+    <div class="posts-section">
+
+      <div class="posts-header">
+        <div class="posts-title">Your <em>posts</em></div>
+        <div class="post-count-chip" id="postCountChip">0 drops</div>
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab on" data-tab="all"    onclick="switchTab(this,'all')">All</button>
+        <button class="filter-tab"    data-tab="photos" onclick="switchTab(this,'photos')">Photos</button>
+        <button class="filter-tab"    data-tab="videos" onclick="switchTab(this,'videos')">Videos</button>
+        <button class="filter-tab"    data-tab="about"  onclick="switchTab(this,'about')">About</button>
+      </div>
+
+      <div id="mediaSection">
+        <div class="posts-grid" id="postsGrid"></div>
+      </div>
+
+      <div class="about-section" id="aboutSection">
+        <div class="about-grid">
+          <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
+          <div class="about-card"><small>Best energy</small><strong>Intentional, playful, actually communicative</strong></div>
+          <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, a conversation that keeps going</strong></div>
+          <div class="about-card"><small>Status</small><strong id="aboutStatus">Standard profile</strong></div>
         </div>
       </div>
+
     </div>
   </div>
 
-  <button class="fab" onclick="openComposer()">＋</button>
+  <!-- FAB — plus button → opens composer -->
+  <button class="fab" onclick="openComposer()" aria-label="Create post">＋</button>
 
-  <div class="modal" id="editModal">
-    <div class="backdrop" onclick="closeEditProfile()"></div>
-    <div class="modal-card">
-      <div class="modal-head">
-        <div>
-          <div class="modal-title">Edit your profile</div>
-          <div class="modal-sub">Tighten your name, bio, and how your page feels when someone lands on it.</div>
-        </div>
-        <button class="close-btn" onclick="closeEditProfile()">✕</button>
-      </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label for="editName">Display name</label>
-          <input id="editName" type="text" maxlength="40" placeholder="Your display name" />
-        </div>
-        <div class="field">
-          <label for="editBio">Bio</label>
-          <textarea id="editBio" maxlength="240" placeholder="Write a bio that actually sounds like you."></textarea>
-        </div>
-      </div>
-
-      <button class="save-btn" onclick="saveProfileEdits()">Save changes</button>
-    </div>
-  </div>
-
-  <div class="sheet" id="composerSheet">
-    <div class="backdrop" onclick="closeComposer()"></div>
-    <div class="sheet-card">
-      <div class="sheet-head">
-        <div>
-          <div class="sheet-title">Make a post</div>
-          <div class="sheet-sub">Choose a photo or video. On mobile, the camera options will open your phone camera directly.</div>
-        </div>
-        <button class="close-btn" onclick="closeComposer()">✕</button>
-      </div>
-
-      <div class="sheet-grid">
-        <button class="sheet-btn" onclick="openPhotoCamera()">
-          <div>📸 Photo from camera<small>Quick shot straight from your phone</small></div>
-          <span>→</span>
-        </button>
-        <button class="sheet-btn" onclick="openVideoCamera()">
-          <div>🎥 Video from camera<small>Record a short clip instantly</small></div>
-          <span>→</span>
-        </button>
-        <button class="sheet-btn" onclick="openLibraryPicker()">
-          <div>🖼️ Choose from library<small>Upload a photo or video you already have</small></div>
-          <span>→</span>
-        </button>
-      </div>
-
-      <div class="preview-box" id="previewBox"></div>
-
-      <div class="form-grid" style="margin-top:12px;">
-        <div class="field">
-          <label for="postCaption">Caption</label>
-          <textarea id="postCaption" maxlength="220" placeholder="Add a caption that feels like you."></textarea>
-        </div>
-      </div>
-
-      <button class="save-btn" onclick="publishPost()">Publish post</button>
-      <div class="helper">This profile page expects a Supabase storage bucket called <strong>posts</strong> and a table called <strong>user_posts</strong>.</div>
-    </div>
-  </div>
-
-  <input id="avatarInput" type="file" accept="image/*" hidden />
-  <input id="photoCameraInput" type="file" accept="image/*" capture="environment" hidden />
-  <input id="videoCameraInput" type="file" accept="video/*" capture="environment" hidden />
-  <input id="libraryInput" type="file" accept="image/*,video/*" hidden />
-
+  <!-- Tab bar -->
   <div class="tabs">
     <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
     <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
-    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab" href="discover.html"><div class="tab-icon">🔍</div><div class="tab-label">Discover</div></a>
     <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
 
+  <!-- Edit Profile Modal -->
+  <div class="modal-backdrop" id="editModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Edit profile</div>
+        <button class="close-btn" onclick="closeEdit()">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Name</label>
+          <input id="editName" type="text" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="editBio" placeholder="Say something real about you…"></textarea>
+        </div>
+        <div class="field">
+          <label>Age</label>
+          <input id="editAge" type="number" placeholder="Your age" min="18" max="99" />
+        </div>
+      </div>
+      <button class="save-btn" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+
+  <!-- Post Composer Sheet -->
+  <div class="sheet-backdrop" id="composerSheet">
+    <div class="sheet-card">
+      <div class="sheet-handle"></div>
+      <div class="sheet-head">
+        <div class="sheet-title">New post</div>
+        <button class="sheet-post-btn" id="sheetPostBtn" onclick="publishPost()" disabled>Share</button>
+      </div>
+
+      <!-- Author row -->
+      <div class="composer-author">
+        <div class="composer-avatar" id="composerAvatar"></div>
+        <div>
+          <div class="composer-name" id="composerName">You</div>
+          <div class="composer-sub">Posting to Discover</div>
+        </div>
+      </div>
+
+      <!-- Caption input -->
+      <textarea
+        class="caption-input"
+        id="postCaption"
+        placeholder="Say something real… a thought, a vibe, a question."
+        maxlength="300"
+      ></textarea>
+
+      <!-- Media picker zone -->
+      <div class="media-pick-zone" id="mediaPick" onclick="triggerPhotoPicker()">
+        <div class="pick-empty" id="pickEmpty">
+          <div class="pick-empty-icon">📸</div>
+          <div class="pick-empty-label">Add a photo or video</div>
+          <div class="pick-empty-sub">Tap to pick from your library</div>
+          <div class="pick-type-row">
+            <button class="pick-type-btn" onclick="stopProp(event); triggerPhotoPicker()">📷 Photo</button>
+            <button class="pick-type-btn" onclick="stopProp(event); triggerVideoPicker()">🎥 Video</button>
+          </div>
+        </div>
+        <div class="preview-wrap" id="previewWrap" style="display:none;"></div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="composer-toolbar">
+        <button class="toolbar-btn" onclick="triggerPhotoPicker()" title="Photo">📷</button>
+        <button class="toolbar-btn" onclick="triggerVideoPicker()" title="Video">🎥</button>
+        <span class="toolbar-hint">Photo · Video</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
   <script>
-    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
 
     let me = null;
     let myProfile = null;
     let posts = [];
-    let activeFilter = 'all';
     let pendingPostFile = null;
+    let activeTab = 'all';
 
+    // ── Helpers ───────────────────────────────────────────────
     function esc(v) {
-      return String(v ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+      return String(v ?? '').replace(/[&<>"']/g, s =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s])
+      );
     }
 
-    async function getUser() {
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) {
-        window.location.href = 'auth.html';
-        return null;
-      }
-      return user;
+    function goTo(url) { closeMenu(); window.location.href = url; }
+    function stopProp(e) { e.stopPropagation(); }
+
+    let toastTimer;
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    async function ensureProfile(user) {
-      const { data: existing } = await sb
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
+    function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
 
-      if (existing) return existing;
-
-      const fallbackName = user.email ? user.email.split('@')[0] : 'New User';
-      await sb.from('profiles').insert({
-        user_id: user.id,
-        name: fallbackName,
-        age: 25,
-        bio: 'This is a new user.',
-        avatar_url: 'default-avatar.jpg',
-        is_premium: false
-      });
-
-      const { data } = await sb
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      return data;
-    }
-
-    function renderProfile(profile) {
-      document.getElementById('name').textContent = profile.name || 'No name set';
-      document.getElementById('bio').textContent = profile.bio || 'No bio yet';
-      document.getElementById('avatar').src = profile.avatar_url || 'default-avatar.jpg';
-      document.getElementById('handle').textContent = `@${(profile.name || 'miruuser').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'miruuser'}`;
-      document.getElementById('premiumChip').textContent = profile.is_premium ? 'Premium on' : 'Premium off';
-      document.getElementById('premiumAbout').textContent = profile.is_premium ? 'Premium creator profile' : 'Standard profile';
-      document.getElementById('editName').value = profile.name || '';
-      document.getElementById('editBio').value = profile.bio || '';
-    }
-
-    async function loadCounts() {
-      const { count: likesCount } = await sb
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .eq('target_user_id', me.id)
-        .in('type', ['like', 'super']);
-
-      const { count: matchCount } = await sb
-        .from('conversations')
-        .select('*', { count: 'exact', head: true })
-        .or(`user_a.eq.${me.id},user_b.eq.${me.id}`);
-
-      document.getElementById('statLikes').textContent = likesCount || 0;
-      document.getElementById('statMatches').textContent = matchCount || 0;
-    }
-
-    async function loadPosts() {
-      const grid = document.getElementById('postsGrid');
-
-      const { data, error } = await sb
-        .from('user_posts')
-        .select('*')
-        .eq('user_id', me.id)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        posts = [];
-        grid.innerHTML = `
-          <div class="grid-card empty" style="grid-column: 1 / -1; aspect-ratio:auto; min-height:180px;">
-            Your profile is ready, but posts need a <strong>user_posts</strong> table and <strong>posts</strong> storage bucket in Supabase before media can appear here.
-          </div>
-        `;
-        updatePostStats();
-        return;
-      }
-
-      posts = data || [];
-      updatePostStats();
-      renderPosts();
-    }
-
-    function updatePostStats() {
-      const mediaCount = posts.filter((p) => p.media_type === 'image' || p.media_type === 'video').length;
-      document.getElementById('statPosts').textContent = posts.length;
-      document.getElementById('statMedia').textContent = mediaCount;
-      document.getElementById('postCountChip').textContent = `${posts.length} drops`;
-    }
-
-    function renderPosts() {
-      const grid = document.getElementById('postsGrid');
-      let filtered = posts;
-
-      if (activeFilter === 'photos') filtered = posts.filter((p) => p.media_type === 'image');
-      if (activeFilter === 'videos') filtered = posts.filter((p) => p.media_type === 'video');
-
-      if (!filtered.length) {
-        grid.innerHTML = `
-          <div class="grid-card empty" style="grid-column: 1 / -1; aspect-ratio:auto; min-height:180px;">
-            No ${activeFilter === 'all' ? 'posts' : activeFilter} yet. Tap the floating <strong>+</strong> button when you want to create one.
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML = filtered.map((post) => {
-        const typeLabel = post.media_type === 'video' ? 'video' : 'photo';
-        const media = post.media_type === 'video'
-          ? `<video src="${esc(post.media_url)}" muted playsinline preload="metadata"></video>`
-          : `<img src="${esc(post.media_url)}" alt="post media" />`;
-        return `
-          <div class="grid-card">
-            <div class="media-type">${typeLabel}</div>
-            ${media}
-            <div class="post-stamp">${post.caption ? esc(post.caption.slice(0, 18)) : 'miru drop'}</div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function switchTab(button, tab) {
-      activeFilter = tab;
-      document.querySelectorAll('.tab-btn').forEach((btn) => btn.classList.remove('on'));
-      button.classList.add('on');
-
-      document.getElementById('aboutSection').style.display = tab === 'about' ? 'block' : 'none';
-      document.getElementById('mediaSection').style.display = tab === 'about' ? 'none' : 'block';
-
-      if (tab !== 'about') renderPosts();
-    }
-
+    // ── Menu ──────────────────────────────────────────────────
     function toggleMenu() {
       document.getElementById('profileMenu').classList.toggle('show');
     }
@@ -1240,211 +1340,397 @@
       document.getElementById('profileMenu').classList.remove('show');
     }
 
-    function openEditProfile() {
-      closeMenu();
-      document.getElementById('editModal').classList.add('show');
-    }
+    document.addEventListener('click', e => {
+      const menu    = document.getElementById('profileMenu');
+      const actions = document.querySelector('.top-actions');
+      if (menu.classList.contains('show') && !actions.contains(e.target)) closeMenu();
+    });
 
-    function closeEditProfile() {
-      document.getElementById('editModal').classList.remove('show');
-    }
-
-    async function saveProfileEdits() {
-      const name = document.getElementById('editName').value.trim();
-      const bio = document.getElementById('editBio').value.trim();
-
-      const { error } = await sb
-        .from('profiles')
-        .update({ name: name || 'New User', bio })
-        .eq('user_id', me.id);
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      myProfile.name = name || 'New User';
-      myProfile.bio = bio;
-      renderProfile(myProfile);
-      closeEditProfile();
-    }
-
-    function openComposer() {
-      closeMenu();
-      document.getElementById('composerSheet').classList.add('show');
-    }
-
-    function closeComposer() {
-      document.getElementById('composerSheet').classList.remove('show');
-    }
-
+    // ── Avatar ────────────────────────────────────────────────
     function triggerAvatarUpload() {
+      closeMenu();
       document.getElementById('avatarInput').click();
     }
 
-    function openPhotoCamera() {
-      document.getElementById('photoCameraInput').click();
+    function triggerBannerUpload() {
+      closeMenu();
+      document.getElementById('bannerInput').click();
     }
 
-    function openVideoCamera() {
-      document.getElementById('videoCameraInput').click();
+    function renderBanner(url) {
+      const img = document.getElementById('bannerImg');
+      if (url) {
+        img.src = url;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
     }
 
-    function openLibraryPicker() {
-      document.getElementById('libraryInput').click();
+    async function uploadBanner(file) {
+      if (!file) return;
+      showToast('Uploading banner…', 'info');
+      const path = `${me.id}/banner/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
+      const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+      if (error) { showToast(error.message, 'error'); return; }
+
+      const { data } = sb.storage.from('avatars').getPublicUrl(path);
+      await sb.from('profiles').update({ banner_url: data.publicUrl }).eq('user_id', me.id);
+      myProfile.banner_url = data.publicUrl;
+      renderBanner(data.publicUrl);
+      showToast('Banner updated! ✨', 'success');
     }
 
-    function setPreview(file) {
-      pendingPostFile = file;
-      const box = document.getElementById('previewBox');
-      if (!file) {
-        box.classList.remove('show');
-        box.innerHTML = '';
-        return;
+    function renderAvatar(url, name) {
+      const img  = document.getElementById('avatarImg');
+      const init = document.getElementById('avatarInitial');
+      if (url) {
+        img.src = url;
+        img.style.display = 'block';
+        init.style.display = 'none';
+      } else {
+        img.style.display  = 'none';
+        init.style.display = 'block';
+        init.textContent   = initial(name);
       }
 
-      const url = URL.createObjectURL(file);
-      const isVideo = file.type.startsWith('video/');
-      box.innerHTML = isVideo
-        ? `<video src="${url}" controls muted playsinline></video>`
-        : `<img src="${url}" alt="preview" />`;
-      box.classList.add('show');
+      // Composer avatar
+      const ca = document.getElementById('composerAvatar');
+      if (url) {
+        ca.innerHTML = `<img src="${esc(url)}" alt="" />`;
+      } else {
+        ca.textContent = initial(name);
+      }
     }
 
     async function uploadAvatar(file) {
       if (!file) return;
-      const path = `${me.id}/avatar/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+      showToast('Uploading photo…', 'info');
+      const path = `${me.id}/avatar/${Date.now()}_${file.name.replace(/\s+/g,'_')}`;
       const { error } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
-      if (error) {
-        alert(error.message);
-        return;
-      }
+      if (error) { showToast(error.message, 'error'); return; }
 
       const { data } = sb.storage.from('avatars').getPublicUrl(path);
-      const url = data.publicUrl;
+      await sb.from('profiles').update({ avatar_url: data.publicUrl }).eq('user_id', me.id);
+      myProfile.avatar_url = data.publicUrl;
+      renderAvatar(data.publicUrl, myProfile.name);
+      showToast('Photo updated! ✨', 'success');
+    }
 
-      const { error: updateError } = await sb
-        .from('profiles')
-        .update({ avatar_url: url })
-        .eq('user_id', me.id);
+    // ── Render profile ────────────────────────────────────────
+    function renderProfile(p) {
+      document.getElementById('nameEl').textContent    = p.name || 'Miru user';
+      document.getElementById('handleEl').textContent  = `@${(p.name || 'miruuser').toLowerCase().replace(/\s+/g,'.')}`;
+      document.getElementById('bioEl').textContent     = p.bio || 'Say something real.';
+      document.getElementById('composerName').textContent = p.name || 'You';
 
-      if (updateError) {
-        alert(updateError.message);
+      const badge = document.getElementById('premiumBadge');
+      badge.classList.toggle('show', !!p.is_premium);
+
+      document.getElementById('aboutStatus').textContent = p.is_premium ? 'Premium ✦' : 'Standard profile';
+
+      renderAvatar(p.avatar_url, p.name);
+      renderBanner(p.banner_url || null);
+
+      // Edit modal defaults
+      document.getElementById('editName').value = p.name || '';
+      document.getElementById('editBio').value  = p.bio  || '';
+      document.getElementById('editAge').value  = p.age  || '';
+    }
+
+    // ── Counts ────────────────────────────────────────────────
+    async function loadCounts() {
+      const [
+        { count: likes },
+        { count: matches }
+      ] = await Promise.all([
+        sb.from('likes').select('*', { count:'exact', head:true }).eq('target_user_id', me.id),
+        sb.from('conversations').select('*', { count:'exact', head:true })
+          .or(`user_a.eq.${me.id},user_b.eq.${me.id}`)
+      ]);
+
+      document.getElementById('statLikes').textContent   = likes   || 0;
+      document.getElementById('statMatches').textContent = matches || 0;
+    }
+
+    // ── Posts ─────────────────────────────────────────────────
+    async function loadPosts() {
+      const { data, error } = await sb
+        .from('user_posts')
+        .select('id,media_url,media_type,caption,created_at')
+        .eq('user_id', me.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        posts = [];
+        renderPosts();
         return;
       }
 
-      myProfile.avatar_url = url;
-      document.getElementById('avatar').src = url;
+      posts = data || [];
+      const media = posts.filter(p => p.media_type === 'image' || p.media_type === 'video').length;
+      document.getElementById('statPosts').textContent    = posts.length;
+      document.getElementById('statMedia').textContent    = media;
+      document.getElementById('postCountChip').textContent = `${posts.length} drop${posts.length !== 1 ? 's' : ''}`;
+      renderPosts();
     }
 
-async function publishPost() {
-  if (!me || !me.id) {
-    alert("You are not logged in.");
-    return;
-  }
+    function renderPosts() {
+      const grid = document.getElementById('postsGrid');
+      let list = posts;
+      if (activeTab === 'photos') list = posts.filter(p => p.media_type === 'image');
+      if (activeTab === 'videos') list = posts.filter(p => p.media_type === 'video');
 
-  if (!pendingPostFile) {
-    alert("Choose a photo or video first.");
-    return;
-  }
-
-  const caption = document.getElementById("postCaption").value.trim();
-  const isVideo = pendingPostFile.type.startsWith("video/");
-  const mediaType = isVideo ? "video" : "image";
-  const safeName = pendingPostFile.name.replace(/\s+/g, "_");
-  const path = `${me.id}/${mediaType}/${Date.now()}_${safeName}`;
-
-  console.log("Uploading file to posts bucket:", path);
-
-  const { error: uploadError } = await sb.storage
-    .from("posts")
-    .upload(path, pendingPostFile, { upsert: false });
-
-  if (uploadError) {
-    console.error("Upload failed:", uploadError);
-    alert("Upload failed: " + uploadError.message);
-    return;
-  }
-
-  const { data: publicData } = sb.storage.from("posts").getPublicUrl(path);
-  const mediaUrl = publicData.publicUrl;
-
-  console.log("Public URL:", mediaUrl);
-  console.log("Inserting into user_posts...");
-
-  const { data: insertedPost, error: insertError } = await sb
-    .from("user_posts")
-    .insert({
-      user_id: me.id,
-      media_url: mediaUrl,
-      media_type: mediaType,
-      caption: caption || null
-    })
-    .select();
-
-  console.log("insertedPost:", insertedPost);
-  console.log("insertError:", insertError);
-
-  if (insertError) {
-    alert("Post insert failed: " + insertError.message);
-    return;
-  }
-
-  document.getElementById("postCaption").value = "";
-  pendingPostFile = null;
-
-  const previewBox = document.getElementById("previewBox");
-  previewBox.classList.remove("show");
-  previewBox.innerHTML = "";
-
-  closeComposer();
-  await loadPosts();
-
-  const allTab = document.querySelector('.tab-btn[data-tab="all"]');
-  if (allTab) switchTab(allTab, "all");
-
-  alert("Post published successfully.");
-
-    }
-
-    function showMenuAlert(message) {
-      closeMenu();
-      alert(message);
-    }
-
-    async function logout() {
-      await sb.auth.signOut();
-      window.location.href = 'auth.html';
-    }
-
-    function bindFileInputs() {
-      document.getElementById('avatarInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        uploadAvatar(file);
-      });
-
-      document.getElementById('photoCameraInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
-      document.getElementById('videoCameraInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
-      document.getElementById('libraryInput').addEventListener('change', (e) => setPreview(e.target.files[0]));
-    }
-
-    document.addEventListener('click', (e) => {
-      const menu = document.getElementById('profileMenu');
-      const topActions = document.querySelector('.top-actions');
-      if (menu.classList.contains('show') && !topActions.contains(e.target)) {
-        closeMenu();
+      if (!list.length) {
+        grid.innerHTML = `
+          <div class="grid-empty">
+            <div class="grid-empty-emoji">📸</div>
+            <div class="grid-empty-title">No ${activeTab === 'all' ? 'posts' : activeTab} yet.</div>
+            <div class="grid-empty-body">Tap the <strong>＋</strong> button to share your first photo or video.</div>
+            <button class="grid-empty-btn" onclick="openComposer()">Create first post</button>
+          </div>
+        `;
+        return;
       }
+
+      grid.innerHTML = list.map(post => {
+        const isVideo  = post.media_type === 'video';
+        const mediaHTML = isVideo
+          ? `<video src="${esc(post.media_url)}" muted playsinline preload="metadata"></video>`
+          : `<img src="${esc(post.media_url)}" alt="${esc(post.caption || '')}" loading="lazy" />`;
+
+        return `
+          <div class="grid-cell">
+            ${mediaHTML}
+            ${isVideo ? '<div class="cell-badge">▶ Video</div>' : ''}
+            ${post.caption ? `<div class="cell-caption">${esc(post.caption)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function switchTab(btn, tab) {
+      activeTab = tab;
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      document.getElementById('mediaSection').style.display = tab === 'about' ? 'none' : 'block';
+      document.getElementById('aboutSection').style.display = tab === 'about' ? 'block' : 'none';
+      if (tab !== 'about') renderPosts();
+    }
+
+    // ── Edit profile ──────────────────────────────────────────
+    function openEdit() {
+      closeMenu();
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function closeEdit() {
+      document.getElementById('editModal').classList.remove('show');
+    }
+
+    async function saveEdit() {
+      const name = document.getElementById('editName').value.trim();
+      const bio  = document.getElementById('editBio').value.trim();
+      const age  = parseInt(document.getElementById('editAge').value) || null;
+
+      const { error } = await sb.from('profiles')
+        .update({ name: name || myProfile.name, bio, age })
+        .eq('user_id', me.id);
+
+      if (error) { showToast(error.message, 'error'); return; }
+
+      myProfile.name = name || myProfile.name;
+      myProfile.bio  = bio;
+      myProfile.age  = age;
+      renderProfile(myProfile);
+      closeEdit();
+      showToast('Profile saved! ✨', 'success');
+    }
+
+    // ── Composer ──────────────────────────────────────────────
+    function openComposer() {
+      document.getElementById('composerSheet').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeComposer() {
+      document.getElementById('composerSheet').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    // Click outside sheet to close
+    document.getElementById('composerSheet').addEventListener('click', e => {
+      if (e.target === document.getElementById('composerSheet')) closeComposer();
     });
 
-    async function init() {
-      bindFileInputs();
-      me = await getUser();
-      if (!me) return;
+    function triggerPhotoPicker() { document.getElementById('photoCameraInput').click(); }
+    function triggerVideoPicker() { document.getElementById('videoInput').click(); }
 
-      myProfile = await ensureProfile(me);
+    function setPreview(file) {
+      pendingPostFile = file;
+      const zone = document.getElementById('mediaPick');
+      const empty = document.getElementById('pickEmpty');
+      const wrap  = document.getElementById('previewWrap');
+      const btn   = document.getElementById('sheetPostBtn');
+
+      if (!file) {
+        wrap.style.display  = 'none';
+        wrap.innerHTML      = '';
+        empty.style.display = 'flex';
+        zone.classList.remove('has-media');
+        zone.onclick = () => triggerPhotoPicker();
+        checkCanShare();
+        return;
+      }
+
+      const url     = URL.createObjectURL(file);
+      const isVideo = file.type.startsWith('video/');
+
+      wrap.innerHTML = isVideo
+        ? `<video src="${url}" controls muted playsinline></video><button class="preview-remove" onclick="clearPreview()">✕</button>`
+        : `<img src="${url}" alt="preview" /><button class="preview-remove" onclick="clearPreview()">✕</button>`;
+
+      wrap.style.display  = 'block';
+      empty.style.display = 'none';
+      zone.classList.add('has-media');
+      zone.onclick = null;
+      checkCanShare();
+    }
+
+    function clearPreview() { setPreview(null); }
+
+    function checkCanShare() {
+      const hasMedia   = !!pendingPostFile;
+      const hasCaption = document.getElementById('postCaption').value.trim().length > 0;
+      document.getElementById('sheetPostBtn').disabled = !(hasMedia || hasCaption);
+    }
+
+    document.getElementById('postCaption').addEventListener('input', checkCanShare);
+
+    async function publishPost() {
+      const caption  = document.getElementById('postCaption').value.trim();
+      if (!pendingPostFile && !caption) return;
+
+      const btn = document.getElementById('sheetPostBtn');
+      btn.disabled     = true;
+      btn.textContent  = 'Sharing…';
+
+      let mediaUrl  = null;
+      let mediaType = null;
+
+      try {
+        if (pendingPostFile) {
+          const isVideo  = pendingPostFile.type.startsWith('video/');
+          const folder   = isVideo ? 'video' : 'image';
+          const safeName = pendingPostFile.name.replace(/\s+/g,'_');
+          const path     = `${me.id}/${folder}/${Date.now()}_${safeName}`;
+
+          const { error: upErr } = await sb.storage
+            .from('posts')
+            .upload(path, pendingPostFile, { upsert: false });
+
+          if (upErr) throw upErr;
+
+          const { data: urlData } = sb.storage.from('posts').getPublicUrl(path);
+          mediaUrl  = urlData.publicUrl;
+          mediaType = isVideo ? 'video' : 'image';
+        }
+
+        const { error: insertErr } = await sb.from('user_posts').insert({
+          user_id:    me.id,
+          media_url:  mediaUrl,
+          media_type: mediaType,
+          caption:    caption || null,
+          created_at: new Date().toISOString()
+        });
+
+        if (insertErr) throw insertErr;
+
+        // Reset composer
+        document.getElementById('postCaption').value = '';
+        clearPreview();
+        closeComposer();
+        btn.textContent = 'Share';
+        btn.disabled    = true;
+
+        showToast('Posted! ✨', 'success');
+        await loadPosts();
+
+        // Switch to all tab
+        const allTab = document.querySelector('.filter-tab[data-tab="all"]');
+        if (allTab) switchTab(allTab, 'all');
+
+      } catch (err) {
+        showToast(err.message, 'error');
+        btn.textContent = 'Share';
+        btn.disabled    = false;
+      }
+    }
+
+    // ── Share profile ─────────────────────────────────────────
+    function shareProfile() {
+      if (navigator.share) {
+        navigator.share({ title: `${myProfile?.name} on Miru`, url: window.location.href })
+          .catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(window.location.href);
+        showToast('Link copied!', 'success');
+      }
+    }
+
+    // ── Auth ──────────────────────────────────────────────────
+    async function logout() {
+      closeMenu();
+      await sb.auth.signOut();
+      window.location.replace('auth.html');
+    }
+
+    // ── File inputs ───────────────────────────────────────────
+    function bindInputs() {
+      document.getElementById('avatarInput').addEventListener('change', e => {
+        if (e.target.files[0]) uploadAvatar(e.target.files[0]);
+      });
+      document.getElementById('bannerInput').addEventListener('change', e => {
+        if (e.target.files[0]) uploadBanner(e.target.files[0]);
+      });
+      document.getElementById('photoCameraInput').addEventListener('change', e => {
+        if (e.target.files[0]) setPreview(e.target.files[0]);
+      });
+      document.getElementById('videoInput').addEventListener('change', e => {
+        if (e.target.files[0]) setPreview(e.target.files[0]);
+      });
+      document.getElementById('libraryInput').addEventListener('change', e => {
+        if (e.target.files[0]) setPreview(e.target.files[0]);
+      });
+    }
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      bindInputs();
+
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { window.location.replace('auth.html'); return; }
+      me = user;
+
+      // Load or create profile
+      let { data: prof } = await sb
+        .from('profiles')
+        .select('*')
+        .eq('user_id', me.id)
+        .maybeSingle();
+
+      if (!prof) {
+        const fallback = me.email?.split('@')[0] || 'New User';
+        await sb.from('profiles').insert({
+          user_id: me.id, name: fallback, bio: '', avatar_url: '', is_premium: false
+        });
+        const { data: fresh } = await sb.from('profiles').select('*').eq('user_id', me.id).maybeSingle();
+        prof = fresh || {};
+      }
+
+      myProfile = prof;
       renderProfile(myProfile);
-      await loadCounts();
-      await loadPosts();
+      await Promise.all([loadCounts(), loadPosts()]);
     }
 
     init();
