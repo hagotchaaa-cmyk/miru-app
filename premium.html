@@ -597,18 +597,10 @@
 
 <script>
 const sb = supabase.createClient(
-  window.SUPABASE_URL,
-  window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
 );
-</script>
 
-<div class="premium-cta-wrap">
-  <button class="cta-btn" id="startPremiumCheckout">
-    Start Premium — $3.99/month
-  </button>
-</div>
-
-<script>
 document.getElementById('startPremiumCheckout').addEventListener('click', async () => {
   try {
     const { data: { user }, error } = await sb.auth.getUser();
@@ -619,13 +611,18 @@ document.getElementById('startPremiumCheckout').addEventListener('click', async 
     }
 
     const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
-    const checkoutUrl =
-      `${baseUrl}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
 
-    window.location.href = checkoutUrl;
+    const checkoutUrl = new URL(baseUrl);
+    checkoutUrl.searchParams.set('client_reference_id', user.id);
+
+    if (user.email) {
+      checkoutUrl.searchParams.set('prefilled_email', user.email);
+    }
+
+    window.location.href = checkoutUrl.toString();
   } catch (err) {
-    alert('Could not start checkout.');
-    console.error(err);
+    console.error('Premium checkout error:', err);
+    alert('Something went wrong starting checkout.');
   }
 });
 </script>
