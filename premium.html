@@ -608,6 +608,12 @@ const sb = supabase.createClient(
   </button>
 </div>
 
+<div class="premium-cta-wrap">
+  <button class="cta-btn" id="startPremiumCheckout">
+    Start Premium — $3.99/month
+  </button>
+</div>
+
 <script>
 document.getElementById('startPremiumCheckout').addEventListener('click', async () => {
   try {
@@ -618,7 +624,7 @@ document.getElementById('startPremiumCheckout').addEventListener('click', async 
       return;
     }
 
- const baseUrl = 'https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';
+    const baseUrl = 'https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';
     const checkoutUrl =
       `${baseUrl}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
 
