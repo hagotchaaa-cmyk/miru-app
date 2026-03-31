@@ -5,576 +5,509 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0D0A1A" />
+  <meta name="theme-color" content="#0A0714" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <title>Miru — Explore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0D0A1A;
-      --bg-2: #130F2A;
-      --surface: #1C1640;
-      --surface-2: #241C4C;
-      --border: rgba(196, 184, 240, 0.14);
-      --border-strong: rgba(196, 184, 240, 0.22);
-      --violet: #4A3F8A;
-      --lavender: #8B7EC8;
-      --lilac: #C4B8F0;
-      --white: #FFFFFF;
-      --text: #F7F4FF;
-      --text-soft: #D3CBF2;
-      --text-muted: #9E95C9;
-      --success: #7EEDB0;
-      --danger: #FF8EA1;
-      --warning: #FFD98E;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --serif: 'Playfair Display', serif;
-      --sans: 'DM Sans', sans-serif;
+      --bg:       #0A0714;
+      --surface:  #100D22;
+      --s2:       #181430;
+      --border:   rgba(180,170,255,0.10);
+      --border-hi:rgba(180,170,255,0.20);
+      --white:    #FFFFFF;
+      --text:     #F0ECFF;
+      --soft:     #C4BCEE;
+      --muted:    #7A72AA;
+      --lilac:    #B8AEFF;
+      --gold:     #F5CE7A;
+      --pass:     #FF7090;
+      --like:     #7DFFC8;
+      --super:    #7EB8FF;
+      --serif:    'Cormorant Garamond', serif;
+      --sans:     'Cabinet Grotesk', sans-serif;
+      --shadow:   0 24px 60px rgba(0,0,0,0.50);
     }
 
     html, body {
-      min-height: 100%;
-      background:
-        radial-gradient(circle at top, rgba(139, 126, 200, 0.22), transparent 28%),
-        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      height: 100%;
+      background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
+      overflow: hidden;
     }
 
-    body { padding-bottom: 100px; }
-
-    .ambient::before,
-    .ambient::after {
+    /* ── Grain + glow bg ── */
+    body::before {
       content: "";
       position: fixed;
-      width: 240px;
-      height: 240px;
-      border-radius: 999px;
-      filter: blur(90px);
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(90,70,200,0.30), transparent),
+        radial-gradient(ellipse 40% 40% at 85% 55%, rgba(130,100,255,0.10), transparent);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.6;
     }
 
-    .ambient::before {
-      top: -60px;
-      left: -90px;
-      background: rgba(139, 126, 200, 0.16);
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
     }
 
-    .ambient::after {
-      right: -100px;
-      top: 260px;
-      background: rgba(74, 63, 138, 0.24);
-    }
-
+    /* ── Layout ── */
     .shell {
-      max-width: 460px;
-      margin: 0 auto;
-      min-height: 100vh;
       position: relative;
       z-index: 1;
+      max-width: 430px;
+      margin: 0 auto;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
+    /* ── Nav ── */
     .nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 16px 18px;
+      flex-shrink: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      backdrop-filter: blur(18px);
-      background: rgba(13, 10, 26, 0.72);
-      border-bottom: 1px solid rgba(196,184,240,0.08);
+      padding: 14px 18px 10px;
+      position: relative;
+      z-index: 10;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
     .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
     .logo {
       font-family: var(--serif);
-      font-size: 27px;
+      font-size: 26px;
       font-style: italic;
       font-weight: 700;
-      letter-spacing: -0.5px;
       color: var(--white);
+      letter-spacing: -0.4px;
     }
 
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .nav-chip,
-    .ghost-btn,
-    .filter-chip,
-    .sub-chip,
-    .mini-pill,
-    .profile-badge,
-    .quick-btn,
-    .action-btn,
-    .tab {
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .nav-chip {
-      padding: 10px 12px;
+    .deck-pill {
+      padding: 8px 13px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      color: var(--text-soft);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
       font-size: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      font-weight: 700;
+      font-weight: 800;
+      color: var(--soft);
     }
 
-    .ghost-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.09); }
+
+    /* ── Filter bar ── */
+    .filters {
+      flex-shrink: 0;
+      padding: 0 18px 10px;
     }
 
-    .page {
-      padding: 18px;
-    }
-
-    .hero {
-      border-radius: 34px;
-      padding: 20px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-        linear-gradient(180deg, #171131 0%, #120D25 100%);
-      border: 1px solid rgba(196,184,240,0.12);
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::after {
-      content: "";
-      position: absolute;
-      right: -30px;
-      top: -20px;
-      width: 160px;
-      height: 160px;
-      background: radial-gradient(circle, rgba(196,184,240,0.2), transparent 65%);
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      color: var(--lilac);
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-
-    .title-row {
+    .filter-scroll {
       display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .title {
-      font-family: var(--serif);
-      font-size: 34px;
-      line-height: 0.97;
-      letter-spacing: -0.8px;
-      color: var(--white);
-    }
-
-    .title em { color: var(--lilac); font-style: italic; }
-
-    .subcopy {
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.6;
-      max-width: 300px;
-    }
-
-    .stack-box {
-      min-width: 102px;
-      text-align: right;
-      padding: 12px 14px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .stack-label {
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-
-    .stack-value {
-      color: var(--white);
-      font-weight: 800;
-      font-size: 22px;
-    }
-
-    .filter-row,
-    .subfilter-row {
-      display: flex;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
+      padding-bottom: 2px;
     }
+    .filter-scroll::-webkit-scrollbar { display: none; }
 
-    .filter-row::-webkit-scrollbar,
-    .subfilter-row::-webkit-scrollbar { display: none; }
-
-    .filter-chip,
-    .sub-chip {
+    .fchip {
+      flex-shrink: 0;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
       white-space: nowrap;
-      padding: 11px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      font-size: 12px;
-      font-weight: 700;
     }
 
-    .filter-chip.on,
-    .sub-chip.on {
+    .fchip.on {
       background: var(--white);
-      color: #120D25;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+      color: #0A0714;
+      border-color: var(--white);
+      box-shadow: 0 4px 18px rgba(255,255,255,0.14);
     }
 
-    .subfilter-row {
-      margin-top: 10px;
-    }
-
-    .feed-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .feed-copy {
-      color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .mini-pill {
-      padding: 10px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .card-wrap {
+    /* ── Card stack area ── */
+    .stack-area {
+      flex: 1;
       position: relative;
-      min-height: 78vh;
-    }
-
-    .ghost-card {
-      position: absolute;
-      inset: 12px 8px auto 8px;
-      height: calc(100% - 8px);
-      border-radius: 30px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      transform: scale(0.98);
-      z-index: 0;
-    }
-
-    .ghost-card.second {
-      inset-top: 20px;
-      transform: scale(0.96);
-      opacity: 0.72;
-    }
-
-    .card {
-      position: relative;
-      z-index: 2;
-      border-radius: 30px;
       overflow: hidden;
-      background: linear-gradient(145deg, #352B6B, #1E1745);
-      min-height: 78vh;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(196,184,240,0.14);
+      padding: 0 14px;
     }
 
-    .bg {
+    /* Ghost cards behind */
+    .ghost {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+    }
+
+    .ghost-2 {
+      background: rgba(255,255,255,0.025);
+      transform: scale(0.94) translateY(12px);
+      z-index: 1;
+    }
+
+    .ghost-1 {
+      background: rgba(255,255,255,0.04);
+      transform: scale(0.97) translateY(6px);
+      z-index: 2;
+    }
+
+    /* Main card */
+    .card {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      overflow: hidden;
+      z-index: 3;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.10);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      will-change: transform;
+      transition: box-shadow 0.2s;
+    }
+
+    .card:active { cursor: grabbing; }
+
+    /* Drag indicator overlays */
+    .card-like-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(125,255,200,0.25), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.1s;
+      z-index: 10;
+      pointer-events: none;
+      border-radius: 28px;
+    }
+
+    .card-pass-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(225deg, rgba(255,112,144,0.25), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.1s;
+      z-index: 10;
+      pointer-events: none;
+      border-radius: 28px;
+    }
+
+    .drag-label {
+      position: absolute;
+      top: 24px;
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 700;
+      font-style: italic;
+      z-index: 11;
+      opacity: 0;
+      transition: opacity 0.1s;
+      pointer-events: none;
+      letter-spacing: -0.5px;
+      padding: 8px 16px;
+      border-radius: 14px;
+      border: 3px solid;
+    }
+
+    .drag-label.like-label {
+      left: 20px;
+      color: var(--like);
+      border-color: var(--like);
+      transform: rotate(-12deg);
+    }
+
+    .drag-label.pass-label {
+      right: 20px;
+      color: var(--pass);
+      border-color: var(--pass);
+      transform: rotate(12deg);
+    }
+
+    .drag-label.super-label {
+      left: 50%;
+      transform: translateX(-50%) rotate(0deg);
+      color: var(--super);
+      border-color: var(--super);
+      top: auto;
+      bottom: 120px;
+    }
+
+    /* Card background */
+    .card-bg {
       position: absolute;
       inset: 0;
       background-size: cover;
-      background-position: center;
-      filter: saturate(1.02);
+      background-position: center top;
     }
 
-    .overlay {
+    .card-gradient {
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(7,5,15,0.18) 10%, rgba(7,5,15,0.88) 100%);
+      background: linear-gradient(
+        to bottom,
+        rgba(5,3,15,0.05) 0%,
+        rgba(5,3,15,0.15) 40%,
+        rgba(5,3,15,0.75) 70%,
+        rgba(5,3,15,0.96) 100%
+      );
     }
 
-    .top-layer,
-    .content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .top-layer {
+    /* Card top badge row */
+    .card-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
       padding: 16px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 10px;
+      z-index: 5;
     }
 
-    .profile-badge,
-    .compat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .prompt-badge {
+      padding: 8px 13px;
       border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 11px;
-      font-weight: 700;
-      backdrop-filter: blur(14px);
-    }
-
-    .profile-badge {
-      background: rgba(255,255,255,0.84);
-      color: #21194A;
-      border: 1px solid rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.85);
+      color: #0A0714;
       font-family: var(--serif);
       font-style: italic;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      max-width: 200px;
+      line-height: 1.3;
     }
 
-    .compat-pill {
-      background: rgba(255,255,255,0.08);
+    .compat-badge {
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(10,7,20,0.65);
+      border: 1px solid rgba(255,255,255,0.15);
       color: var(--white);
-      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 12px;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
     }
 
-    .content {
-      min-height: 78vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+    /* Card content */
+    .card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: 20px;
+      z-index: 5;
     }
 
-    .headline-row {
+    .card-name-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .name {
-      font-family: var(--serif);
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1;
-      color: var(--white);
       margin-bottom: 6px;
-    }
-
-    .loc {
-      font-size: 13px;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.5;
-    }
-
-    .signal {
-      min-width: 96px;
-      text-align: right;
-    }
-
-    .signal-label {
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-
-    .signal-score {
-      color: var(--white);
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .bio {
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.65;
-      margin-bottom: 14px;
-      max-width: 95%;
-    }
-
-    .insights {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 14px;
     }
 
-    .insight {
-      padding: 12px 13px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .insight small {
-      display: block;
-      color: var(--text-muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 4px;
-    }
-
-    .insight strong {
-      color: var(--white);
-      font-size: 13px;
-      line-height: 1.4;
+    .card-name {
+      font-family: var(--serif);
+      font-size: 38px;
       font-weight: 700;
+      line-height: 0.95;
+      color: var(--white);
+      letter-spacing: -0.8px;
     }
 
-    .tags {
+    .card-premium {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #F5CE7A, #E8920A);
+      color: #0A0714;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .card-loc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 10px;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-bio {
+      font-size: 14px;
+      color: var(--soft);
+      line-height: 1.6;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 7px;
       flex-wrap: wrap;
       margin-bottom: 14px;
     }
 
-    .tag {
-      padding: 8px 12px;
+    .card-tag {
+      padding: 6px 11px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--soft);
       font-size: 11px;
       font-weight: 700;
     }
 
-    .quick-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .quick-btn {
-      padding: 13px 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
+    /* ── Action buttons ── */
     .actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      flex-shrink: 0;
+      padding: 12px 24px 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
     }
 
-    .action-btn {
-      min-height: 62px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 800;
+    .act-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .act-btn:active { transform: scale(0.92); }
+
+    .act-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      font-size: 22px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     }
 
-    .action-btn.pass {
-      background: rgba(255,255,255,0.04);
-      color: var(--text-soft);
-      border: 1px solid rgba(255,255,255,0.08);
+    .act-btn.pass .act-circle {
+      background: rgba(255,112,144,0.12);
+      border: 2px solid rgba(255,112,144,0.30);
     }
 
-    .action-btn.super {
-      background: rgba(255,255,255,0.08);
-      color: var(--white);
-      border: 1px solid rgba(255,255,255,0.12);
+    .act-btn.super .act-circle {
+      background: rgba(126,184,255,0.12);
+      border: 2px solid rgba(126,184,255,0.30);
+      width: 48px;
+      height: 48px;
+      font-size: 18px;
     }
 
-    .action-btn.like {
-      background: var(--white);
-      color: #120D25;
-      box-shadow: 0 10px 24px rgba(255,255,255,0.14);
+    .act-btn.like .act-circle {
+      background: rgba(125,255,200,0.12);
+      border: 2px solid rgba(125,255,200,0.30);
+      width: 72px;
+      height: 72px;
+      font-size: 28px;
     }
 
-    .empty {
-      padding: 34px 20px;
-      text-align: center;
-      color: var(--text-soft);
-      line-height: 1.7;
-      border-radius: 24px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
+    .act-btn.undo .act-circle {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(255,255,255,0.10);
+      width: 44px;
+      height: 44px;
+      font-size: 16px;
     }
 
+    .act-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .act-btn.pass  .act-label { color: var(--pass); }
+    .act-btn.super .act-label { color: var(--super); }
+    .act-btn.like  .act-label { color: var(--like); }
+    .act-btn.undo  .act-label { color: var(--muted); }
+
+    /* ── Bottom tab bar ── */
     .tabs {
-      position: fixed;
-      left: 50%;
-      bottom: 12px;
-      transform: translateX(-50%);
-      width: min(430px, calc(100% - 16px));
-      padding: 12px 10px;
+      flex-shrink: 0;
+      padding: 8px 10px 12px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      background: rgba(18, 13, 37, 0.88);
-      border: 1px solid rgba(196,184,240,0.12);
-      border-radius: 24px;
+      gap: 5px;
+      background: rgba(10,7,20,0.85);
+      border-top: 1px solid var(--border);
       backdrop-filter: blur(18px);
-      z-index: 70;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
     }
 
     .tab {
@@ -583,362 +516,651 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      min-height: 54px;
-      border-radius: 18px;
-      color: var(--text-muted);
-      transition: 0.2s ease;
+      gap: 4px;
+      min-height: 50px;
+      border-radius: 16px;
+      color: var(--muted);
+      transition: all 0.15s;
     }
 
-    .tab-icon { font-size: 20px; }
-
-    .tab-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.9px;
-      font-weight: 700;
-    }
+    .tab-icon { font-size: 19px; }
+    .tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; }
 
     .tab.on {
       background: rgba(255,255,255,0.06);
       color: var(--white);
     }
 
-    @media (max-width: 390px) {
-      .title { font-size: 30px; }
-      .headline-row { flex-direction: column; align-items: flex-start; }
-      .signal { text-align: left; }
-      .insights { grid-template-columns: 1fr; }
-      .quick-row { grid-template-columns: 1fr; }
-      .actions { grid-template-columns: 1fr; }
+    /* ── Empty state ── */
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      z-index: 3;
+    }
+
+    .empty-emoji { font-size: 48px; margin-bottom: 16px; }
+
+    .empty-title {
+      font-family: var(--serif);
+      font-size: 30px;
+      font-style: italic;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .empty-body {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Loading state ── */
+    .loading-state {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--lilac);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Match modal ── */
+    .match-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .match-modal.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .match-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(5,3,15,0.88);
+      backdrop-filter: blur(16px);
+    }
+
+    .match-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 340px;
+      background: linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+      border: 1px solid var(--border-hi);
+      border-radius: 32px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .match-hearts {
+      font-size: 44px;
+      margin-bottom: 16px;
+      animation: pulse 1.2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.12); }
+    }
+
+    .match-title {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    .match-sub {
+      font-size: 14px;
+      color: var(--soft);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .match-name {
+      color: var(--like);
+      font-weight: 800;
+    }
+
+    .match-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .match-msg-btn {
+      padding: 15px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.14);
+    }
+
+    .match-skip-btn {
+      padding: 13px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+
+    /* ── Swipe animations ── */
+    .card.fly-right {
+      animation: flyRight 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+
+    .card.fly-left {
+      animation: flyLeft 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+
+    .card.fly-up {
+      animation: flyUp 0.45s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+
+    @keyframes flyRight {
+      to { transform: translateX(140%) rotate(28deg); opacity: 0; }
+    }
+
+    @keyframes flyLeft {
+      to { transform: translateX(-140%) rotate(-28deg); opacity: 0; }
+    }
+
+    @keyframes flyUp {
+      to { transform: translateY(-140%) scale(0.8); opacity: 0; }
+    }
+
+    /* Card enter animation */
+    .card.enter {
+      animation: cardEnter 0.4s cubic-bezier(0.34,1.4,0.64,1) both;
+    }
+
+    @keyframes cardEnter {
+      from { transform: scale(0.88) translateY(20px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
     }
   </style>
 </head>
-<body>
-  <div class="ambient"></div>
 
+<body>
   <div class="shell">
+
+    <!-- Nav -->
     <div class="nav">
       <div class="brand">
-        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
+        <img class="brand-icon" src="icon.svg" alt="Miru" />
         <div class="logo">miru.</div>
       </div>
       <div class="nav-right">
-        <div class="nav-chip" id="deckCount">12 nearby</div>
-        <button class="ghost-btn" onclick="window.location.href='profile.html'">⚙️</button>
+        <div class="deck-pill" id="deckPill">— nearby</div>
+        <button class="icon-btn" onclick="window.location.href='profile.html'">⚙️</button>
       </div>
     </div>
 
-    <div class="page">
-      <div class="hero">
-        <div class="eyebrow">Explore with intention</div>
-        <div class="title-row">
-          <div>
-            <div class="title">A better <em>discovery</em><br />engine.</div>
-            <div class="subcopy">Skip the dead-end swipes. Explore richer profiles, stronger signals, and people who actually fit your energy.</div>
-          </div>
-          <div class="stack-box">
-            <div class="stack-label">In deck</div>
-            <div class="stack-value" id="stackValue">12</div>
-          </div>
-        </div>
-
-        <div class="filter-row">
-          <button class="filter-chip on">For you</button>
-          <button class="filter-chip">Nearby now</button>
-          <button class="filter-chip">Premium</button>
-          <button class="filter-chip">New faces</button>
-          <button class="filter-chip">Video-first</button>
-        </div>
-
-        <div class="subfilter-row">
-          <button class="sub-chip on">Relationship</button>
-          <button class="sub-chip">Fun tonight</button>
-          <button class="sub-chip">Deep talks</button>
-          <button class="sub-chip">Creative</button>
-        </div>
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-scroll">
+        <button class="fchip on" data-filter="all">For you</button>
+        <button class="fchip" data-filter="premium">Premium</button>
+        <button class="fchip" data-filter="new">New faces</button>
+        <button class="fchip" data-filter="boosted">Boosted</button>
+        <button class="fchip" data-filter="nearby">Nearby</button>
       </div>
-
-      <div class="feed-meta">
-        <div class="feed-copy">Curated profiles that match your vibe, availability, and what you actually want right now.</div>
-        <div class="mini-pill" id="positionPill">1 / 12</div>
-      </div>
-
-      <div class="card-wrap" id="feed"></div>
     </div>
+
+    <!-- Card stack -->
+    <div class="stack-area" id="stackArea">
+      <div class="ghost ghost-2"></div>
+      <div class="ghost ghost-1"></div>
+      <div class="loading-state" id="loadingState">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <button class="act-btn undo" onclick="undoAction()" id="undoBtn">
+        <div class="act-circle">↩</div>
+        <div class="act-label">Undo</div>
+      </button>
+      <button class="act-btn pass" onclick="animatePass()">
+        <div class="act-circle">✕</div>
+        <div class="act-label">Pass</div>
+      </button>
+      <button class="act-btn like" onclick="animateLike()">
+        <div class="act-circle">💜</div>
+        <div class="act-label">Like</div>
+      </button>
+      <button class="act-btn super" onclick="animateSuper()">
+        <div class="act-circle">⚡</div>
+        <div class="act-label">Super</div>
+      </button>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tabs">
+      <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+      <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+      <a class="tab on" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+      <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
+    </div>
+
   </div>
 
-  <div class="tabs">
-    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
-    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
-    <a class="tab on" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
-    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
+  <!-- Match modal -->
+  <div class="match-modal" id="matchModal">
+    <div class="match-backdrop" onclick="closeMatchModal()"></div>
+    <div class="match-card">
+      <div class="match-hearts">💜💜</div>
+      <div class="match-title">It's a match!</div>
+      <div class="match-sub">You and <span class="match-name" id="matchName">them</span> both liked each other. Don't leave them waiting.</div>
+      <div class="match-btns">
+        <button class="match-msg-btn" onclick="goToMessages()">Send a message</button>
+        <button class="match-skip-btn" onclick="closeMatchModal()">Keep exploring</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    // ── Supabase ──────────────────────────────────────────────
     const sb = supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
     );
 
+    // ── State ─────────────────────────────────────────────────
     let me = null;
     let profiles = [];
+    let allProfiles = [];
     let current = 0;
+    let history = [];
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragX = 0;
+    let dragY = 0;
+    let currentCard = null;
+    let lastMatchedUser = null;
 
-    const prompts = [
-      'Make me laugh...',
-      'Something weird...',
-      'Tell me a story...',
-      'What are you really like?',
-      'What do you want this week?'
+    const PROMPTS = [
+      '"Make me laugh..."',
+      '"Something weird about you..."',
+      '"Tell me a story..."',
+      '"What are you really like?"',
+      '"What do you want right now?"',
+      '"Change my mind about..."',
+      '"My most unpopular opinion..."',
     ];
 
-    const insightPool = [
-      ['Best first date', 'Late-night dessert and a walk'],
-      ['Current energy', 'Looking for something intentional'],
-      ['Conversation style', 'Playful, curious, a little chaotic'],
-      ['Weekend vibe', 'Rooftops, coffee, and disappearing into a bookstore'],
-      ['Green flag', 'Actually follows through'],
-      ['Small obsession', 'Music that feels cinematic']
-    ];
+    const VIBES = ['intentional', 'real talk', 'video-first', 'creative', 'deep diver', 'low-key', 'weekend plans'];
 
     function esc(v) {
       return String(v ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
     }
 
-    function gradientFor(index) {
-      if (index % 3 === 1) return 'linear-gradient(145deg,#5F4EB3,#231A54)';
-      if (index % 3 === 2) return 'linear-gradient(145deg,#7B5FDB,#2A2255)';
-      return 'linear-gradient(145deg,#46388E,#1D1642)';
+    function gradients(i) {
+      const g = [
+        'linear-gradient(145deg,#3D3280,#1A1448)',
+        'linear-gradient(145deg,#5F3D8A,#221540)',
+        'linear-gradient(145deg,#2E4080,#0F1A3A)',
+        'linear-gradient(145deg,#6B3D6B,#1E0F2A)',
+        'linear-gradient(145deg,#3D5F80,#0F1E2E)',
+      ];
+      return g[i % g.length];
     }
 
-    function bgStyle(profile, index) {
-      if (profile.avatar_url) {
-        return `background-image:url('${esc(profile.avatar_url)}');background-size:cover;background-position:center;`;
-      }
-      return `background:${gradientFor(index)};`;
+    function compatibility(i) { return Math.max(80, 97 - i * 3); }
+    function getPrompt(i)      { return PROMPTS[i % PROMPTS.length]; }
+    function getVibes(p, i)    {
+      const base = [];
+      if (p.is_premium) base.push('premium');
+      base.push(VIBES[i % VIBES.length]);
+      base.push(VIBES[(i + 2) % VIBES.length]);
+      return base.slice(0, 3);
     }
 
-    function compatibility(index) {
-      return Math.max(82, 97 - (index * 3));
-    }
-
-    function getPrompt(index) {
-      return prompts[index % prompts.length];
-    }
-
-    function buildInsights(index) {
-      const first = insightPool[index % insightPool.length];
-      const second = insightPool[(index + 2) % insightPool.length];
-      return [first, second];
-    }
-
-    function updateDeckMeta() {
-      const total = profiles.length;
-      const left = Math.max(total - current, 0);
-      const deckCount = document.getElementById('deckCount');
-      const stackValue = document.getElementById('stackValue');
-      const positionPill = document.getElementById('positionPill');
-
-      if (deckCount) deckCount.textContent = `${left} nearby`;
-      if (stackValue) stackValue.textContent = left;
-      if (positionPill) positionPill.textContent = total ? `${Math.min(current + 1, total)} / ${total}` : '0 / 0';
-    }
-
+    // ── Init ──────────────────────────────────────────────────
     async function init() {
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) {
-        window.location.href = 'auth.html';
-        return;
-      }
+      if (!user) { window.location.replace('auth.html'); return; }
       me = user;
-      bindFilterChips();
+
+      bindFilters();
       await loadProfiles();
     }
 
-    function bindFilterChips() {
-      document.querySelectorAll('.filter-chip, .sub-chip').forEach((chip) => {
-        chip.addEventListener('click', () => {
-          const row = chip.parentElement;
-          row.querySelectorAll('button').forEach((btn) => btn.classList.remove('on'));
-          chip.classList.add('on');
-        });
-      });
-    }
-
+    // ── Load profiles from Supabase ───────────────────────────
     async function loadProfiles() {
+      showLoading(true);
+
       const { data, error } = await sb
         .from('profiles')
         .select('user_id,name,age,bio,avatar_url,is_premium,boost_until')
         .neq('user_id', me.id)
-        .order('boost_until', { ascending: false });
+        .order('boost_until', { ascending: false, nullsFirst: false });
+
+      showLoading(false);
 
       if (error) {
-        document.getElementById('feed').innerHTML = `<div class="empty">${esc(error.message)}</div>`;
+        showEmpty('Could not load profiles. Please try again.');
         return;
       }
 
-      profiles = data || [];
-      current = 0;
-      updateDeckMeta();
-      renderCurrent();
+      // Filter out already-liked profiles
+      const { data: myLikes } = await sb
+        .from('likes')
+        .select('target_user_id')
+        .eq('user_id', me.id);
+
+      const likedIds = new Set((myLikes || []).map(l => l.target_user_id));
+
+      allProfiles = (data || []).filter(p => !likedIds.has(p.user_id));
+      applyFilter('all');
     }
 
-    function renderCurrent() {
-      const feed = document.getElementById('feed');
-      const p = profiles[current];
-      updateDeckMeta();
+    // ── Filter logic ──────────────────────────────────────────
+    function applyFilter(type) {
+      switch (type) {
+        case 'premium': profiles = allProfiles.filter(p => p.is_premium); break;
+        case 'new':     profiles = [...allProfiles].reverse(); break;
+        case 'boosted': profiles = allProfiles.filter(p => p.boost_until && new Date(p.boost_until) > new Date()); break;
+        default:        profiles = allProfiles; break;
+      }
+      current = 0;
+      history = [];
+      updateDeckPill();
+      renderCard();
+    }
 
+    function bindFilters() {
+      document.querySelectorAll('.fchip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
+          chip.classList.add('on');
+          applyFilter(chip.dataset.filter);
+        });
+      });
+    }
+
+    // ── Render card ───────────────────────────────────────────
+    function renderCard(animate = true) {
+      const area = document.getElementById('stackArea');
+      const existing = area.querySelector('.card');
+      if (existing) existing.remove();
+
+      updateDeckPill();
+
+      const p = profiles[current];
       if (!p) {
-        feed.innerHTML = `
-          <div class="empty">
-            You’ve cleared your deck for now.<br />
-            Check back later for new faces or open Matches to revisit your strongest connections.
-          </div>
-        `;
+        showEmpty();
         return;
       }
 
-      const insights = buildInsights(current);
-      const prompt = getPrompt(current);
-      const score = compatibility(current);
+      const score   = compatibility(current);
+      const prompt  = getPrompt(current);
+      const vibes   = getVibes(p, current);
+      const bgStyle = p.avatar_url
+        ? `background-image:url('${esc(p.avatar_url)}');background-color:#1a1440;`
+        : `background:${gradients(current)};`;
 
-      feed.innerHTML = `
-        <div class="ghost-card second"></div>
-        <div class="ghost-card"></div>
-        <div class="card">
-          ${p.avatar_url ? `<div class="bg" style="${bgStyle(p, current)}"></div>` : `<div class="bg" style="${bgStyle(p, current)}"></div>`}
-          <div class="overlay"></div>
+      const card = document.createElement('div');
+      card.className = 'card' + (animate ? ' enter' : '');
+      card.innerHTML = `
+        <div class="card-like-overlay" id="likeOverlay"></div>
+        <div class="card-pass-overlay" id="passOverlay"></div>
+        <div class="drag-label like-label" id="likeLabel">LIKE</div>
+        <div class="drag-label pass-label" id="passLabel">PASS</div>
+        <div class="drag-label super-label" id="superLabel">SUPER ⚡</div>
 
-          <div class="top-layer">
-            <div class="profile-badge">"${esc(prompt)}"</div>
-            <div class="compat-pill">${score}% match</div>
+        <div class="card-bg" style="${bgStyle}"></div>
+        <div class="card-gradient"></div>
+
+        <div class="card-top">
+          <div class="prompt-badge">${esc(prompt)}</div>
+          <div class="compat-badge">${score}% match</div>
+        </div>
+
+        <div class="card-content">
+          <div class="card-name-row">
+            <div class="card-name">${esc(p.name || 'Someone')}${p.age ? `, ${esc(String(p.age))}` : ''}</div>
+            ${p.is_premium ? '<div class="card-premium">✦ Premium</div>' : ''}
           </div>
-
-          <div class="content">
-            <div class="headline-row">
-              <div>
-                <div class="name">${esc(p.name || 'Match')}${p.age ? `, ${esc(p.age)}` : ''}</div>
-                <div class="loc">📍 Nearby · ${p.is_premium ? 'Premium' : 'Miru'} · live in Phoenix</div>
-              </div>
-              <div class="signal">
-                <div class="signal-label">Signal</div>
-                <div class="signal-score">Strong</div>
-              </div>
-            </div>
-
-            <div class="bio">${esc(p.bio || 'No bio yet. But the vibe is promising.')}</div>
-
-            <div class="insights">
-              <div class="insight">
-                <small>${esc(insights[0][0])}</small>
-                <strong>${esc(insights[0][1])}</strong>
-              </div>
-              <div class="insight">
-                <small>${esc(insights[1][0])}</small>
-                <strong>${esc(insights[1][1])}</strong>
-              </div>
-            </div>
-
-            <div class="tags">
-              <div class="tag">real</div>
-              <div class="tag">video-first</div>
-              ${p.is_premium ? `<div class="tag">premium</div>` : ''}
-              <div class="tag">intentional</div>
-              <div class="tag">miru</div>
-            </div>
-
-            <div class="quick-row">
-              <button class="quick-btn" onclick="window.location.href='profile.html'">Edit vibe<br />settings</button>
-              <button class="quick-btn" onclick="window.location.href='messages.html'">Open your<br />messages</button>
-              <button class="quick-btn" onclick="window.location.href='index.html'">Back to<br />daily matches</button>
-            </div>
-
-            <div class="actions">
-              <button class="action-btn pass" onclick="passUser()">✕ Pass</button>
-              <button class="action-btn super" onclick="superLikeUser()">⚡ Super</button>
-              <button class="action-btn like" onclick="likeUser()">💜 Connect</button>
-            </div>
+          <div class="card-loc">📍 Nearby · Miru</div>
+          <div class="card-bio">${esc(p.bio || 'No bio yet — but the vibe is promising.')}</div>
+          <div class="card-tags">
+            ${vibes.map(v => `<div class="card-tag">${esc(v)}</div>`).join('')}
           </div>
         </div>
       `;
+
+      area.appendChild(card);
+      currentCard = card;
+      bindDrag(card);
     }
 
-    function nextProfile() {
-      current += 1;
-      renderCurrent();
+    // ── Drag / swipe logic ────────────────────────────────────
+    function bindDrag(card) {
+      // Touch
+      card.addEventListener('touchstart', onDragStart, { passive: true });
+      card.addEventListener('touchmove',  onDragMove,  { passive: false });
+      card.addEventListener('touchend',   onDragEnd);
+      // Mouse
+      card.addEventListener('mousedown',  onDragStart);
+      window.addEventListener('mousemove', onDragMove);
+      window.addEventListener('mouseup',   onDragEnd);
     }
 
-    function passUser() {
-      nextProfile();
+    function getXY(e) {
+      if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      return { x: e.clientX, y: e.clientY };
     }
 
-    async function likeUser() {
+    function onDragStart(e) {
+      if (e.type === 'mousedown') e.preventDefault();
+      isDragging = true;
+      const { x, y } = getXY(e);
+      dragStartX = x;
+      dragStartY = y;
+      dragX = 0;
+      dragY = 0;
+      if (currentCard) currentCard.style.transition = 'none';
+    }
+
+    function onDragMove(e) {
+      if (!isDragging || !currentCard) return;
+      if (e.type === 'touchmove') e.preventDefault();
+
+      const { x, y } = getXY(e);
+      dragX = x - dragStartX;
+      dragY = y - dragStartY;
+
+      const rotate = dragX * 0.08;
+      currentCard.style.transform = `translateX(${dragX}px) translateY(${dragY}px) rotate(${rotate}deg)`;
+
+      // Overlay opacities
+      const likeOverlay  = currentCard.querySelector('#likeOverlay');
+      const passOverlay  = currentCard.querySelector('#passOverlay');
+      const superOverlay = currentCard.querySelector('#superLabel');
+      const likeLabel    = currentCard.querySelector('#likeLabel');
+      const passLabel    = currentCard.querySelector('#passLabel');
+
+      const absX = Math.abs(dragX);
+      const absY = Math.abs(dragY);
+      const threshold = 60;
+
+      if (dragY < -threshold && absY > absX) {
+        // Swiping up = super like
+        likeOverlay.style.opacity = '0';
+        passOverlay.style.opacity = '0';
+        likeLabel.style.opacity   = '0';
+        passLabel.style.opacity   = '0';
+        superOverlay.style.opacity = Math.min(1, (absY - threshold) / 80);
+      } else if (dragX > 0) {
+        likeOverlay.style.opacity  = Math.min(0.9, dragX / 120);
+        passOverlay.style.opacity  = '0';
+        likeLabel.style.opacity    = Math.min(1, dragX / 80);
+        passLabel.style.opacity    = '0';
+        superOverlay.style.opacity = '0';
+      } else {
+        passOverlay.style.opacity  = Math.min(0.9, -dragX / 120);
+        likeOverlay.style.opacity  = '0';
+        passLabel.style.opacity    = Math.min(1, -dragX / 80);
+        likeLabel.style.opacity    = '0';
+        superOverlay.style.opacity = '0';
+      }
+    }
+
+    function onDragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('mouseup', onDragEnd);
+
+      if (!currentCard) return;
+
+      const SWIPE_X = 100;
+      const SWIPE_Y = -120;
+
+      if (dragX > SWIPE_X) {
+        triggerLike();
+      } else if (dragX < -SWIPE_X) {
+        triggerPass();
+      } else if (dragY < SWIPE_Y && Math.abs(dragY) > Math.abs(dragX)) {
+        triggerSuper();
+      } else {
+        // Snap back
+        currentCard.style.transition = 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+        currentCard.style.transform = 'translateX(0) translateY(0) rotate(0deg)';
+        // Reset overlays
+        currentCard.querySelectorAll('#likeOverlay,#passOverlay,#likeLabel,#passLabel,#superLabel')
+          .forEach(el => el.style.opacity = '0');
+      }
+    }
+
+    // ── Actions ───────────────────────────────────────────────
+    function animatePass()  { triggerPass(); }
+    function animateLike()  { triggerLike(); }
+    function animateSuper() { triggerSuper(); }
+
+    function triggerPass() {
+      if (!currentCard || !profiles[current]) return;
+      currentCard.style.transition = '';
+      currentCard.classList.add('fly-left');
+      saveToHistory('pass');
+      setTimeout(advance, 420);
+    }
+
+    function triggerLike() {
+      if (!currentCard || !profiles[current]) return;
+      currentCard.style.transition = '';
+      currentCard.classList.add('fly-right');
       const p = profiles[current];
-      if (!p) return;
+      saveToHistory('like');
+      likeUser(p.user_id, 'like');
+      setTimeout(advance, 420);
+    }
 
+    function triggerSuper() {
+      if (!currentCard || !profiles[current]) return;
+      currentCard.style.transition = '';
+      currentCard.classList.add('fly-up');
+      const p = profiles[current];
+      saveToHistory('super');
+      likeUser(p.user_id, 'super');
+      setTimeout(advance, 420);
+    }
+
+    function advance() {
+      current++;
+      renderCard();
+    }
+
+    // ── Undo ──────────────────────────────────────────────────
+    function saveToHistory(action) {
+      history.push({ index: current, action });
+    }
+
+    function undoAction() {
+      if (!history.length) return;
+      const last = history.pop();
+      current = last.index;
+      renderCard();
+    }
+
+    // ── Like / super like in DB ───────────────────────────────
+    async function likeUser(targetId, type) {
+      // Check if already liked
       const { data: existing } = await sb
         .from('likes')
         .select('id')
         .eq('user_id', me.id)
-        .eq('target_user_id', p.user_id)
-        .eq('type', 'like')
+        .eq('target_user_id', targetId)
         .maybeSingle();
 
-      if (!existing) {
-        const { error } = await sb.from('likes').insert({
-          user_id: me.id,
-          target_user_id: p.user_id,
-          type: 'like'
-        });
+      if (existing) return;
 
-        if (error) {
-          alert(error.message);
-          return;
-        }
+      const { error } = await sb.from('likes').insert({
+        user_id:        me.id,
+        target_user_id: targetId,
+        type
+      });
 
-        await maybeCreateConversation(me.id, p.user_id);
-      }
+      if (error) { console.error('[likes] insert error:', error.message); return; }
 
-      nextProfile();
-    }
-
-    async function superLikeUser() {
-      const p = profiles[current];
-      if (!p) return;
-
-      const { data: existing } = await sb
-        .from('likes')
-        .select('id')
-        .eq('user_id', me.id)
-        .eq('target_user_id', p.user_id)
-        .eq('type', 'super')
-        .maybeSingle();
-
-      if (!existing) {
-        const { error } = await sb.from('likes').insert({
-          user_id: me.id,
-          target_user_id: p.user_id,
-          type: 'super'
-        });
-
-        if (error) {
-          alert(error.message);
-          return;
-        }
-
-        await maybeCreateConversation(me.id, p.user_id);
-      }
-
-      nextProfile();
+      await maybeCreateConversation(me.id, targetId);
     }
 
     async function maybeCreateConversation(myId, targetId) {
+      // Check for mutual like
       const { data: mutual } = await sb
         .from('likes')
         .select('id')
@@ -946,23 +1168,70 @@
         .eq('target_user_id', myId)
         .limit(1);
 
-      if (!mutual || !mutual.length) return;
+      if (!mutual?.length) return;
 
+      // Check if conversation already exists
       const { data: existing } = await sb
         .from('conversations')
         .select('id')
         .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
         .maybeSingle();
 
-      if (!existing) {
-        await sb.from('conversations').insert({
-          user_a: myId,
-          user_b: targetId,
-          last_message: 'You matched 💜',
-          last_message_at: new Date().toISOString()
-        });
-        alert('It’s a match 💜');
-      }
+      if (existing) return;
+
+      const { error } = await sb.from('conversations').insert({
+        user_a:           myId,
+        user_b:           targetId,
+        last_message:     'You matched 💜',
+        last_message_at:  new Date().toISOString()
+      });
+
+      if (error) { console.error('[conversations] insert error:', error.message); return; }
+
+      // Show match modal
+      const matchedProfile = allProfiles.find(p => p.user_id === targetId);
+      lastMatchedUser = targetId;
+      showMatchModal(matchedProfile?.name || 'them');
+    }
+
+    // ── Match modal ───────────────────────────────────────────
+    function showMatchModal(name) {
+      document.getElementById('matchName').textContent = name;
+      document.getElementById('matchModal').classList.add('visible');
+    }
+
+    function closeMatchModal() {
+      document.getElementById('matchModal').classList.remove('visible');
+    }
+
+    function goToMessages() {
+      window.location.href = 'messages.html';
+    }
+
+    // ── UI helpers ────────────────────────────────────────────
+    function updateDeckPill() {
+      const left = Math.max(profiles.length - current, 0);
+      document.getElementById('deckPill').textContent = `${left} nearby`;
+    }
+
+    function showLoading(on) {
+      document.getElementById('loadingState').style.display = on ? 'flex' : 'none';
+    }
+
+    function showEmpty(msg) {
+      const area = document.getElementById('stackArea');
+      const existing = area.querySelector('.card');
+      if (existing) existing.remove();
+      area.innerHTML = `
+        <div class="ghost ghost-2"></div>
+        <div class="ghost ghost-1"></div>
+        <div class="loading-state" id="loadingState" style="display:none"></div>
+        <div class="empty-state">
+          <div class="empty-emoji">✨</div>
+          <div class="empty-title">You're all caught up.</div>
+          <div class="empty-body">${esc(msg || 'You\'ve seen everyone nearby. Check back later or adjust your filters.')}</div>
+        </div>
+      `;
     }
 
     init();
