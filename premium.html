@@ -602,17 +602,33 @@ const sb = supabase.createClient(
 );
 </script>
 
-<script async src="https://js.stripe.com/v3/buy-button.js"></script>
-
-<div style="margin-top:16px;">
-  <stripe-buy-button
-    id="miruStripeButton"
-    buy-button-id="buy_btn_1TGpAUQ0ZcRbTeoTELl7b4QL"
-    publishable-key="pk_live_51TGo11Q0ZcRbTeoT1dB3WFRF28io31vR7lrZvuy8IWECDVwxEq4Z92lwvI0qUSQtWnh5S3UhEbAQPqWfvLbr3gf700S7gJt7Rs">
-  </stripe-buy-button>
+<div class="premium-cta-wrap">
+  <button class="cta-btn" id="startPremiumCheckout">
+    Start Premium — $3.99/month
+  </button>
 </div>
 
 <script>
+document.getElementById('startPremiumCheckout').addEventListener('click', async () => {
+  try {
+    const { data: { user }, error } = await sb.auth.getUser();
+
+    if (error || !user) {
+      alert('Please sign in first.');
+      return;
+    }
+
+ const baseUrl = 'https://buy.stripe.com/test_5kQaEY2Ee2FZcfXflpbjW00';
+    const checkoutUrl =
+      `${baseUrl}?client_reference_id=${encodeURIComponent(user.id)}&prefilled_email=${encodeURIComponent(user.email || '')}`;
+
+    window.location.href = checkoutUrl;
+  } catch (err) {
+    alert('Could not start checkout.');
+    console.error(err);
+  }
+});
+</script>
 (async () => {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
