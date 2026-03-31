@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0D0A1A" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <title>Miru — Premium</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -417,12 +417,19 @@
       border-radius: 999px;
       font-size: 14px;
       font-weight: 800;
+      transition: opacity 0.2s, transform 0.2s;
     }
 
     .cta-btn {
       background: var(--white);
       color: #120D25;
       box-shadow: 0 10px 24px rgba(255,255,255,0.12);
+    }
+
+    .cta-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .ghost-btn {
@@ -438,6 +445,40 @@
       line-height: 1.6;
       margin-top: 10px;
     }
+
+    /* Success banner — shown after returning from Stripe */
+    .success-banner {
+      display: none;
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(125, 255, 200, 0.08);
+      border: 1px solid rgba(125, 255, 200, 0.25);
+      color: #7DFFC8;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .success-banner.visible { display: block; }
+
+    /* Cancel banner */
+    .cancel-banner {
+      display: none;
+      margin-bottom: 14px;
+      padding: 16px 18px;
+      border-radius: 22px;
+      background: rgba(255, 143, 171, 0.08);
+      border: 1px solid rgba(255, 143, 171, 0.22);
+      color: #FF8FAB;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .cancel-banner.visible { display: block; }
 
     .tabs {
       position: fixed;
@@ -508,10 +549,19 @@
     </div>
 
     <div class="page">
+
+      <!-- Success / cancel banners shown after returning from Stripe -->
+      <div class="success-banner" id="successBanner">
+        🎉 Payment successful! Your premium is being activated — this can take a moment. Refresh your profile if it hasn't updated yet.
+      </div>
+      <div class="cancel-banner" id="cancelBanner">
+        Payment cancelled. No charge was made. You can try again any time.
+      </div>
+
       <div class="hero">
         <div class="eyebrow">Premium that still feels easy</div>
         <h1>Unlock <em>more</em><br />without the clutter.</h1>
-        <div class="hero-sub">This upgrade page uses the same simple flow as the rest of the app: clear top actions, one main decision, easy comparison, and obvious navigation back out.</div>
+        <div class="hero-sub">More reach, more matches, more control — for less than a coffee a month.</div>
 
         <div class="easy-row">
           <div class="chip"><strong>1 tap</strong><span>to upgrade</span></div>
@@ -524,9 +574,9 @@
         <div class="panel-head">
           <div>
             <div class="panel-title">Free vs premium</div>
-            <div class="panel-sub">Kept simple so users instantly know what changes when they subscribe.</div>
+            <div class="panel-sub">Kept simple so you instantly know what changes.</div>
           </div>
-          <div class="mini-badge">easy compare</div>
+          <div class="mini-badge">compare</div>
         </div>
 
         <div class="compare">
@@ -535,7 +585,7 @@
           <div class="compare-row"><div>Super likes per day</div><div class="free">3</div><div class="prem">10</div></div>
           <div class="compare-row"><div>Priority matching</div><div class="free">✕</div><div class="prem">✓</div></div>
           <div class="compare-row"><div>See who liked you</div><div class="free">✕</div><div class="prem">✓</div></div>
-          <div class="compare-row"><div>Profile boost feel</div><div class="free">Standard</div><div class="prem">Higher reach</div></div>
+          <div class="compare-row"><div>Profile boost</div><div class="free">Standard</div><div class="prem">Higher reach</div></div>
         </div>
       </div>
 
@@ -545,7 +595,7 @@
             <div class="panel-title">Choose your plan</div>
             <div class="panel-sub">One main plan, one backup option, no confusing flow.</div>
           </div>
-          <div class="mini-badge">clean checkout</div>
+          <div class="mini-badge">checkout</div>
         </div>
 
         <div class="plans">
@@ -554,7 +604,7 @@
             <div class="plan-top">
               <div>
                 <div class="plan-name">Monthly Premium</div>
-                <div class="plan-copy">Best for users who want more reach, more control, and a better profile presence right now.</div>
+                <div class="plan-copy">More reach, more control, and a better profile presence — starting today.</div>
               </div>
               <div class="price">$3.99<small>/mo</small></div>
             </div>
@@ -563,7 +613,7 @@
               <div>✓ More super likes</div>
               <div>✓ Better visibility and premium profile feel</div>
             </div>
-           <button id="startPremiumCheckout" class="cta-btn">Start Premium — $3.99/month</button>
+            <button id="startPremiumCheckout" class="cta-btn">Start Premium — $3.99/month</button>
           </div>
 
           <div class="plan-card">
@@ -583,7 +633,7 @@
           </div>
         </div>
 
-        <div class="foot-note">Demo billing flow for now. Stripe or app billing can be connected next without changing the layout.</div>
+        <div class="foot-note">Payments secured by Stripe. Cancel any time from your profile.</div>
       </div>
     </div>
   </div>
@@ -595,47 +645,85 @@
     <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
 
-<script>
-const sb = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+  <script>
+    // ── Supabase client ──────────────────────────────────────
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
 
-document.addEventListener('DOMContentLoaded', () => {
-  const premiumBtn = document.getElementById('startPremiumCheckout');
+    // ── Handle return from Stripe ────────────────────────────
+    // Stripe redirects back to premium.html?success=true or ?canceled=true
+    const params = new URLSearchParams(window.location.search);
 
-  if (!premiumBtn) {
-    console.error('Premium button not found: startPremiumCheckout');
-    return;
-  }
-
-  premiumBtn.addEventListener('click', async () => {
-    try {
-      console.log('Premium button clicked');
-
-      const { data: { user }, error } = await sb.auth.getUser();
-      console.log('Supabase user result:', { user, error });
-
-      if (error || !user) {
-        alert('Please sign in first.');
-        return;
-      }
-
-      const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
-
-      const checkoutUrl = new URL(baseUrl);
-      checkoutUrl.searchParams.set('client_reference_id', user.id);
-
-      if (user.email) {
-        checkoutUrl.searchParams.set('prefilled_email', user.email);
-      }
-
-      console.log('Redirecting to:', checkoutUrl.toString());
-      window.location.href = checkoutUrl.toString();
-    } catch (err) {
-      console.error('Premium checkout error:', err);
-      alert('Something went wrong starting checkout.');
+    if (params.get('success') === 'true') {
+      document.getElementById('successBanner').classList.add('visible');
+      // Clean the URL so refreshing doesn't re-show the banner
+      window.history.replaceState({}, '', 'premium.html');
     }
-  });
-});
-</script>
+
+    if (params.get('canceled') === 'true') {
+      document.getElementById('cancelBanner').classList.add('visible');
+      window.history.replaceState({}, '', 'premium.html');
+    }
+
+    // ── Premium checkout button ──────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('startPremiumCheckout');
+      if (!btn) return;
+
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        btn.textContent = 'Loading…';
+
+        try {
+          // Get the logged-in user
+          const { data: { user }, error: userError } = await sb.auth.getUser();
+
+          if (userError || !user) {
+            alert('Please sign in first.');
+            window.location.href = 'auth.html';
+            return;
+          }
+
+          // Get the session token to authenticate with the edge function
+          const { data: { session } } = await sb.auth.getSession();
+
+          // Call the create-checkout-session edge function
+          // This passes the user ID as metadata so the webhook
+          // knows exactly who to grant premium to
+          const response = await fetch(
+            `${window.SUPABASE_URL}/functions/v1/create-checkout-session`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type':  'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+                'apikey':        window.SUPABASE_ANON_KEY || window.SUPABASE_KEY,
+              },
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok || !data.url) {
+            console.error('Checkout error:', data);
+            alert('Could not start checkout. Please try again.');
+            return;
+          }
+
+          // Redirect to Stripe checkout
+          window.location.href = data.url;
+
+        } catch (err) {
+          console.error('Premium checkout error:', err);
+          alert('Something went wrong. Please try again.');
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'Start Premium — $3.99/month';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
