@@ -5,78 +5,73 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0D0A1A" />
+  <meta name="theme-color" content="#0A0714" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <title>Miru — Home</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0D0A1A;
-      --bg-2: #130F2A;
-      --surface: #1C1640;
-      --surface-2: #241C4C;
-      --border: rgba(196, 184, 240, 0.14);
-      --border-strong: rgba(196, 184, 240, 0.22);
-      --violet: #4A3F8A;
-      --lavender: #8B7EC8;
-      --lilac: #C4B8F0;
-      --white: #FFFFFF;
-      --text: #F7F4FF;
-      --text-soft: #D3CBF2;
-      --text-muted: #9E95C9;
-      --success: #7EEDB0;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-      --radius-xl: 26px;
-      --radius-lg: 20px;
-      --serif: 'Playfair Display', serif;
-      --sans: 'DM Sans', sans-serif;
+      --bg:       #0A0714;
+      --s1:       #100D22;
+      --s2:       #181430;
+      --border:   rgba(180,170,255,0.10);
+      --border-hi:rgba(180,170,255,0.20);
+      --white:    #FFFFFF;
+      --text:     #F0ECFF;
+      --soft:     #C4BCEE;
+      --muted:    #7A72AA;
+      --lilac:    #B8AEFF;
+      --gold:     #F5CE7A;
+      --green:    #7DFFC8;
+      --shadow:   0 24px 60px rgba(0,0,0,0.50);
+      --serif:    'Cormorant Garamond', serif;
+      --sans:     'Cabinet Grotesk', sans-serif;
     }
 
-    html, body {
-      min-height: 100%;
-      background:
-        radial-gradient(circle at top, rgba(139, 126, 200, 0.22), transparent 28%),
-        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
-      color: var(--text);
-      font-family: var(--sans);
-    }
+    html, body { min-height: 100%; font-family: var(--sans); color: var(--text); }
 
-    body { padding-bottom: 100px; }
-
-    .shell {
-      max-width: 460px;
-      margin: 0 auto;
-      min-height: 100vh;
-      position: relative;
+    body {
+      background: var(--bg);
+      padding-bottom: 96px;
       overflow-x: hidden;
+      position: relative;
     }
 
-    .ambient::before,
-    .ambient::after {
+    body::before {
       content: "";
       position: fixed;
-      width: 260px;
-      height: 260px;
-      border-radius: 999px;
-      filter: blur(90px);
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.28), transparent),
+        radial-gradient(ellipse 40% 40% at 85% 55%, rgba(120,90,255,0.08), transparent);
       pointer-events: none;
       z-index: 0;
-      opacity: 0.6;
     }
 
-    .ambient::before {
-      top: -70px;
-      left: -90px;
-      background: rgba(139, 126, 200, 0.16);
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
     }
 
-    .ambient::after {
-      right: -110px;
-      top: 220px;
-      background: rgba(74, 63, 138, 0.2);
+    .shell {
+      max-width: 440px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
 
+    /* ── Top bar ── */
     .top-bar {
       position: sticky;
       top: 0;
@@ -84,125 +79,107 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 18px;
-      backdrop-filter: blur(16px);
-      background: rgba(13, 10, 26, 0.72);
-      border-bottom: 1px solid rgba(196, 184, 240, 0.08);
+      padding: 15px 18px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: rgba(10,7,20,0.76);
+      border-bottom: 1px solid var(--border);
     }
 
     .logo {
       font-family: var(--serif);
       font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--white);
       font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
     }
 
     .top-right {
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-
-    .join-btn,
-    .primary-btn,
-    .secondary-btn,
-    .pill-btn,
-    .upgrade-pill,
-    .mcs-connect,
-    .mcs-pass,
-    .utility-btn,
-    .icon-btn,
-    .avatar-pill {
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .join-btn,
-    .mcs-connect,
-    .upgrade-pill,
-    .primary-btn {
-      background: var(--white);
-      color: #120D25;
-      border-radius: 999px;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(255, 255, 255, 0.14);
+      gap: 9px;
     }
 
     .join-btn {
-      padding: 12px 18px;
-      font-size: 13px;
-    }
-
-    .icon-btn,
-    .avatar-pill {
-      width: 40px;
-      height: 40px;
+      padding: 11px 18px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,255,255,0.12);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .join-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(255,255,255,0.18); }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
       color: var(--text);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.09); }
+
+    .avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, rgba(184,174,255,0.25), rgba(184,174,255,0.08));
+      border: 1px solid var(--border-hi);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      font-weight: 800;
+      color: var(--lilac);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.15s;
     }
+    .avatar-btn:hover { transform: scale(1.05); }
+    .avatar-btn img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-    .avatar-pill img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 999px;
-      display: block;
-    }
-
-    .hero {
-      position: relative;
-      z-index: 1;
-      padding: 24px 18px 12px;
-    }
+    /* ── Hero (logged-out) ── */
+    .hero-section { padding: 20px 18px 8px; }
 
     .beta-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
-    .beta-pill,
-    .countdown-pill,
-    .mcs-score,
-    .mcs-prompt,
-    .mc-tag,
-    .sb-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .beta-pill {
+      padding: 7px 13px;
       border-radius: 999px;
-      padding: 7px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--soft);
       font-size: 11px;
       font-weight: 700;
     }
 
-    .beta-pill {
-      color: var(--lilac);
-      border: 1px solid rgba(196, 184, 240, 0.18);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .beta-pill strong { color: var(--white); font-weight: 800; }
+    .beta-pill strong { color: var(--white); font-weight: 900; }
 
     .hero-card {
-      border-radius: 34px;
+      border-radius: 32px;
       padding: 26px 22px 22px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-        linear-gradient(180deg, #171131 0%, #120D25 100%);
-      border: 1px solid rgba(196, 184, 240, 0.12);
+      background: linear-gradient(160deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018));
+      border: 1px solid var(--border);
       box-shadow: var(--shadow);
       overflow: hidden;
       position: relative;
@@ -211,41 +188,45 @@
     .hero-card::after {
       content: "";
       position: absolute;
-      inset: auto -40px -50px auto;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, rgba(196,184,240,0.18), transparent 60%);
+      right: -40px;
+      top: -30px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(184,174,255,0.16), transparent 65%);
       pointer-events: none;
     }
 
     .eyebrow {
-      color: var(--lilac);
       font-size: 11px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1.2px;
+      color: var(--lilac);
       margin-bottom: 14px;
-      font-weight: 800;
+      opacity: 0.85;
     }
 
     .hero h1 {
       font-family: var(--serif);
-      font-size: 44px;
-      line-height: 0.96;
-      letter-spacing: -1px;
-      margin-bottom: 12px;
+      font-size: 46px;
+      line-height: 0.94;
+      letter-spacing: -1.2px;
+      color: var(--white);
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
     }
 
-    .hero h1 em {
-      font-style: italic;
-      color: var(--lilac);
-    }
+    .hero h1 em { font-style: italic; color: var(--lilac); }
 
     .hero-sub {
       font-size: 15px;
-      line-height: 1.6;
-      color: var(--text-soft);
+      line-height: 1.65;
+      color: var(--soft);
       max-width: 310px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
     }
 
     .cta-row {
@@ -253,48 +234,67 @@
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
     }
 
-    .primary-btn,
-    .secondary-btn {
-      padding: 14px 16px;
-      font-size: 13px;
+    .primary-btn {
+      padding: 14px 20px;
       border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 13px;
       font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.14);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
+    .primary-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(255,255,255,0.20); }
 
     .secondary-btn {
-      background: rgba(255,255,255,0.04);
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
       color: var(--text);
-      border: 1px solid rgba(255,255,255,0.08);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .secondary-btn:hover { background: rgba(255,255,255,0.08); }
 
+    /* Mini preview cards */
     .cards-preview {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .mini-card {
-      border-radius: 22px;
+      border-radius: 20px;
       overflow: hidden;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(196, 184, 240, 0.12);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      transition: transform 0.2s;
     }
 
-    .mini-card:nth-child(2) { transform: translateY(16px); }
+    .mini-card:nth-child(2) { transform: translateY(14px); }
+    .mini-card:hover { transform: scale(1.02); }
+    .mini-card:nth-child(2):hover { transform: translateY(14px) scale(1.02); }
 
     .mc-thumb {
-      height: 132px;
-      background: linear-gradient(145deg, #352B6B, #1E1745);
+      height: 120px;
       background-size: cover;
       background-position: center;
       display: flex;
       align-items: flex-end;
-      justify-content: flex-start;
-      padding: 12px;
-      font-size: 28px;
+      padding: 10px;
       position: relative;
     }
 
@@ -302,408 +302,530 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, transparent 30%, rgba(8, 6, 18, 0.65) 100%);
+      background: linear-gradient(180deg, transparent 40%, rgba(8,6,20,0.7) 100%);
     }
 
-    .mc-thumb span {
+    .mc-thumb-label {
       position: relative;
       z-index: 1;
-      font-size: 12px;
-      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 9px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.16);
-      backdrop-filter: blur(10px);
-    }
-
-    .mc-body {
-      padding: 12px;
-    }
-
-    .mc-name {
-      font-weight: 800;
-      font-size: 14px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
       color: var(--white);
-      margin-bottom: 3px;
+      font-family: var(--serif);
+      font-style: italic;
     }
 
-    .mc-detail {
-      color: var(--text-muted);
-      font-size: 11px;
-      line-height: 1.4;
-    }
+    .mc-body { padding: 10px 11px 12px; }
+    .mc-name { font-weight: 800; font-size: 13px; color: var(--white); margin-bottom: 3px; }
+    .mc-detail { color: var(--muted); font-size: 11px; }
 
-    .mc-tag {
-      margin-top: 8px;
-      color: var(--white);
-      background: rgba(139, 126, 200, 0.18);
-      border: 1px solid rgba(196, 184, 240, 0.12);
-      padding: 5px 8px;
-    }
-
+    /* Stats */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 18px 0 6px;
+      gap: 8px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
     }
 
     .stat {
-      padding: 14px 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(196, 184, 240, 0.1);
+      padding: 12px 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--border);
       text-align: center;
     }
 
     .stat-value {
       display: block;
-      font-size: 22px;
-      font-weight: 800;
+      font-size: 20px;
+      font-weight: 900;
       color: var(--white);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      letter-spacing: -0.3px;
     }
 
     .stat-label {
-      font-size: 11px;
+      font-size: 10px;
       line-height: 1.3;
-      color: var(--text-muted);
-    }
-
-    .section {
-      position: relative;
-      z-index: 1;
-      padding: 16px 18px 0;
-    }
-
-    .dashboard-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .shot-greeting {
-      color: var(--text-muted);
-      font-size: 11px;
-      letter-spacing: 1.1px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
+      color: var(--muted);
       font-weight: 700;
     }
 
-    .shot-title {
-      font-family: var(--serif);
-      font-size: 32px;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
+    /* ── Dashboard (logged-in) ── */
+    .dashboard-section { padding: 16px 18px 0; }
 
-    .shot-title em {
-      font-style: italic;
-      color: var(--lilac);
-    }
-
-    .countdown-pill {
-      color: var(--text-soft);
-      border: 1px solid rgba(196,184,240,0.12);
-      background: rgba(255,255,255,0.04);
-      white-space: nowrap;
-    }
-
-    .swipe-bar {
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
-      border: 1px solid rgba(196,184,240,0.1);
-      box-shadow: var(--shadow);
-      border-radius: 24px;
-      padding: 14px;
+    .greeting-row {
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 12px;
-      flex-wrap: wrap;
       margin-bottom: 14px;
     }
 
-    .sb-left {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .sb-chip {
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 12px;
-    }
-
-    .sb-chip strong {
-      font-size: 15px;
+    .greeting-label {
+      font-size: 11px;
       font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .greeting-title {
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.8px;
       color: var(--white);
     }
 
-    .upgrade-pill {
-      padding: 12px 16px;
-      font-size: 12px;
-      align-self: center;
+    .greeting-title em { font-style: italic; color: var(--lilac); }
+
+    .countdown-badge {
+      flex-shrink: 0;
+      padding: 10px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      text-align: center;
     }
 
-    .utility-row {
+    .countdown-label { font-size: 10px; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+
+    .countdown-time {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: 1px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Stats strip */
+    .stats-strip {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: stretch;
     }
 
-    .utility-btn {
-      padding: 14px 10px;
+    .strip-stat {
+      padding: 14px 14px;
       border-radius: 18px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .strip-stat-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.3px;
+      margin-bottom: 2px;
+    }
+
+    .strip-stat-label { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+    .premium-strip {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(245,206,122,0.12), rgba(232,146,10,0.06));
+      border: 1px solid rgba(245,206,122,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .premium-strip:hover { background: linear-gradient(135deg, rgba(245,206,122,0.18), rgba(232,146,10,0.10)); }
+
+    .premium-strip-inner { text-align: center; }
+    .premium-strip-icon { font-size: 18px; margin-bottom: 2px; }
+    .premium-strip-label { font-size: 11px; font-weight: 800; color: var(--gold); }
+
+    /* Quick actions */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .quick-btn {
+      padding: 14px 8px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      font-family: var(--sans);
+      font-size: 11px;
       font-weight: 700;
       line-height: 1.4;
-      min-height: 62px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, border-color 0.15s;
     }
 
-    .match-grid {
-      display: grid;
-      gap: 14px;
+    .quick-btn:hover { background: rgba(255,255,255,0.07); border-color: var(--border-hi); }
+    .quick-btn-icon { font-size: 20px; }
+
+    /* Section header */
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
+    }
+
+    .section-title em { font-style: italic; color: var(--lilac); }
+
+    .section-link {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      transition: color 0.15s;
+    }
+    .section-link:hover { color: var(--soft); }
+
+    /* Match cards */
+    .match-list { display: flex; flex-direction: column; gap: 12px; }
 
     .match-card {
-      border-radius: 28px;
+      border-radius: 26px;
       overflow: hidden;
-      border: 1px solid rgba(196,184,240,0.12);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
       box-shadow: var(--shadow);
+      transition: transform 0.2s;
     }
+    .match-card:hover { transform: translateY(-2px); }
 
-    .mcs-hero {
-      height: 245px;
+    .mc-hero {
+      height: 230px;
+      background-size: cover;
+      background-position: center;
       position: relative;
       display: flex;
       align-items: flex-end;
-      padding: 18px;
-      background: linear-gradient(145deg, #352B6B, #1E1745);
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
+      padding: 16px;
     }
 
-    .mcs-hero::before {
+    .mc-hero::before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(7, 5, 15, 0.1) 15%, rgba(7, 5, 15, 0.82) 100%);
+      background: linear-gradient(180deg, rgba(5,3,15,0.1) 20%, rgba(5,3,15,0.88) 100%);
     }
 
-    .mcs-score,
-    .mcs-prompt {
+    .mc-hero-score {
       position: absolute;
-      z-index: 1;
-      backdrop-filter: blur(14px);
-    }
-
-    .mcs-score {
       top: 14px;
       right: 14px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(10,7,20,0.65);
+      border: 1px solid rgba(255,255,255,0.15);
       color: var(--white);
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
+      font-size: 11px;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
     }
 
-    .mcs-prompt {
+    .mc-hero-prompt {
+      position: absolute;
       top: 14px;
       left: 14px;
-      color: var(--text);
-      background: rgba(255,255,255,0.78);
-      border: 1px solid rgba(255,255,255,0.55);
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      color: #0A0714;
       font-family: var(--serif);
       font-style: italic;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      max-width: 190px;
     }
 
-    .mcs-overlay {
+    .mc-hero-bottom {
       position: relative;
       z-index: 1;
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .mcs-name {
+    .mc-hero-name {
       font-family: var(--serif);
-      font-size: 28px;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
       line-height: 1;
-      color: var(--white);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
     }
 
-    .mcs-loc {
-      color: rgba(255,255,255,0.82);
+    .mc-hero-loc {
       font-size: 12px;
-      line-height: 1.5;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .compat {
-      min-width: 96px;
+    .mc-hero-compat {
       text-align: right;
+      flex-shrink: 0;
     }
 
-    .compat-label {
-      color: var(--text-muted);
-      font-size: 10px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
+    .mc-hero-compat-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .mc-hero-compat-val { font-size: 22px; font-weight: 900; color: var(--white); }
 
-    .compat-score {
-      font-weight: 800;
-      font-size: 20px;
-      color: var(--white);
-    }
+    .mc-body { padding: 14px 16px; }
 
-    .mcs-body {
-      padding: 16px;
-    }
-
-    .relation-line {
+    .mc-status-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--text-soft);
-      font-size: 12px;
       margin-bottom: 10px;
     }
 
-    .relation-dot {
+    .status-dot {
       width: 8px;
       height: 8px;
-      border-radius: 999px;
-      background: var(--success);
-      box-shadow: 0 0 18px rgba(126, 237, 176, 0.45);
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(125,255,200,0.5);
+      flex-shrink: 0;
     }
 
-    .mcs-tags {
+    .status-text { font-size: 12px; color: var(--soft); font-weight: 700; }
+
+    .mc-tags {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
       margin-bottom: 14px;
     }
 
-    .mcs-tag {
-      padding: 8px 12px;
+    .mc-tag {
+      padding: 7px 12px;
       border-radius: 999px;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
+      border: 1px solid var(--border);
+      color: var(--soft);
       font-size: 11px;
       font-weight: 700;
     }
 
-    .mcs-actions {
+    .mc-bio {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .mc-actions {
       display: grid;
-      grid-template-columns: 0.95fr 1.45fr;
+      grid-template-columns: 1fr 1.6fr;
       gap: 10px;
     }
 
-    .mcs-pass,
-    .mcs-connect {
-      padding: 15px 14px;
+    .mc-pass-btn {
+      padding: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .mc-pass-btn:hover { background: rgba(255,112,144,0.08); border-color: rgba(255,112,144,0.25); color: #FF7090; }
+
+    .mc-like-btn {
+      padding: 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,255,255,0.12);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .mc-like-btn:hover { transform: translateY(-1px); }
+    .mc-like-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Empty / loading */
+    .empty-card {
+      padding: 32px 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .empty-emoji { font-size: 36px; margin-bottom: 12px; }
+    .empty-title { font-family: var(--serif); font-size: 24px; font-style: italic; color: var(--white); margin-bottom: 8px; }
+    .empty-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    .skeleton {
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      animation: shimmer 1.5s infinite;
+    }
+
+    .skeleton-hero { height: 230px; background: rgba(255,255,255,0.04); }
+    .skeleton-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .skeleton-line { height: 12px; border-radius: 6px; background: rgba(255,255,255,0.05); }
+    .skeleton-line.w60 { width: 60%; }
+    .skeleton-line.w80 { width: 80%; }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.6; }
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 110px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      padding: 12px 20px;
       border-radius: 999px;
       font-size: 13px;
       font-weight: 800;
+      backdrop-filter: blur(16px);
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+      white-space: nowrap;
     }
 
-    .mcs-pass {
-      background: rgba(255,255,255,0.04);
-      color: var(--text-soft);
-      border: 1px solid rgba(255,255,255,0.08);
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    .empty {
-      border-radius: 24px;
-      padding: 24px 18px;
-      text-align: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-soft);
-      line-height: 1.7;
+    .toast.success {
+      background: rgba(125,255,200,0.15);
+      border: 1px solid rgba(125,255,200,0.30);
+      color: var(--green);
     }
 
-    .bottom-tabs {
+    .toast.match {
+      background: rgba(184,174,255,0.15);
+      border: 1px solid rgba(184,174,255,0.30);
+      color: var(--lilac);
+    }
+
+    .toast.info {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      color: var(--soft);
+    }
+
+    /* Tab bar */
+    .tabs {
       position: fixed;
       left: 50%;
       bottom: 12px;
       transform: translateX(-50%);
       width: min(430px, calc(100% - 16px));
-      padding: 12px 10px;
+      padding: 10px 10px 12px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      background: rgba(18, 13, 37, 0.88);
-      border: 1px solid rgba(196,184,240,0.12);
+      gap: 5px;
+      background: rgba(10,7,20,0.88);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(20px);
       z-index: 70;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.40);
     }
 
-    .btab {
+    .tab {
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      min-height: 54px;
-      border-radius: 18px;
-      color: var(--text-muted);
-      transition: 0.2s ease;
+      gap: 4px;
+      min-height: 50px;
+      border-radius: 16px;
+      color: var(--muted);
+      transition: all 0.15s;
     }
 
-    .btab-icon { font-size: 20px; }
-    .btab-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.9px;
-      font-weight: 700;
-    }
+    .tab-icon { font-size: 19px; }
+    .tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; }
 
-    .btab.on {
+    .tab.on {
       background: rgba(255,255,255,0.06);
       color: var(--white);
     }
 
     @media (max-width: 390px) {
       .hero h1 { font-size: 38px; }
-      .shot-title { font-size: 28px; }
+      .greeting-title { font-size: 28px; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .utility-row { grid-template-columns: 1fr; }
-      .cards-preview { grid-template-columns: 1fr 1fr 1fr; }
-      .mcs-overlay { flex-direction: column; align-items: flex-start; }
-      .compat { text-align: left; min-width: 0; }
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
+
 <body>
-  <div class="ambient"></div>
   <div class="shell">
+
+    <!-- Top bar -->
     <div class="top-bar">
       <div class="logo">miru.</div>
       <div class="top-right" id="topRight">
-        <button class="join-btn" onclick="goAuth()">Join free</button>
+        <button class="join-btn" onclick="window.location.href='auth.html'">Join free</button>
       </div>
     </div>
 
-    <div class="hero">
+    <!-- Hero (logged-out) -->
+    <div id="heroSection" class="hero-section" style="display:none;">
       <div class="beta-row">
         <div class="beta-pill"><strong>Now in beta</strong> · Phoenix, AZ</div>
       </div>
@@ -714,91 +836,139 @@
         <p class="hero-sub">No swiping. No fake photos. No burnout. Miru gives you 3 curated, video-first matches a day based on who you actually are.</p>
 
         <div class="cta-row">
-          <button class="primary-btn" onclick="goAuth()">✦ Get early access</button>
+          <button class="primary-btn" onclick="window.location.href='auth.html'">✦ Get early access</button>
           <button class="secondary-btn" onclick="window.location.href='explore.html'">See how it works →</button>
         </div>
 
-        <div class="cards-preview" id="previewCards"></div>
+        <div class="cards-preview" id="previewCards">
+          <div class="mini-card">
+            <div class="mc-thumb" style="background:linear-gradient(145deg,#46388E,#1D1642);">
+              <div class="mc-thumb-label">"Make me laugh..."</div>
+            </div>
+            <div class="mc-body">
+              <div class="mc-name">Sofia R.</div>
+              <div class="mc-detail">2.4 mi · Phoenix</div>
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mc-thumb" style="background:linear-gradient(145deg,#5F4EB3,#231A54);">
+              <div class="mc-thumb-label">"Tell me a story..."</div>
+            </div>
+            <div class="mc-body">
+              <div class="mc-name">Marcus T.</div>
+              <div class="mc-detail">1.1 mi · Tempe</div>
+            </div>
+          </div>
+          <div class="mini-card">
+            <div class="mc-thumb" style="background:linear-gradient(145deg,#7B5FDB,#2A2255);">
+              <div class="mc-thumb-label">"Something weird..."</div>
+            </div>
+            <div class="mc-body">
+              <div class="mc-name">Priya N.</div>
+              <div class="mc-detail">4.8 mi · Scottsdale</div>
+            </div>
+          </div>
+        </div>
 
         <div class="stats-row">
-          <div class="stat">
-            <span class="stat-value">3</span>
-            <span class="stat-label">Matches per day</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">0</span>
-            <span class="stat-label">Fake photos</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">94%</span>
-            <span class="stat-label">Feel seen</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">∞</span>
-            <span class="stat-label">Real conversations</span>
-          </div>
+          <div class="stat"><span class="stat-value">3</span><span class="stat-label">Matches per day</span></div>
+          <div class="stat"><span class="stat-value">0</span><span class="stat-label">Fake photos</span></div>
+          <div class="stat"><span class="stat-value">94%</span><span class="stat-label">Feel seen</span></div>
+          <div class="stat"><span class="stat-value">∞</span><span class="stat-label">Real convos</span></div>
         </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="dashboard-head">
+    <!-- Dashboard (logged-in) -->
+    <div id="dashSection" class="dashboard-section" style="display:none;">
+
+      <div class="greeting-row">
         <div>
-          <div class="shot-greeting">Good morning, friend ✦</div>
-          <div class="shot-title">Your <em>3 matches</em><br />dropped today.</div>
+          <div class="greeting-label" id="greetLabel">Good morning ✦</div>
+          <div class="greeting-title">Your <em>3 matches</em><br />dropped today.</div>
         </div>
-        <div class="countdown-pill">Next batch in <span id="countdown">13:22:41</span></div>
+        <div class="countdown-badge">
+          <div class="countdown-label">Next batch</div>
+          <div class="countdown-time" id="countdown">--:--:--</div>
+        </div>
       </div>
 
-      <div class="swipe-bar">
-        <div class="sb-left">
-          <div class="sb-chip"><strong id="likeCount">40</strong> likes</div>
-          <div class="sb-chip"><strong id="superCount">3</strong> ⚡ super</div>
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="strip-stat">
+          <div class="strip-stat-val" id="likeCount">—</div>
+          <div class="strip-stat-label">💜 Likes sent</div>
         </div>
-        <button class="upgrade-pill" id="premiumBtn" onclick="window.location.href='premium.html'">⭐ Premium</button>
+        <div class="strip-stat">
+          <div class="strip-stat-val" id="superCount">—</div>
+          <div class="strip-stat-label">⚡ Super likes</div>
+        </div>
+        <div class="premium-strip" onclick="window.location.href='premium.html'" id="premiumStrip">
+          <div class="premium-strip-inner">
+            <div class="premium-strip-icon">⭐</div>
+            <div class="premium-strip-label" id="premiumLabel">Upgrade</div>
+          </div>
+        </div>
       </div>
 
-      <div class="utility-row">
-        <button class="utility-btn" onclick="window.location.href='explore.html'">🔍<br />Explore more</button>
-        <button class="utility-btn" onclick="window.location.href='double_date.html'">👯<br />Add your friend</button>
-        <button class="utility-btn" onclick="window.location.href='messages.html'">💬<br />Open messages</button>
+      <!-- Quick actions — NO DUPLICATES -->
+      <div class="quick-grid">
+        <a class="quick-btn" href="explore.html">
+          <div class="quick-btn-icon">🔍</div>
+          Explore
+        </a>
+        <a class="quick-btn" href="messages.html">
+          <div class="quick-btn-icon">💬</div>
+          Messages
+        </a>
+        <a class="quick-btn" href="matchmaker.html">
+          <div class="quick-btn-icon">🤖</div>
+          AI Match
+        </a>
+        <a class="quick-btn" href="double_date.html">
+          <div class="quick-btn-icon">👯</div>
+          Friends
+        </a>
       </div>
-<div class="utility-row">
-  <button class="utility-btn" onclick="window.location.href='explore.html'">
-    🔍<br />Explore more
-  </button>
-  <button class="utility-btn" onclick="window.location.href='double_date.html'">
-    👯<br />Add your friend
-  </button>
-  <button class="utility-btn" onclick="window.location.href='messages.html'">
-    💬<br />Open messages
-  </button>
-  <button class="utility-btn" onclick="window.location.href='matchmaker.html'">
-    🤖<br />AI Matchmaker
-  </button>
-</div>
-      <div class="match-grid" id="matchList"></div>
+
+      <!-- Match feed -->
+      <div class="section-head">
+        <div class="section-title">Today's <em>picks</em></div>
+        <a class="section-link" href="explore.html">See all →</a>
+      </div>
+
+      <div class="match-list" id="matchList">
+        <!-- Skeleton loaders -->
+        <div class="skeleton">
+          <div class="skeleton-hero"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w80"></div>
+            <div class="skeleton-line w60"></div>
+          </div>
+        </div>
+        <div class="skeleton">
+          <div class="skeleton-hero"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-line w80"></div>
+            <div class="skeleton-line w60"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
   </div>
 
-  <div class="bottom-tabs">
-    <a class="btab on" href="index.html">
-      <div class="btab-icon">💜</div>
-      <div class="btab-label">Matches</div>
-    </a>
-    <a class="btab" href="messages.html">
-      <div class="btab-icon">💬</div>
-      <div class="btab-label">Messages</div>
-    </a>
-    <a class="btab" href="explore.html">
-      <div class="btab-icon">🔍</div>
-      <div class="btab-label">Explore</div>
-    </a>
-    <a class="btab" href="profile.html">
-      <div class="btab-icon">👤</div>
-      <div class="btab-label">Profile</div>
-    </a>
+  <!-- Tab bar -->
+  <div class="tabs">
+    <a class="tab on" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
+    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
+    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
+    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
   </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
   <script>
     const sb = supabase.createClient(
@@ -808,371 +978,315 @@
 
     let me = null;
     let myProfile = null;
-    let loadedProfiles = [];
 
+    // ── Helpers ───────────────────────────────────────────────
     function esc(v) {
-      return String(v ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
+      return String(v ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function goAuth() {
-      window.location.href = "auth.html";
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    async function getUser() {
-      const { data: { user } } = await sb.auth.getUser();
-      return user || null;
+    function greeting() {
+      const h = new Date().getHours();
+      if (h < 12) return 'Good morning ✦';
+      if (h < 17) return 'Good afternoon ✦';
+      return 'Good evening ✦';
     }
 
-    async function ensureProfile(user) {
-      const { data: existing } = await sb
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (existing) return existing;
-
-      const fallbackName = user.email ? user.email.split("@")[0] : "New User";
-
-      await sb.from("profiles").insert({
-        user_id: user.id,
-        name: fallbackName,
-        age: 25,
-        bio: "Say something real.",
-        avatar_url: "",
-        is_premium: false
-      });
-
-      const { data } = await sb
-        .from("profiles")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      return data;
-    }
-
-    function renderLoggedOutNav() {
-      document.getElementById("topRight").innerHTML = `
-        <button class="join-btn" onclick="goAuth()">Join free</button>
-      `;
-    }
-
-    function renderLoggedInNav() {
-      const initial = esc((myProfile?.name || me?.email || "M").trim().charAt(0).toUpperCase());
-      const avatarHTML = myProfile?.avatar_url
-        ? `<button class="avatar-pill" onclick="window.location.href='profile.html'"><img src="${esc(myProfile.avatar_url)}" alt="avatar"></button>`
-        : `<button class="avatar-pill" onclick="window.location.href='profile.html'">${initial}</button>`;
-
-      document.getElementById("topRight").innerHTML = `
-        <button class="icon-btn" onclick="window.location.href='messages.html'">🔔</button>
-        ${avatarHTML}
-        <button class="icon-btn" onclick="logout()">↗</button>
-      `;
-    }
-
-    function profilePrompt(index) {
-      if (index === 0) return 'Make me laugh...';
-      if (index === 1) return 'Something weird...';
-      return 'Tell me a story...';
-    }
-
-    function profileAccent(index) {
-      if (index === 1) return 'linear-gradient(145deg,#5F4EB3,#231A54)';
-      if (index === 2) return 'linear-gradient(145deg,#7B5FDB,#2A2255)';
-      return 'linear-gradient(145deg,#46388E,#1D1642)';
-    }
-
-    function previewThumbStyle(profile, index) {
-      if (profile.avatar_url) {
-        return `background-image:url('${esc(profile.avatar_url)}');background-size:cover;background-position:center;`;
-      }
-      return `background:${profileAccent(index)};`;
-    }
-
-    function renderMarketingOnly() {
-      document.getElementById("premiumBtn").style.display = "inline-block";
-      document.getElementById("previewCards").innerHTML = `
-        <div class="mini-card">
-          <div class="mc-thumb" style="${profileAccent(0)}"><span>"Make me laugh..."</span></div>
-          <div class="mc-body">
-            <div class="mc-name">Sofia R.</div>
-            <div class="mc-detail">2.4 mi · Tonight</div>
-            <div class="mc-tag">chill tonight</div>
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="mc-thumb" style="${profileAccent(1)}"><span>"Tell me a story..."</span></div>
-          <div class="mc-body">
-            <div class="mc-name">Marcus T.</div>
-            <div class="mc-detail">1.1 mi · Weekend</div>
-            <div class="mc-tag">deep adventure</div>
-          </div>
-        </div>
-        <div class="mini-card">
-          <div class="mc-thumb" style="${profileAccent(2)}"><span>"Something weird..."</span></div>
-          <div class="mc-body">
-            <div class="mc-name">Priya N.</div>
-            <div class="mc-detail">4.8 mi · Flexible</div>
-            <div class="mc-tag">artsy match</div>
-          </div>
-        </div>
-      `;
-
-      document.getElementById("matchList").innerHTML = `
-        <div class="match-card">
-          <div class="mcs-hero" style="${profileAccent(0)}">
-            <div class="mcs-score">97% match</div>
-            <div class="mcs-prompt">"Make me laugh..."</div>
-            <div class="mcs-overlay">
-              <div>
-                <div class="mcs-name">Sofia R., 27</div>
-                <div class="mcs-loc">2.4 mi · Phoenix</div>
-              </div>
-              <div class="compat">
-                <div class="compat-label">Compatibility</div>
-                <div class="compat-score">97%</div>
-              </div>
-            </div>
-          </div>
-          <div class="mcs-body">
-            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
-            <div class="mcs-tags">
-              <div class="mcs-tag">chill</div>
-              <div class="mcs-tag">artsy</div>
-              <div class="mcs-tag">tonight</div>
-            </div>
-            <div class="mcs-actions">
-              <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button>
-              <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="match-card">
-          <div class="mcs-hero" style="${profileAccent(1)}">
-            <div class="mcs-score">91% match</div>
-            <div class="mcs-prompt">"Something weird..."</div>
-            <div class="mcs-overlay">
-              <div>
-                <div class="mcs-name">Marcus T., 30</div>
-                <div class="mcs-loc">1.1 mi · Tempe</div>
-              </div>
-              <div class="compat">
-                <div class="compat-label">Compatibility</div>
-                <div class="compat-score">91%</div>
-              </div>
-            </div>
-          </div>
-          <div class="mcs-body">
-            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
-            <div class="mcs-tags">
-              <div class="mcs-tag">adventurous</div>
-              <div class="mcs-tag">deep talks</div>
-            </div>
-            <div class="mcs-actions">
-              <button class="mcs-pass" onclick="window.location.href='auth.html'">Pass</button>
-              <button class="mcs-connect" onclick="window.location.href='auth.html'">✦ Connect</button>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    async function loadCounts() {
-      const { count: likesCount } = await sb
-        .from("likes")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", me.id)
-        .eq("type", "like");
-
-      const { count: superCount } = await sb
-        .from("likes")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", me.id)
-        .eq("type", "super");
-
-      document.getElementById("likeCount").textContent = likesCount || 0;
-      document.getElementById("superCount").textContent = superCount || 0;
-      document.getElementById("premiumBtn").textContent = myProfile?.is_premium ? "⭐ Premium on" : "⭐ Premium";
-    }
-
-    async function loadMatches() {
-      const { data, error } = await sb
-        .from("profiles")
-        .select("user_id,name,age,bio,avatar_url,is_premium,boost_until")
-        .neq("user_id", me.id)
-        .order("boost_until", { ascending: false })
-        .limit(12);
-
-      if (error) {
-        document.getElementById("matchList").innerHTML = `<div class="empty">${esc(error.message)}</div>`;
-        return;
-      }
-
-      loadedProfiles = data || [];
-      renderPreviews(loadedProfiles.slice(0, 3));
-      renderMatches(loadedProfiles.slice(0, 3));
-    }
-
-    function renderPreviews(items) {
-      const wrap = document.getElementById("previewCards");
-      if (!items.length) {
-        wrap.innerHTML = "";
-        return;
-      }
-
-      wrap.innerHTML = items.map((p, i) => `
-        <div class="mini-card">
-          <div class="mc-thumb" style="${previewThumbStyle(p, i)}"><span>"${esc(profilePrompt(i))}"</span></div>
-          <div class="mc-body">
-            <div class="mc-name">${esc(p.name || "Match")}</div>
-            <div class="mc-detail">${esc(p.age || "—")} · Real person</div>
-            <div class="mc-tag">${p.is_premium ? "premium" : "new drop"}</div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function renderMatches(items) {
-      const wrap = document.getElementById("matchList");
-      if (!items.length) {
-        wrap.innerHTML = `<div class="empty">No profiles yet. Come back after more people join.</div>`;
-        return;
-      }
-
-      wrap.innerHTML = items.map((p, i) => `
-        <div class="match-card">
-          <div class="mcs-hero" style="${previewThumbStyle(p, i)}">
-            <div class="mcs-score">${97 - (i * 6)}% match</div>
-            <div class="mcs-prompt">"${esc(profilePrompt(i))}"</div>
-            <div class="mcs-overlay">
-              <div>
-                <div class="mcs-name">${esc(p.name || "Match")}${p.age ? `, ${esc(p.age)}` : ""}</div>
-                <div class="mcs-loc">${esc(p.bio || "2.4 mi · Phoenix")}</div>
-              </div>
-              <div class="compat">
-                <div class="compat-label">Compatibility</div>
-                <div class="compat-score">${97 - (i * 6)}%</div>
-              </div>
-            </div>
-          </div>
-          <div class="mcs-body">
-            <div class="relation-line"><span class="relation-dot"></span> Relationship</div>
-            <div class="mcs-tags">
-              <div class="mcs-tag">real</div>
-              <div class="mcs-tag">video-first</div>
-              ${p.is_premium ? `<div class="mcs-tag">premium</div>` : ``}
-              <div class="mcs-tag">miru</div>
-            </div>
-            <div class="mcs-actions">
-              <button class="mcs-pass" onclick="window.location.href='explore.html'">Pass</button>
-              <button class="mcs-connect" onclick="likeUser('${esc(p.user_id)}')">✦ Connect</button>
-            </div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    async function likeUser(targetId) {
-      if (!me) {
-        window.location.href = "auth.html";
-        return;
-      }
-
-      const { data: existing } = await sb
-        .from("likes")
-        .select("id")
-        .eq("user_id", me.id)
-        .eq("target_user_id", targetId)
-        .eq("type", "like")
-        .maybeSingle();
-
-      if (existing) {
-        alert("Already liked 💜");
-        return;
-      }
-
-      const { error } = await sb.from("likes").insert({
-        user_id: me.id,
-        target_user_id: targetId,
-        type: "like"
-      });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      await maybeCreateConversation(me.id, targetId);
-      await loadCounts();
-      alert("Liked 💜");
-    }
-
-    async function maybeCreateConversation(myId, targetId) {
-      const { data: mutual } = await sb
-        .from("likes")
-        .select("id")
-        .eq("user_id", targetId)
-        .eq("target_user_id", myId)
-        .limit(1);
-
-      if (!mutual || !mutual.length) return;
-
-      const { data: existing } = await sb
-        .from("conversations")
-        .select("id")
-        .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
-        .maybeSingle();
-
-      if (!existing) {
-        await sb.from("conversations").insert({
-          user_a: myId,
-          user_b: targetId,
-          last_message: "You matched 💜",
-          last_message_at: new Date().toISOString()
-        });
-      }
-    }
-
-    async function logout() {
-      await sb.auth.signOut();
-      window.location.href = "auth.html";
-    }
-
+    // ── Countdown to midnight ─────────────────────────────────
+    // FIX: Real countdown based on actual time, not hardcoded
     function startCountdown() {
-      let remaining = 13 * 3600 + 22 * 60 + 41;
       const el = document.getElementById('countdown');
       if (!el) return;
 
-      setInterval(() => {
-        const hrs = String(Math.floor(remaining / 3600)).padStart(2, '0');
-        const mins = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
-        const secs = String(remaining % 60).padStart(2, '0');
-        el.textContent = `${hrs}:${mins}:${secs}`;
-        remaining = remaining > 0 ? remaining - 1 : 13 * 3600 + 22 * 60 + 41;
-      }, 1000);
+      function update() {
+        const now = new Date();
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        let diff = Math.floor((midnight - now) / 1000);
+        if (diff < 0) diff = 0;
+
+        const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+        const s = String(diff % 60).padStart(2, '0');
+        el.textContent = `${h}:${m}:${s}`;
+      }
+
+      update();
+      setInterval(update, 1000);
     }
 
-    async function init() {
-      startCountdown();
-      me = await getUser();
+    // ── Nav ───────────────────────────────────────────────────
+    function renderNav() {
+      const initial = esc((myProfile?.name || me?.email || 'M').trim().charAt(0).toUpperCase());
+      const avatarHTML = myProfile?.avatar_url
+        ? `<img src="${esc(myProfile.avatar_url)}" alt="avatar" />`
+        : initial;
 
-      if (!me) {
-        renderLoggedOutNav();
-        renderMarketingOnly();
+      document.getElementById('topRight').innerHTML = `
+        <a class="icon-btn" href="messages.html" title="Messages">💬</a>
+        <button class="avatar-btn" onclick="window.location.href='profile.html'" title="Profile">${avatarHTML}</button>
+        <button class="icon-btn" onclick="logout()" title="Sign out" style="font-size:13px;">↗</button>
+      `;
+    }
+
+    // ── Profile ensure ────────────────────────────────────────
+    // FIX: Removed hardcoded age:25
+    async function ensureProfile(user) {
+      try {
+        const { data: existing } = await sb
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (existing) return existing;
+
+        const fallbackName = user.email ? user.email.split('@')[0] : 'New User';
+
+        await sb.from('profiles').insert({
+          user_id:    user.id,
+          name:       fallbackName,
+          bio:        '',
+          avatar_url: '',
+          is_premium: false
+          // age is NOT set here — collected during onboarding
+        });
+
+        const { data } = await sb.from('profiles').select('*').eq('user_id', user.id).maybeSingle();
+        return data;
+      } catch (err) {
+        console.error('[ensureProfile]', err);
+        return null;
+      }
+    }
+
+    // ── Load stats ────────────────────────────────────────────
+    async function loadStats() {
+      const [{ count: likes }, { count: supers }] = await Promise.all([
+        sb.from('likes').select('*', { count: 'exact', head: true }).eq('user_id', me.id).eq('type', 'like'),
+        sb.from('likes').select('*', { count: 'exact', head: true }).eq('user_id', me.id).eq('type', 'super'),
+      ]);
+
+      document.getElementById('likeCount').textContent  = likes  ?? 0;
+      document.getElementById('superCount').textContent = supers ?? 0;
+      document.getElementById('premiumLabel').textContent = myProfile?.is_premium ? 'Premium ✦' : 'Upgrade';
+    }
+
+    // ── Load match feed ───────────────────────────────────────
+    const PROMPTS = [
+      '"Make me laugh..."',
+      '"Something weird about you..."',
+      '"Tell me a story..."',
+      '"What are you really like?"',
+      '"Change my mind about..."',
+    ];
+
+    const GRADIENTS = [
+      'linear-gradient(145deg,#46388E,#1D1642)',
+      'linear-gradient(145deg,#5F4EB3,#231A54)',
+      'linear-gradient(145deg,#7B5FDB,#2A2255)',
+      'linear-gradient(145deg,#2E4080,#0F1A3A)',
+      'linear-gradient(145deg,#6B3D6B,#1E0F2A)',
+    ];
+
+    function bgStyle(p, i) {
+      if (p.avatar_url) return `background-image:url('${esc(p.avatar_url)}');background-color:#1a1440;`;
+      return `background:${GRADIENTS[i % GRADIENTS.length]};`;
+    }
+
+    function compat(i) { return Math.max(80, 97 - i * 4); }
+
+    async function loadMatches() {
+      // Get already-liked IDs so we don't show them
+      const { data: myLikes } = await sb
+        .from('likes')
+        .select('target_user_id')
+        .eq('user_id', me.id);
+
+      const likedIds = new Set((myLikes || []).map(l => l.target_user_id));
+
+      const { data, error } = await sb
+        .from('profiles')
+        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until')
+        .neq('user_id', me.id)
+        .order('boost_until', { ascending: false, nullsFirst: false })
+        .limit(20);
+
+      if (error) {
+        document.getElementById('matchList').innerHTML = `
+          <div class="empty-card">
+            <div class="empty-body">${esc(error.message)}</div>
+          </div>
+        `;
         return;
       }
 
+      const profiles = (data || []).filter(p => !likedIds.has(p.user_id)).slice(0, 5);
+
+      if (!profiles.length) {
+        document.getElementById('matchList').innerHTML = `
+          <div class="empty-card">
+            <div class="empty-emoji">✨</div>
+            <div class="empty-title">You're all caught up.</div>
+            <div class="empty-body">You've seen everyone today. New faces drop at midnight.</div>
+          </div>
+        `;
+        return;
+      }
+
+      document.getElementById('matchList').innerHTML = profiles.map((p, i) => `
+        <div class="match-card">
+          <div class="mc-hero" style="${bgStyle(p, i)}">
+            <div class="mc-hero-score">${compat(i)}% match</div>
+            <div class="mc-hero-prompt">${esc(PROMPTS[i % PROMPTS.length])}</div>
+            <div class="mc-hero-bottom">
+              <div>
+                <div class="mc-hero-name">${esc(p.name || 'Match')}${p.age ? `, ${esc(String(p.age))}` : ''}</div>
+                <div class="mc-hero-loc">📍 Nearby · Miru</div>
+              </div>
+              <div class="mc-hero-compat">
+                <div class="mc-hero-compat-label">Match</div>
+                <div class="mc-hero-compat-val">${compat(i)}%</div>
+              </div>
+            </div>
+          </div>
+          <div class="mc-body">
+            <div class="mc-status-row">
+              <span class="status-dot"></span>
+              <span class="status-text">Active on Miru</span>
+              ${p.is_premium ? '<span class="mc-tag" style="margin-left:auto;">✦ Premium</span>' : ''}
+            </div>
+            ${p.bio ? `<div class="mc-bio">${esc(p.bio)}</div>` : ''}
+            <div class="mc-tags">
+              <div class="mc-tag">real</div>
+              <div class="mc-tag">video-first</div>
+              <div class="mc-tag">intentional</div>
+            </div>
+            <div class="mc-actions">
+              <button class="mc-pass-btn" onclick="passUser('${esc(p.user_id)}', this)">✕ Pass</button>
+              <button class="mc-like-btn" id="like-${esc(p.user_id)}" onclick="likeUser('${esc(p.user_id)}', this)">💜 Connect</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Like / pass ───────────────────────────────────────────
+    async function likeUser(targetId, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Liking…';
+
+      const { data: existing } = await sb
+        .from('likes')
+        .select('id')
+        .eq('user_id', me.id)
+        .eq('target_user_id', targetId)
+        .maybeSingle();
+
+      if (existing) {
+        showToast('Already liked 💜', 'info');
+        btn.textContent = '💜 Liked';
+        return;
+      }
+
+      const { error } = await sb.from('likes').insert({
+        user_id:        me.id,
+        target_user_id: targetId,
+        type:           'like'
+      });
+
+      if (error) {
+        showToast(error.message, 'info');
+        btn.disabled = false;
+        btn.textContent = '💜 Connect';
+        return;
+      }
+
+      btn.textContent = '💜 Liked';
+      showToast('Liked! 💜', 'success');
+      await loadStats();
+      await maybeCreateConversation(me.id, targetId);
+    }
+
+    function passUser(targetId, btn) {
+      // Animate card out
+      const card = btn.closest('.match-card');
+      if (card) {
+        card.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        card.style.transform = 'translateX(-60px)';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 300);
+      }
+    }
+
+    // ── Mutual match check ────────────────────────────────────
+    async function maybeCreateConversation(myId, targetId) {
+      const { data: mutual } = await sb
+        .from('likes')
+        .select('id')
+        .eq('user_id', targetId)
+        .eq('target_user_id', myId)
+        .limit(1);
+
+      if (!mutual?.length) return;
+
+      const { data: existing } = await sb
+        .from('conversations')
+        .select('id')
+        .or(`and(user_a.eq.${myId},user_b.eq.${targetId}),and(user_a.eq.${targetId},user_b.eq.${myId})`)
+        .maybeSingle();
+
+      if (existing) return;
+
+      const { error } = await sb.from('conversations').insert({
+        user_a:          myId,
+        user_b:          targetId,
+        last_message:    'You matched 💜',
+        last_message_at: new Date().toISOString()
+      });
+
+      if (!error) {
+        showToast("It's a match! 💜 Send them a message.", 'match');
+      }
+    }
+
+    // ── Logout ────────────────────────────────────────────────
+    async function logout() {
+      await sb.auth.signOut();
+      window.location.replace('auth.html');
+    }
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      const { data: { user } } = await sb.auth.getUser();
+
+      if (!user) {
+        // Logged out — show marketing hero
+        document.getElementById('heroSection').style.display = 'block';
+        return;
+      }
+
+      me = user;
       myProfile = await ensureProfile(me);
-      renderLoggedInNav();
-      await loadCounts();
-      await loadMatches();
+
+      // Logged in — show dashboard
+      document.getElementById('dashSection').style.display = 'block';
+      document.getElementById('greetLabel').textContent = greeting();
+
+      renderNav();
+      startCountdown();
+
+      // Load data in parallel
+      await Promise.all([loadStats(), loadMatches()]);
     }
 
     init();
