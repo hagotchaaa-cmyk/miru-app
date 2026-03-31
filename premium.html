@@ -563,7 +563,7 @@
               <div>✓ More super likes</div>
               <div>✓ Better visibility and premium profile feel</div>
             </div>
-            <button class="cta-btn" onclick="activatePremium()">Start Premium — $3.99/month</button>
+           <button id="startPremiumCheckout" class="cta-btn">Start Premium — $3.99/month</button>
           </div>
 
           <div class="plan-card">
@@ -601,28 +601,41 @@ const sb = supabase.createClient(
   SUPABASE_ANON_KEY
 );
 
-document.getElementById('startPremiumCheckout').addEventListener('click', async () => {
-  try {
-    const { data: { user }, error } = await sb.auth.getUser();
+document.addEventListener('DOMContentLoaded', () => {
+  const premiumBtn = document.getElementById('startPremiumCheckout');
 
-    if (error || !user) {
-      alert('Please sign in first.');
-      return;
-    }
-
-    const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
-
-    const checkoutUrl = new URL(baseUrl);
-    checkoutUrl.searchParams.set('client_reference_id', user.id);
-
-    if (user.email) {
-      checkoutUrl.searchParams.set('prefilled_email', user.email);
-    }
-
-    window.location.href = checkoutUrl.toString();
-  } catch (err) {
-    console.error('Premium checkout error:', err);
-    alert('Something went wrong starting checkout.');
+  if (!premiumBtn) {
+    console.error('Premium button not found: startPremiumCheckout');
+    return;
   }
+
+  premiumBtn.addEventListener('click', async () => {
+    try {
+      console.log('Premium button clicked');
+
+      const { data: { user }, error } = await sb.auth.getUser();
+      console.log('Supabase user result:', { user, error });
+
+      if (error || !user) {
+        alert('Please sign in first.');
+        return;
+      }
+
+      const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
+
+      const checkoutUrl = new URL(baseUrl);
+      checkoutUrl.searchParams.set('client_reference_id', user.id);
+
+      if (user.email) {
+        checkoutUrl.searchParams.set('prefilled_email', user.email);
+      }
+
+      console.log('Redirecting to:', checkoutUrl.toString());
+      window.location.href = checkoutUrl.toString();
+    } catch (err) {
+      console.error('Premium checkout error:', err);
+      alert('Something went wrong starting checkout.');
+    }
+  });
 });
 </script>
