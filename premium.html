@@ -598,42 +598,48 @@
 <script>
 const sb = supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY
+  window.SUPABASE_KEY || window.SUPABASE_ANON_KEY
 );
 
 document.addEventListener('DOMContentLoaded', () => {
   const premiumBtn = document.getElementById('startPremiumCheckout');
 
   if (!premiumBtn) {
-    console.error('Premium button not found: startPremiumCheckout');
+    console.error('Premium button not found');
     return;
   }
 
   premiumBtn.addEventListener('click', async () => {
     try {
-      console.log('Premium button clicked');
-
       const { data: { user }, error } = await sb.auth.getUser();
-      console.log('Supabase user result:', { user, error });
 
       if (error || !user) {
         alert('Please sign in first.');
         return;
       }
 
-      const baseUrl = 'https://buy.stripe.com/test_6oUcN695dh2k7Gh5xPgMw00';
+      const { data, error: fnError } = await sb.functions.invoke('create-checkout-session', {
+        body: {
+          userId: user.id,
+          email: user.email || null,
+        },
+      });
 
-      const checkoutUrl = new URL(baseUrl);
-      checkoutUrl.searchParams.set('client_reference_id', user.id);
-
-      if (user.email) {
-        checkoutUrl.searchParams.set('prefilled_email', user.email);
+      if (fnError) {
+        console.error('Function error:', fnError);
+        alert('Could not start checkout.');
+        return;
       }
 
-      console.log('Redirecting to:', checkoutUrl.toString());
-      window.location.href = checkoutUrl.toString();
+      if (!data?.url) {
+        console.error('Missing checkout URL:', data);
+        alert('Checkout URL was not returned.');
+        return;
+      }
+
+      window.location.href = data.url;
     } catch (err) {
-      console.error('Premium checkout error:', err);
+      console.error('Checkout start failed:', err);
       alert('Something went wrong starting checkout.');
     }
   });
