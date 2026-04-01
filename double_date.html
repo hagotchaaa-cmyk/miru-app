@@ -3,86 +3,117 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Miru — Double Date</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0714" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Miru — Friends</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #7C5CBF;
-      color: white;
-      padding: 0;
-      margin: 0;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0714; --border: rgba(180,170,255,0.09); --border-hi: rgba(180,170,255,0.18);
+      --white: #FFFFFF; --text: #F0ECFF; --soft: #C4BCEE; --muted: #7A72AA;
+      --lilac: #B8AEFF; --gold: #F5CE7A; --green: #7DFFC8;
+      --serif: 'Cormorant Garamond', serif; --sans: 'Cabinet Grotesk', sans-serif;
     }
-    .container {
-      padding: 20px;
-    }
-    .friend-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .friend-item {
-      padding: 10px;
-      background: #fff;
-      color: black;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .friend-item:hover {
-      background: #EDE8FF;
-    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+    body { padding-bottom: 96px; }
+    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.22), transparent); pointer-events: none; z-index: 0; }
+    .shell { max-width: 440px; margin: 0 auto; position: relative; z-index: 1; }
+    .top-bar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; backdrop-filter: blur(20px); background: rgba(10,7,20,0.85); border-bottom: 1px solid var(--border); }
+    .logo { font-family: var(--serif); font-size: 26px; font-style: italic; font-weight: 700; color: var(--white); }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: var(--sans); }
+    .page { padding: 18px 16px; }
+    .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--lilac); margin-bottom: 10px; opacity: 0.85; }
+    .page-title { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 0.96; letter-spacing: -1px; color: var(--white); margin-bottom: 10px; }
+    .page-title em { color: var(--lilac); font-style: italic; }
+    .page-sub { color: var(--soft); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
+    .coming-soon { padding: 20px; border-radius: 20px; background: linear-gradient(135deg, rgba(184,174,255,0.07), rgba(125,255,200,0.04)); border: 1px solid var(--border-hi); margin-bottom: 18px; text-align: center; }
+    .cs-emoji { font-size: 32px; margin-bottom: 10px; }
+    .cs-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--white); margin-bottom: 8px; }
+    .cs-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .section-label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .friend-list { display: flex; flex-direction: column; gap: 8px; }
+    .friend-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
+    .friend-item:hover { background: rgba(255,255,255,0.07); }
+    .friend-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(145deg, #3D3280, #1A1448); border: 2px solid rgba(184,174,255,0.20); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--white); flex-shrink: 0; overflow: hidden; }
+    .friend-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .friend-name { font-size: 14px; font-weight: 800; color: var(--white); margin-bottom: 2px; }
+    .friend-sub { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .friend-action { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); font-size: 13px; display: flex; align-items: center; justify-content: center; }
+    .empty-state { padding: 40px 20px; text-align: center; border-radius: 20px; border: 1px dashed var(--border-hi); background: rgba(255,255,255,0.02); }
+    .empty-emoji { font-size: 36px; margin-bottom: 12px; }
+    .empty-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--white); margin-bottom: 8px; }
+    .empty-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .tab-bar { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: min(430px, 100%); padding: 10px 4px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-around; align-items: center; background: rgba(10,7,20,0.94); border-top: 1px solid rgba(180,170,255,0.10); backdrop-filter: blur(24px); z-index: 70; }
+    .tab-item { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 12px; color: rgba(180,170,255,0.38); transition: color 0.18s; position: relative; min-width: 52px; }
+    .tab-item.on { color: #FFFFFF; }
+    .tab-item.on::before { content: ""; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 24px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, #B8AEFF, #7DFFC8); }
+    .tab-svg { width: 21px; height: 21px; }
+    .tab-item:not(.on) .tab-svg { opacity: 0.45; }
+    .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Invite a Friend for a Double Date</h2>
-    <div class="friend-list" id="friendList"></div>
+  <div class="shell">
+    <div class="top-bar">
+      <div class="logo">miru.</div>
+      <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+    </div>
+    <div class="page">
+      <div class="eyebrow">Coming soon</div>
+      <div class="page-title">Bring a <em>friend</em><br />along.</div>
+      <div class="page-sub">Double dates, group hangs, bringing a friend into the mix — all coming to Miru soon.</div>
+      <div class="coming-soon">
+        <div class="cs-emoji">👯</div>
+        <div class="cs-title">Friends feature in the works.</div>
+        <div class="cs-body">We're building out double dates and friend invites. Here are the people already on Miru you could connect with.</div>
+      </div>
+      <div class="section-label">People on Miru</div>
+      <div class="friend-list" id="friendList"></div>
+    </div>
   </div>
 
-  <script>
-    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
-    let me = null;
+  <nav class="tab-bar">
+    <a class="tab-item on" href="index.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="tab-label">Matches</span></a>
+    <a class="tab-item" href="explore.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span class="tab-label">Explore</span></a>
+    <a class="tab-item" href="discover.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="tab-label">Discover</span></a>
+    <a class="tab-item" href="messages.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="tab-label">Messages</span></a>
+    <a class="tab-item" href="profile.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tab-label">Profile</span></a>
+  </nav>
 
-    async function getUser() {
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) {
-        window.location.href = "auth.html";
-        return null;
-      }
-      return user;
-    }
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+
+    function esc(v) { return String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+    function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
 
     async function loadFriends() {
-      me = await getUser();
-      const { data: friends } = await sb
-        .from("profiles")
-        .select("user_id, name")
-        .neq("user_id", me.id);
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { window.location.href = 'auth.html'; return; }
 
-      const friendListContainer = document.getElementById("friendList");
-      friends.forEach(friend => {
-        const div = document.createElement("div");
-        div.className = "friend-item";
-        div.innerText = friend.name;
-        div.onclick = () => startDoubleDate(friend.user_id);
-        friendListContainer.appendChild(div);
-      });
-    }
+      const { data } = await sb.from('profiles').select('user_id,name,avatar_url,bio').neq('user_id', user.id).limit(20);
+      const list = document.getElementById('friendList');
 
-    async function startDoubleDate(friendId) {
-      const { error } = await sb
-        .from("group_chats")
-        .insert([
-          { user_a_id: me.id, user_b_id: friendId }
-        ]);
-
-      if (error) {
-        alert("Error creating double date group chat: " + error.message);
+      if (!data?.length) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-emoji">✨</div><div class="empty-title">No one here yet.</div><div class="empty-body">Invite friends to join Miru so you can see them here.</div></div>';
         return;
       }
 
-      window.location.href = `messages.html?group_chat=${me.id}_${friendId}`;
+      list.innerHTML = data.map(p => `
+        <div class="friend-item" onclick="window.location.href='messages.html'">
+          <div class="friend-avatar">${p.avatar_url ? `<img src="${esc(p.avatar_url)}" alt="" />` : esc(initial(p.name))}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="friend-name">${esc(p.name || 'Miru user')}</div>
+            <div class="friend-sub">${esc(p.bio ? p.bio.slice(0, 40) : 'On Miru')}</div>
+          </div>
+          <div class="friend-action">→</div>
+        </div>
+      `).join('');
     }
 
     loadFriends();

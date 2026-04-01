@@ -1,0 +1,160 @@
+Project: Miru Dating App
+
+Live site: https://miru-app.onrender.com
+GitHub: https://github.com/hagotchaaa-cmyk/miru-app
+Local: C:\Users\avong\miru-app
+Supabase project: rlmcwbaiuowbkgfzdlme
+
+
+Current state of all pages:
+
+index.html — Home/dashboard. Needs CSS modernization (cards look old). "3 matches dropped today" text was removed, replaced with "Who's new today?" The match cards, stats strip, and quick action grid are all wired to Supabase. Tab bar is the new 5-tab SVG nav.
+explore.html — Swipe cards for matchmaking. 5-tab nav. Action buttons padding fixed to clear tab bar.
+discover.html — Instagram-style post grid with likes/comments. 5-tab nav. Old tab CSS removed.
+messages.html — Real-time chat. 5-tab nav. Old tab CSS removed.
+profile.html — Instagram-style layout. Small circular avatar top-left, stats top-right, posts grid dominates. Change banner button is tiny icon on avatar. 5-tab nav. FAB opens post composer sheet.
+premium.html — Stripe checkout. Working with live keys.
+auth.html — Email/password + Google OAuth. Trust box hidden.
+
+5-tab nav (on all pages):
+Matches (heart) | Explore (arrow) | Discover (grid) | Messages (chat) | Profile (person)
+Active tab has white color + lilac/green gradient top indicator.
+Supabase:
+
+All tables set up: profiles, likes, conversations, messages, user_posts, post_likes, post_comments, matchmaker_preferences
+Storage buckets: avatars, posts, message_media, media (all public, 500MB, no mime restrictions)
+Edge functions: create-checkout-session, stripe-webhook
+
+Stripe (LIVE mode):
+
+STRIPE_SECRET_KEY = sk_live_... (saved in Supabase secrets)
+STRIPE_PRICE_ID = price_1TGp3oQ0ZcRbTeoTly8A93BX
+STRIPE_WEBHOOK_SECRET = whsec_... (saved in Supabase secrets)
+SITE_URL = https://miru-app.onrender.com
+
+Google OAuth: Working. Redirect URL hardcoded to https://miru-app.onrender.com/index.html
+What was being worked on when chat ended:
+Modernizing the UI — index.html cards and lettering looked old/tacky. User wanted cleaner, more modern styling across all pages. The index.html redesign was in progress but the file creation got cut off. Start by finishing the index.html redesign — upload the current index.html and rebuild it with modern clean cards, no boxy feel, sleeker typography.
+
+How Miru is built and runs:
+Stack:
+
+Pure HTML/CSS/JS — no React, no build step, no npm for the frontend
+Supabase for database, auth, storage, and edge functions
+Stripe for payments (live mode)
+Render for hosting (static site, auto-deploys from GitHub main branch)
+
+How deployment works:
+
+All pages are plain .html files in the root of the repo
+Push to GitHub main → Render auto-deploys in ~60 seconds
+No build command — Render just serves the static files directly
+config.js is in the repo root and holds SUPABASE_URL and SUPABASE_ANON_KEY (never committed to GitHub — kept local only)
+
+How auth works:
+
+Supabase Auth handles email/password and Google OAuth
+After login, Supabase sets a session cookie — all pages check sb.auth.getUser() on load
+Google OAuth redirect goes to https://miru-app.onrender.com/index.html
+auth.html is the login/signup page
+
+How payments work:
+
+User clicks Subscribe on premium.html
+Page calls Supabase Edge Function create-checkout-session
+Edge function creates a Stripe Checkout session using live keys from Supabase Secrets
+User completes payment on Stripe hosted page
+Stripe fires webhook to stripe-webhook edge function
+Webhook sets is_premium = true and saves stripe_customer_id on the user's profile in Supabase
+
+How posts work:
+
+Users upload photos/videos from profile.html via the + FAB button
+Files go to Supabase Storage posts bucket
+Post metadata (media_url, caption, user_id) saved to user_posts table
+discover.html reads from user_posts and shows everyone's posts in a grid
+
+How matching works:
+
+explore.html shows profiles from the profiles table
+Swiping right or clicking Connect inserts a row into likes table
+If both users liked each other, a row is created in conversations table
+messages.html reads from conversations and messages tables in real time
+
+Key files:
+
+config.js — Supabase URL and anon key (local only, gitignored)
+All pages are self-contained HTML files with inline CSS and JS
+No shared JS files or components — each page is independent
+
+Sensitive keys location:
+
+Stripe keys → Supabase Dashboard → Edge Functions → Secrets
+Google OAuth credentials → Supabase Dashboard → Authentication → Providers → Google
+Supabase URL/key → local config.js only
+
+Database schema key details:
+profiles table columns:
+
+user_id, name, age, bio, avatar_url, banner_url, is_premium, boost_until, stripe_customer_id, stripe_subscription_id, last_shown_at, show_count, created_at
+
+likes table: user_id, target_user_id, type (like/super)
+conversations table: user_a, user_b, last_message, last_message_at
+messages table: conversation_id, sender_id, content, media_url, media_type
+user_posts table: user_id, media_url, media_type, caption, is_approved, flagged
+post_likes table: post_id, user_id
+post_comments table: post_id, user_id, content
+matchmaker_preferences table: user_id, ai_enabled, goal, vibes, delivery_mode, week_mode, age_range, distance_miles
+
+Storage buckets:
+
+avatars — profile photos AND banner photos (banner saved at path: userId/banner/...)
+posts — user post media
+message_media — photos/videos sent in messages
+media — general media
+
+All buckets are public, 500MB limit, no mime type restrictions (null)
+
+Known issues / things that still need fixing:
+
+index.html CSS modernization was in progress — cards and typography need to be cleaner and less boxy. This was the active task when the chat ended.
+The old .tabs CSS class may still exist in some files alongside the new .tab-bar CSS — causes a redundant style block but doesn't break anything
+discover.html posts grid shows "Nothing here yet" because users haven't posted from their profiles yet — this is expected behavior, not a bug
+The explore page swipe limit is 40/day for free users stored in localStorage key miru_swipes, resets at midnight
+
+
+Pages that don't exist yet but are linked:
+
+matchmaker.html — linked from index.html quick actions, page doesn't exist yet
+double_date.html — linked from old quick actions, page doesn't exist yet
+reset-password.html — referenced in auth.html password reset flow, page doesn't exist yet
+
+
+Design system:
+
+Fonts: Cormorant Garamond (serif, for headings/display) + Cabinet Grotesk (sans, for everything else)
+Background: #0A0714 (very dark purple-black)
+Accent colors: --lilac #B8AEFF, --gold #F5CE7A, --green #7DFFC8, --red #FF7090
+All pages use the same CSS variables defined in :root
+Cards use rgba(255,255,255,0.04) backgrounds with rgba(180,170,255,0.09) borders
+Border radius: ~18-22px for cards, 999px for pills/buttons
+
+
+User accounts in Supabase right now:
+
+Your account (Allena/Hagotchaaa) — is_premium = true, stripe_customer_id populated
+One other test account with is_premium = true but no stripe_customer_id (created manually)
+
+
+Git history note:
+
+A Stripe test key (sk_test_) was previously committed and is in git history — it was resolved via GitHub secret scanning by marking it as "used in tests"
+The file google api keys.txt was removed from git history using git filter-branch
+.env.backup, google api keys.txt, stripe_backup_code.txt are all in .gitignore and stay local only
+
+Good — you have a matchmaker.html. It's using old fonts (Playfair Display + DM Sans) and old CSS variables. Add this to your handoff notes for the new chat:
+
+matchmaker.html exists — uploaded and confirmed. It uses the old design system (Playfair Display font, old CSS variables like --surface, --text-soft). Needs to be updated to match the current design system (Cormorant Garamond + Cabinet Grotesk, new CSS variables). Also needs the new 5-tab nav added.
+
+Also add to the "pages that don't exist" section — matchmaker.html does exist, remove it from that list. Only double_date.html and reset-password.html are still missing.
+Do you want me to update matchmaker.html to match the current design system and add the new tab bar before you open the new chat?
