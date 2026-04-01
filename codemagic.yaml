@@ -29,14 +29,9 @@ workflows:
       - name: Install CocoaPods
         script: |
           cd ios/App && pod init && pod install
-      - name: Set up signing
+      - name: Set up code signing
         script: |
-          keychain initialize
-          app-store-connect fetch-signing-files com.miru.dating \
-            --type IOS_APP_STORE \
-            --create
-          keychain add-certificates
-          xcode-project use-profiles
+          xcode-project use-profiles --project ios/App/App.xcodeproj
       - name: Build iOS
         script: |
           xcode-project build-ipa \
