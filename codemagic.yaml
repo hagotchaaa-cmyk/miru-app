@@ -2,7 +2,9 @@ workflows:
   ios-workflow:
     name: Miru iOS Build
     max_build_duration: 60
-    environment:
+  environment:
+      groups:
+        - default
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.miru.dating
