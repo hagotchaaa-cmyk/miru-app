@@ -12,14 +12,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg:        #0A0714;
       --s1:        #100D22;
-      --s2:        #181430;
       --border:    rgba(180,170,255,0.10);
       --border-hi: rgba(180,170,255,0.22);
       --white:     #FFFFFF;
@@ -30,51 +28,23 @@
       --gold:      #F5CE7A;
       --green:     #7DFFC8;
       --red:       #FF7090;
-      --shadow:    0 24px 60px rgba(0,0,0,0.55);
       --serif:     'Cormorant Garamond', serif;
       --sans:      'Cabinet Grotesk', sans-serif;
     }
 
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      overflow-x: hidden;
-    }
-
-    body {
-      padding-bottom: 100px;
-      position: relative;
-    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+    body { padding-bottom: 90px; }
 
     body::before {
       content: "";
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.26), transparent),
-        radial-gradient(ellipse 40% 40% at 85% 55%, rgba(120,90,255,0.08), transparent);
+      background: radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.22), transparent);
       pointer-events: none;
       z-index: 0;
     }
 
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.5;
-    }
-
-    .shell {
-      max-width: 440px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+    .shell { max-width: 440px; margin: 0 auto; position: relative; z-index: 1; }
 
     /* ── Top bar ── */
     .top-bar {
@@ -84,464 +54,220 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 18px;
+      padding: 13px 16px;
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      background: rgba(10,7,20,0.80);
+      background: rgba(10,7,20,0.85);
       border-bottom: 1px solid var(--border);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
+    .logo { font-family: var(--serif); font-size: 24px; font-style: italic; font-weight: 700; color: var(--white); }
 
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 11px;
-      border: 1px solid rgba(255,255,255,0.10);
-    }
-
-    .logo {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-style: italic;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.4px;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      position: relative;
-    }
+    .top-actions { display: flex; align-items: center; gap: 8px; position: relative; }
 
     .icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-family: var(--sans);
-      transition: background 0.15s;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); font-size: 15px; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; font-family: var(--sans);
     }
-    .icon-btn:hover { background: rgba(255,255,255,0.09); }
 
-    /* ── Dropdown menu ── */
+    /* ── Menu ── */
     .menu {
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      width: 220px;
-      border-radius: 22px;
-      background: rgba(16,13,34,0.98);
-      border: 1px solid var(--border-hi);
-      box-shadow: var(--shadow);
-      padding: 8px;
-      display: none;
-      z-index: 100;
-      animation: menuIn 0.18s ease both;
+      position: absolute; top: calc(100% + 10px); right: 0; width: 210px;
+      border-radius: 20px; background: rgba(16,13,34,0.98);
+      border: 1px solid var(--border-hi); box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+      padding: 8px; display: none; z-index: 100;
     }
-
-    @keyframes menuIn {
-      from { opacity:0; transform:translateY(-6px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-
     .menu.show { display: block; }
+    .menu-title { padding: 7px 10px 5px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+    .menu-item {
+      width: 100%; text-align: left; padding: 11px 12px; border-radius: 13px;
+      background: transparent; border: none; color: var(--text); font-family: var(--sans);
+      font-size: 13px; font-weight: 700; display: flex; align-items: center;
+      justify-content: space-between; gap: 8px; cursor: pointer;
+    }
+    .menu-item:hover { background: rgba(255,255,255,0.06); }
+    .menu-item small { color: var(--muted); font-size: 11px; }
+    .menu-item.premium { color: var(--gold); }
+    .menu-item.danger { color: var(--red); }
+    .menu-divider { height: 1px; background: var(--border); margin: 5px 4px; }
 
-    .menu-title {
-      padding: 8px 10px 6px;
-      color: var(--muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 800;
+    /* ── Instagram-style profile header ── */
+    .profile-header {
+      padding: 16px 16px 0;
     }
 
-    .menu-item {
-      width: 100%;
-      text-align: left;
-      padding: 12px 12px;
-      border-radius: 14px;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
+    .profile-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      cursor: pointer;
-      transition: background 0.12s;
+      gap: 20px;
+      margin-bottom: 14px;
     }
 
-    .menu-item:hover { background: rgba(255,255,255,0.06); }
-    .menu-item small { color: var(--muted); font-size: 11px; font-weight: 700; }
-
-    .menu-item.premium {
-      color: var(--gold);
-    }
-
-    .menu-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 6px 4px;
-    }
-
-    .menu-item.danger { color: var(--red); }
-
-    /* ── Cover ── */
-    .cover {
-      height: 200px;
-      background:
-        radial-gradient(circle at 70% 30%, rgba(184,174,255,0.22), transparent 50%),
-        linear-gradient(135deg, #2A2060 0%, #160E32 50%, #0A0714 100%);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .cover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(10,7,20,0.95) 100%);
-    }
-
-    .cover-edit {
-      position: absolute;
-      bottom: 14px;
-      right: 14px;
-      z-index: 2;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(10,7,20,0.65);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: var(--soft);
-      font-family: var(--sans);
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: background 0.15s;
-    }
-    .cover-edit:hover { background: rgba(255,255,255,0.12); }
-
-    .cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* ── Profile hero ── */
-    .profile-hero {
-      padding: 0 18px 20px;
-      margin-top: -70px;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Big centered avatar */
-    .avatar-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 16px;
-    }
-
-    .avatar-ring {
-      position: relative;
-      width: 130px;
-      height: 130px;
-    }
+    /* Avatar — smaller, circular, Instagram style */
+    .avatar-wrap { position: relative; flex-shrink: 0; }
 
     .avatar {
-      width: 130px;
-      height: 130px;
-      border-radius: 38px;
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
       overflow: hidden;
       background: linear-gradient(145deg, #3D3280, #1A1448);
-      border: 4px solid var(--bg);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.50), 0 0 0 1px rgba(184,174,255,0.20);
+      border: 2px solid rgba(184,174,255,0.30);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 44px;
+      font-size: 28px;
       font-weight: 800;
       color: var(--white);
+      cursor: pointer;
     }
 
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .avatar-edit-btn {
       position: absolute;
-      right: -6px;
-      bottom: -6px;
-      width: 36px;
-      height: 36px;
+      right: -2px;
+      bottom: -2px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: var(--white);
       color: #0A0714;
-      border: 3px solid var(--bg);
-      font-size: 14px;
+      border: 2px solid var(--bg);
+      font-size: 11px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-family: var(--sans);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.30);
-      transition: transform 0.15s;
     }
-    .avatar-edit-btn:hover { transform: scale(1.08); }
 
     .banner-edit-btn {
       position: absolute;
-      left: -6px;
-      bottom: -6px;
-      width: 36px;
-      height: 36px;
+      left: -2px;
+      bottom: -2px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: rgba(10,7,20,0.80);
       color: var(--white);
-      border: 3px solid var(--bg);
-      font-size: 14px;
+      border: 2px solid var(--bg);
+      font-size: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       font-family: var(--sans);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.30);
-      backdrop-filter: blur(8px);
-      transition: transform 0.15s, background 0.15s;
-    }
-    .banner-edit-btn:hover { transform: scale(1.08); background: rgba(255,255,255,0.15); }
-
-    /* Identity info — centered */
-    .identity {
-      text-align: center;
-      margin-bottom: 16px;
     }
 
-    .name-row {
+    /* Stats row — Instagram style */
+    .stats-row {
+      flex: 1;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+    }
+
+    .stat strong {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.3px;
+    }
+
+    .stat span { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+    /* Name + bio below avatar row */
+    .profile-info { margin-bottom: 12px; }
+
+    .profile-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.4px;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 4px;
-    }
-
-    .name {
-      font-family: var(--serif);
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: -0.8px;
-      line-height: 1;
-      color: var(--white);
     }
 
     .premium-badge {
       display: none;
-      padding: 5px 10px;
+      padding: 3px 8px;
       border-radius: 999px;
       background: linear-gradient(135deg, rgba(245,206,122,0.18), rgba(232,146,10,0.10));
       border: 1px solid rgba(245,206,122,0.30);
       color: var(--gold);
       font-size: 10px;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      font-family: var(--sans);
     }
+    .premium-badge.show { display: inline-flex; }
 
-    .premium-badge.show { display: inline-flex; align-items: center; gap: 4px; }
+    .profile-handle { font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 5px; }
+    .profile-bio { font-size: 13px; color: var(--soft); line-height: 1.55; margin-bottom: 10px; }
 
-    .handle {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .bio {
-      font-size: 14px;
-      color: var(--soft);
-      line-height: 1.65;
-      max-width: 320px;
-      margin: 0 auto 12px;
-    }
-
-    .vibe-chips {
-      display: flex;
-      gap: 7px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
+    .vibe-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
     .vibe-chip {
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      color: var(--soft);
-      font-size: 11px;
-      font-weight: 700;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--soft); font-size: 11px; font-weight: 700;
     }
 
-    /* Action row */
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
+    /* Action buttons */
+    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
 
-    .edit-btn {
-      padding: 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--border-hi);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .edit-btn:hover { background: rgba(255,255,255,0.11); }
-
-    .share-btn {
-      padding: 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .share-btn:hover { background: rgba(255,255,255,0.07); }
-
-    /* Stats row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .stat {
-      padding: 13px 8px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
+    .edit-btn, .share-btn {
+      padding: 9px; border-radius: 8px; font-family: var(--sans);
+      font-size: 13px; font-weight: 800; cursor: pointer; border: none;
       text-align: center;
     }
+    .edit-btn { background: rgba(255,255,255,0.10); color: var(--text); }
+    .share-btn { background: rgba(255,255,255,0.06); color: var(--muted); }
 
-    .stat strong {
-      display: block;
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--white);
-      letter-spacing: -0.3px;
-      margin-bottom: 3px;
-    }
-
-    .stat span {
-      font-size: 10px;
-      color: var(--muted);
-      font-weight: 700;
-      line-height: 1.3;
-    }
-
-    /* ── Posts section ── */
-    .posts-section {
-      padding: 0 14px;
-    }
-
-    .posts-header {
+    /* ── Filter tabs ── */
+    .filter-bar {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 4px 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
     }
-
-    .posts-title {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-style: italic;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.4px;
-    }
-
-    .posts-title em { color: var(--lilac); }
-
-    .post-count-chip {
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--muted);
-    }
-
-    /* Filter tabs */
-    .filter-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .filter-tabs::-webkit-scrollbar { display: none; }
 
     .filter-tab {
-      flex-shrink: 0;
-      padding: 9px 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
+      flex: 1;
+      padding: 11px 0;
+      background: none;
+      border: none;
       color: var(--muted);
       font-family: var(--sans);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       cursor: pointer;
+      border-bottom: 2px solid transparent;
       transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
 
-    .filter-tab.on {
-      background: var(--white);
-      color: #0A0714;
-      border-color: var(--white);
-      box-shadow: 0 4px 16px rgba(255,255,255,0.12);
-    }
+    .filter-tab.on { color: var(--white); border-bottom-color: var(--white); }
 
-    /* Posts grid */
+    /* ── Posts grid — full bleed Instagram style ── */
     .posts-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
-      border-radius: 20px;
-      overflow: hidden;
+      gap: 2px;
     }
 
     .grid-cell {
@@ -552,618 +278,263 @@
       cursor: pointer;
     }
 
-    .grid-cell img,
-    .grid-cell video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+    .grid-cell img, .grid-cell video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
       transition: transform 0.25s;
     }
 
-    .grid-cell:hover img,
-    .grid-cell:hover video { transform: scale(1.05); }
+    .grid-cell:hover img, .grid-cell:hover video { transform: scale(1.04); }
 
     .cell-badge {
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(10,7,20,0.65);
-      color: var(--white);
-      font-size: 10px;
-      font-weight: 800;
-      backdrop-filter: blur(6px);
+      position: absolute; top: 5px; right: 5px;
+      padding: 2px 6px; border-radius: 4px;
+      background: rgba(10,7,20,0.65); color: var(--white);
+      font-size: 9px; font-weight: 800; backdrop-filter: blur(6px);
     }
 
     .cell-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 20px 8px 7px;
-      background: linear-gradient(transparent, rgba(5,3,15,0.80));
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--white);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 14px 6px 5px;
+      background: linear-gradient(transparent, rgba(5,3,15,0.75));
+      font-size: 10px; font-weight: 700; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* Empty state */
     .grid-empty {
       grid-column: span 3;
-      padding: 40px 20px;
+      padding: 48px 20px;
       text-align: center;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed var(--border-hi);
     }
-
     .grid-empty-emoji { font-size: 36px; margin-bottom: 12px; }
-
-    .grid-empty-title {
-      font-family: var(--serif);
-      font-size: 22px;
-      font-style: italic;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-
-    .grid-empty-body {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 16px;
-    }
-
-    .grid-empty-btn {
-      padding: 12px 22px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #0A0714;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 800;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(255,255,255,0.14);
-    }
+    .grid-empty-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--white); margin-bottom: 8px; }
+    .grid-empty-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
     /* About section */
-    .about-section { display: none; padding: 4px 0; }
+    .about-section { display: none; padding: 16px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .about-card { padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); }
+    .about-card small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 5px; }
+    .about-card strong { font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.5; }
 
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .about-card {
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-    }
-
-    .about-card small {
-      display: block;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--muted);
-      margin-bottom: 5px;
-    }
-
-    .about-card strong {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.5;
-    }
-
-    /* ── FAB — plus button ── */
+    /* ── FAB ── */
     .fab {
-      position: fixed;
-      right: max(18px, calc(50% - 202px));
-      bottom: 84px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--white);
-      color: #0A0714;
-      border: none;
-      font-size: 26px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 12px 32px rgba(255,255,255,0.18), 0 4px 12px rgba(0,0,0,0.30);
-      z-index: 75;
-      font-family: var(--sans);
-      transition: transform 0.15s, box-shadow 0.15s;
+      position: fixed; right: max(18px, calc(50% - 202px)); bottom: 84px;
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--white); color: #0A0714; border: none;
+      font-size: 24px; font-weight: 900; display: flex;
+      align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 8px 24px rgba(255,255,255,0.16);
+      z-index: 75; font-family: var(--sans);
     }
 
-    .fab:hover {
-      transform: scale(1.08) translateY(-2px);
-      box-shadow: 0 18px 40px rgba(255,255,255,0.24);
-    }
-
-    .fab:active { transform: scale(0.94); }
-
-    /* ── Edit Profile Modal ── */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 110;
-      background: rgba(5,3,15,0.80);
-      backdrop-filter: blur(14px);
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 70px 14px 20px;
-    }
-
-    .modal-backdrop.show { display: flex; }
-
-    .modal-card {
-      width: 100%;
-      max-width: 420px;
-      background: #100D22;
-      border-radius: 28px;
-      border: 1px solid var(--border-hi);
-      padding: 22px 20px;
-      box-shadow: var(--shadow);
-      animation: slideDown 0.3s cubic-bezier(0.34,1.3,0.64,1) both;
-    }
-
-    @keyframes slideDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to   { transform: translateY(0);     opacity: 1; }
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 18px;
-    }
-
-    .modal-title {
-      font-family: var(--serif);
-      font-size: 28px;
-      font-style: italic;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: -0.5px;
-    }
-
-    .close-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-family: var(--sans);
-      transition: background 0.15s;
-    }
-    .close-btn:hover { background: rgba(255,255,255,0.09); }
-
-    .form-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-
-    .field { display: flex; flex-direction: column; gap: 6px; }
-
-    .field label {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .field input,
-    .field textarea {
-      width: 100%;
-      padding: 13px 15px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .field input:focus,
-    .field textarea:focus { border-color: var(--border-hi); }
-
-    .field textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
-
-    .save-btn {
-      width: 100%;
-      padding: 15px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #0A0714;
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 900;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(255,255,255,0.14);
-      transition: transform 0.15s;
-    }
-    .save-btn:hover { transform: translateY(-1px); }
-
-    /* ── Post Composer Sheet ── */
-    .sheet-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 110;
-      background: rgba(5,3,15,0.85);
-      backdrop-filter: blur(16px);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .sheet-backdrop.show { display: flex; }
-
-    .sheet-card {
-      width: 100%;
-      max-width: 440px;
-      background: #100D22;
-      border-radius: 28px 28px 0 0;
-      border: 1px solid var(--border-hi);
-      border-bottom: none;
-      padding: 0 0 24px;
-      box-shadow: 0 -20px 60px rgba(0,0,0,0.60);
-      max-height: 90dvh;
-      overflow-y: auto;
-      animation: sheetUp 0.35s cubic-bezier(0.34,1.3,0.64,1) both;
-    }
-
-    @keyframes sheetUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
-    }
-
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.14);
-      margin: 12px auto 0;
-    }
-
-    .sheet-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 18px 12px;
-    }
-
-    .sheet-title {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-style: italic;
-      font-weight: 700;
-      color: var(--white);
-    }
-
-    .sheet-post-btn {
-      padding: 10px 20px;
-      border-radius: 999px;
-      background: var(--white);
-      color: #0A0714;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 900;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(255,255,255,0.14);
-      transition: opacity 0.15s;
-    }
-
-    .sheet-post-btn:disabled { opacity: 0.40; cursor: not-allowed; }
-
-    /* Composer author row */
-    .composer-author {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 0 18px 12px;
-    }
-
-    .composer-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(145deg, #5F4EB3, #231A54);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--white);
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
-
-    .composer-name { font-size: 14px; font-weight: 800; color: var(--white); }
-    .composer-sub  { font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 1px; }
-
-    /* Caption */
-    .caption-input {
-      width: 100%;
-      min-height: 80px;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.65;
-      outline: none;
-      resize: none;
-      padding: 0 18px 14px;
-      caret-color: var(--lilac);
-    }
-
-    .caption-input::placeholder { color: var(--muted); }
-
-    /* Media pick area */
-    .media-pick-zone {
-      margin: 0 18px 14px;
-      border-radius: 20px;
-      border: 2px dashed var(--border-hi);
-      background: rgba(255,255,255,0.025);
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .media-pick-zone:hover {
-      border-color: rgba(184,174,255,0.38);
-      background: rgba(255,255,255,0.045);
-    }
-
-    .media-pick-zone.has-media { border-style: solid; border-color: var(--border); cursor: default; }
-
-    .pick-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 28px 20px;
-      text-align: center;
-    }
-
-    .pick-empty-icon { font-size: 28px; }
-    .pick-empty-label { font-size: 13px; font-weight: 800; color: var(--soft); }
-    .pick-empty-sub   { font-size: 11px; color: var(--muted); }
-
-    .pick-type-row { display: flex; gap: 8px; margin-top: 4px; }
-
-    .pick-type-btn {
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-family: var(--sans);
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border-hi);
-      color: var(--text);
-      transition: background 0.15s;
-    }
-    .pick-type-btn:hover { background: rgba(255,255,255,0.10); }
-
-    .preview-wrap { position: relative; }
-
-    .preview-wrap img,
-    .preview-wrap video {
-      width: 100%;
-      max-height: 320px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .preview-remove {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(10,7,20,0.70);
-      border: 1px solid rgba(255,255,255,0.18);
-      color: var(--white);
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-family: var(--sans);
-      backdrop-filter: blur(8px);
-    }
-
-    /* Composer toolbar */
-    .composer-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 18px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .toolbar-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.15s;
-      font-family: var(--sans);
-    }
-    .toolbar-btn:hover { background: rgba(255,255,255,0.08); color: var(--soft); }
-
-    .toolbar-hint { font-size: 11px; color: var(--muted); font-weight: 700; margin-left: 4px; }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%) translateY(12px);
-      padding: 11px 20px;
-      border-radius: 999px;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 800;
-      backdrop-filter: blur(16px);
-      z-index: 300;
-      opacity: 0;
-      transition: opacity 0.22s, transform 0.22s;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-    .toast.success { background:rgba(125,255,200,0.12); border:1px solid rgba(125,255,200,0.28); color:var(--green); }
-    .toast.info    { background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--soft); }
-    .toast.error   { background:rgba(255,112,144,0.12); border:1px solid rgba(255,112,144,0.28); color:var(--red); }
-
+    /* ── Tab bar ── */
     .tab-bar {
-      position: fixed;
-      left: 50%;
-      bottom: 0;
-      transform: translateX(-50%);
+      position: fixed; left: 50%; bottom: 0; transform: translateX(-50%);
       width: min(430px, 100%);
       padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: rgba(10,7,20,0.94);
-      border-top: 1px solid rgba(180,170,255,0.10);
-      backdrop-filter: blur(24px);
-      z-index: 70;
+      display: flex; justify-content: space-around; align-items: center;
+      background: rgba(10,7,20,0.94); border-top: 1px solid rgba(180,170,255,0.10);
+      backdrop-filter: blur(24px); z-index: 70;
     }
     .tab-item {
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 10px;
-      border-radius: 12px;
-      color: rgba(180,170,255,0.38);
-      transition: color 0.18s;
-      position: relative;
-      min-width: 52px;
+      text-decoration: none; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; padding: 6px 10px; border-radius: 12px;
+      color: rgba(180,170,255,0.38); transition: color 0.18s; position: relative; min-width: 52px;
     }
     .tab-item.on { color: #FFFFFF; }
     .tab-item.on::before {
-      content: "";
-      position: absolute;
-      top: -1px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 3px;
-      border-radius: 0 0 4px 4px;
+      content: ""; position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+      width: 24px; height: 3px; border-radius: 0 0 4px 4px;
       background: linear-gradient(90deg, #B8AEFF, #7DFFC8);
     }
     .tab-svg { width: 21px; height: 21px; }
     .tab-item:not(.on) .tab-svg { opacity: 0.45; }
     .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
+
+    /* ── Edit modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 110;
+      background: rgba(5,3,15,0.80); backdrop-filter: blur(14px);
+      display: none; align-items: flex-start; justify-content: center;
+      padding: 70px 14px 20px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-card {
+      width: 100%; max-width: 420px; background: #100D22;
+      border-radius: 26px; border: 1px solid var(--border-hi);
+      padding: 20px 18px; box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .modal-title { font-family: var(--serif); font-size: 26px; font-style: italic; font-weight: 700; color: var(--white); }
+    .close-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--muted); font-size: 13px; display: flex;
+      align-items: center; justify-content: center; cursor: pointer; font-family: var(--sans);
+    }
+    .form-grid { display: flex; flex-direction: column; gap: 11px; margin-bottom: 14px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted); }
+    .field input, .field textarea {
+      width: 100%; padding: 12px 14px; border-radius: 14px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--sans); font-size: 14px; outline: none;
+    }
+    .field textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+    .save-btn {
+      width: 100%; padding: 14px; border-radius: 999px; background: var(--white);
+      color: #0A0714; font-family: var(--sans); font-size: 14px; font-weight: 900;
+      border: none; cursor: pointer;
+    }
+
+    /* ── Composer sheet ── */
+    .sheet-backdrop {
+      position: fixed; inset: 0; z-index: 110;
+      background: rgba(5,3,15,0.85); backdrop-filter: blur(16px);
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .sheet-backdrop.show { display: flex; }
+    .sheet-card {
+      width: 100%; max-width: 440px; background: #100D22;
+      border-radius: 28px 28px 0 0; border: 1px solid var(--border-hi);
+      border-bottom: none; padding: 0 0 24px;
+      box-shadow: 0 -20px 60px rgba(0,0,0,0.60);
+      max-height: 90dvh; overflow-y: auto;
+    }
+    .sheet-handle { width: 36px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.14); margin: 12px auto 0; }
+    .sheet-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; }
+    .sheet-title { font-family: var(--serif); font-size: 24px; font-style: italic; font-weight: 700; color: var(--white); }
+    .sheet-post-btn {
+      padding: 9px 18px; border-radius: 999px; background: var(--white);
+      color: #0A0714; font-family: var(--sans); font-size: 13px; font-weight: 900; border: none; cursor: pointer;
+    }
+    .sheet-post-btn:disabled { opacity: 0.40; cursor: not-allowed; }
+    .composer-author { display: flex; align-items: center; gap: 10px; padding: 0 16px 10px; }
+    .composer-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(145deg, #5F4EB3, #231A54);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: var(--white); overflow: hidden; flex-shrink: 0;
+    }
+    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .composer-name { font-size: 13px; font-weight: 800; color: var(--white); }
+    .composer-sub { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .caption-input {
+      width: 100%; min-height: 70px; background: none; border: none;
+      color: var(--text); font-family: var(--sans); font-size: 14px;
+      line-height: 1.65; outline: none; resize: none; padding: 0 16px 12px;
+    }
+    .caption-input::placeholder { color: var(--muted); }
+    .media-pick-zone {
+      margin: 0 16px 12px; border-radius: 18px;
+      border: 2px dashed var(--border-hi); background: rgba(255,255,255,0.025);
+      overflow: hidden; cursor: pointer;
+    }
+    .media-pick-zone.has-media { border-style: solid; border-color: var(--border); cursor: default; }
+    .pick-empty { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 24px 20px; text-align: center; }
+    .pick-empty-icon { font-size: 26px; }
+    .pick-empty-label { font-size: 13px; font-weight: 800; color: var(--soft); }
+    .pick-empty-sub { font-size: 11px; color: var(--muted); }
+    .pick-type-row { display: flex; gap: 8px; margin-top: 4px; }
+    .pick-type-btn {
+      padding: 7px 14px; border-radius: 999px; font-family: var(--sans);
+      font-size: 12px; font-weight: 800; cursor: pointer;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border-hi); color: var(--text);
+    }
+    .preview-wrap { position: relative; }
+    .preview-wrap img, .preview-wrap video { width: 100%; max-height: 280px; object-fit: cover; display: block; }
+    .preview-remove {
+      position: absolute; top: 7px; right: 7px; width: 28px; height: 28px;
+      border-radius: 50%; background: rgba(10,7,20,0.70); border: 1px solid rgba(255,255,255,0.18);
+      color: var(--white); font-size: 11px; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; font-family: var(--sans); backdrop-filter: blur(8px);
+    }
+    .composer-toolbar {
+      display: flex; align-items: center; gap: 10px; padding: 8px 16px 0;
+      border-top: 1px solid var(--border);
+    }
+    .toolbar-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--muted); font-size: 14px; display: flex;
+      align-items: center; justify-content: center; cursor: pointer; font-family: var(--sans);
+    }
+    .toolbar-hint { font-size: 11px; color: var(--muted); font-weight: 700; margin-left: 4px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 90px; left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      padding: 10px 18px; border-radius: 999px; font-family: var(--sans);
+      font-size: 13px; font-weight: 800; backdrop-filter: blur(16px);
+      z-index: 300; opacity: 0; transition: opacity 0.22s, transform 0.22s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.success { background:rgba(125,255,200,0.12); border:1px solid rgba(125,255,200,0.28); color:var(--green); }
+    .toast.info    { background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--soft); }
+    .toast.error   { background:rgba(255,112,144,0.12); border:1px solid rgba(255,112,144,0.28); color:var(--red); }
   </style>
 </head>
-
 <body>
-  <!-- Hidden inputs -->
-  <input type="file" id="avatarInput"       accept="image/*"         hidden />
-  <input type="file" id="bannerInput"       accept="image/*"         hidden />
-  <input type="file" id="photoCameraInput"  accept="image/*"         hidden />
-  <input type="file" id="videoInput"        accept="video/*"         hidden />
-  <input type="file" id="libraryInput"      accept="image/*,video/*" hidden />
+  <input type="file" id="avatarInput"      accept="image/*"         hidden />
+  <input type="file" id="bannerInput"      accept="image/*"         hidden />
+  <input type="file" id="photoCameraInput" accept="image/*"         hidden />
+  <input type="file" id="videoInput"       accept="video/*"         hidden />
+  <input type="file" id="libraryInput"     accept="image/*,video/*" hidden />
 
   <div class="shell">
-
     <!-- Top bar -->
     <div class="top-bar">
-      <div class="brand">
-        <img class="brand-icon" src="icon.svg" alt="Miru" />
-        <div class="logo">miru.</div>
-      </div>
+      <div class="logo">miru.</div>
       <div class="top-actions">
-        <button class="icon-btn" id="menuBtn" onclick="toggleMenu()">⋯</button>
+        <button class="icon-btn" onclick="toggleMenu()">⋯</button>
         <div class="menu" id="profileMenu">
           <div class="menu-title">Profile</div>
           <button class="menu-item" onclick="openEdit()">✏️ Edit profile <small>name &amp; bio</small></button>
           <button class="menu-item" onclick="triggerAvatarUpload()">🖼️ Change photo <small>update avatar</small></button>
-          <button class="menu-item" onclick="triggerBannerUpload()">🏞️ Change banner <small>update cover image</small></button>
+          <button class="menu-item" onclick="triggerBannerUpload()">🏞️ Change banner <small>update cover</small></button>
           <div class="menu-divider"></div>
-          <button class="menu-item premium" onclick="goTo('premium.html')">⭐ Go Premium <small>unlock more</small></button>
+          <button class="menu-item premium" onclick="window.location.href='premium.html'">⭐ Go Premium <small>unlock more</small></button>
           <div class="menu-divider"></div>
-          <button class="menu-item" onclick="goTo('matchmaker.html')">🤖 AI Matchmaker <small>let AI find you</small></button>
-          <button class="menu-item" onclick="showToast('Notifications coming soon.', 'info')">🔔 Notifications <small>alerts &amp; activity</small></button>
-          <button class="menu-item" onclick="showToast('Privacy controls coming soon.', 'info')">🔒 Privacy <small>visibility &amp; safety</small></button>
+          <button class="menu-item" onclick="showToast('Notifications coming soon.', 'info')">🔔 Notifications</button>
+          <button class="menu-item" onclick="showToast('Privacy controls coming soon.', 'info')">🔒 Privacy</button>
           <div class="menu-divider"></div>
-          <button class="menu-item danger" onclick="logout()">↗ Sign out <small>secure log out</small></button>
+          <button class="menu-item danger" onclick="logout()">↗ Sign out</button>
         </div>
       </div>
     </div>
 
-    <!-- Cover / Banner photo -->
-    <div class="cover" id="coverEl">
-      <img id="bannerImg" src="" alt="Banner" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
-      <button class="cover-edit" onclick="triggerBannerUpload()">🖼️ Change banner</button>
-    </div>
-
-    <!-- Profile hero -->
-    <div class="profile-hero">
-
-      <!-- Big centered avatar -->
-      <div class="avatar-wrap">
-        <div class="avatar-ring">
-          <div class="avatar" id="avatarEl">
-            <img id="avatarImg" src="" alt="Avatar" style="display:none;" />
+    <!-- Profile header — Instagram style -->
+    <div class="profile-header">
+      <div class="profile-row">
+        <!-- Small circular avatar with two tiny buttons -->
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatarEl" onclick="triggerAvatarUpload()">
+            <img id="avatarImg" src="" alt="" style="display:none;" />
             <span id="avatarInitial">?</span>
           </div>
-          <!-- Change profile photo -->
-          <button class="avatar-edit-btn" onclick="triggerAvatarUpload()" title="Change photo">✦</button>
-          <!-- Change banner — sits to the left of the avatar -->
-          <button class="banner-edit-btn" onclick="triggerBannerUpload()" title="Change banner">🏞️</button>
+          <button class="avatar-edit-btn" onclick="triggerAvatarUpload()">✦</button>
+          <button class="banner-edit-btn" onclick="triggerBannerUpload()" title="Change banner">🏞</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat"><strong id="statPosts">0</strong><span>posts</span></div>
+          <div class="stat"><strong id="statLikes">0</strong><span>liked</span></div>
+          <div class="stat"><strong id="statMatches">0</strong><span>matches</span></div>
+          <div class="stat"><strong id="statMedia">0</strong><span>media</span></div>
         </div>
       </div>
 
-      <!-- Identity -->
-      <div class="identity">
-        <div class="name-row">
-          <div class="name" id="nameEl">Loading…</div>
+      <!-- Name + bio -->
+      <div class="profile-info">
+        <div class="profile-name">
+          <span id="nameEl">Loading…</span>
           <div class="premium-badge" id="premiumBadge">⭐ Premium</div>
         </div>
-        <div class="handle" id="handleEl">@miruuser</div>
-        <div class="bio" id="bioEl">Say something real.</div>
+        <div class="profile-handle" id="handleEl">@miruuser</div>
+        <div class="profile-bio" id="bioEl">Say something real.</div>
         <div class="vibe-chips">
           <div class="vibe-chip">video-first</div>
           <div class="vibe-chip">real energy</div>
@@ -1171,58 +542,76 @@
         </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Action buttons -->
       <div class="action-row">
-        <button class="edit-btn" onclick="openEdit()">✏️ Edit profile</button>
-        <button class="share-btn" onclick="shareProfile()">↗ Share</button>
+        <button class="edit-btn" onclick="openEdit()">Edit profile</button>
+        <button class="share-btn" onclick="shareProfile()">Share</button>
       </div>
 
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat"><strong id="statPosts">0</strong><span>posts</span></div>
-        <div class="stat"><strong id="statLikes">0</strong><span>liked</span></div>
-        <div class="stat"><strong id="statMatches">0</strong><span>matches</span></div>
-        <div class="stat"><strong id="statMedia">0</strong><span>media</span></div>
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <button class="filter-tab on" data-tab="all" onclick="switchTab(this,'all')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+          Posts
+        </button>
+        <button class="filter-tab" data-tab="photos" onclick="switchTab(this,'photos')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Photos
+        </button>
+        <button class="filter-tab" data-tab="videos" onclick="switchTab(this,'videos')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Videos
+        </button>
+        <button class="filter-tab" data-tab="about" onclick="switchTab(this,'about')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          About
+        </button>
       </div>
-
     </div>
 
-    <!-- Posts section -->
-    <div class="posts-section">
+    <!-- Posts grid -->
+    <div id="mediaSection">
+      <div class="posts-grid" id="postsGrid"></div>
+    </div>
 
-      <div class="posts-header">
-        <div class="posts-title">Your <em>posts</em></div>
-        <div class="post-count-chip" id="postCountChip">0 drops</div>
+    <div class="about-section" id="aboutSection">
+      <div class="about-grid">
+        <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
+        <div class="about-card"><small>Best energy</small><strong>Intentional, playful, actually communicative</strong></div>
+        <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, a conversation that keeps going</strong></div>
+        <div class="about-card"><small>Status</small><strong id="aboutStatus">Standard profile</strong></div>
       </div>
-
-      <div class="filter-tabs">
-        <button class="filter-tab on" data-tab="all"    onclick="switchTab(this,'all')">All</button>
-        <button class="filter-tab"    data-tab="photos" onclick="switchTab(this,'photos')">Photos</button>
-        <button class="filter-tab"    data-tab="videos" onclick="switchTab(this,'videos')">Videos</button>
-        <button class="filter-tab"    data-tab="about"  onclick="switchTab(this,'about')">About</button>
-      </div>
-
-      <div id="mediaSection">
-        <div class="posts-grid" id="postsGrid"></div>
-      </div>
-
-      <div class="about-section" id="aboutSection">
-        <div class="about-grid">
-          <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
-          <div class="about-card"><small>Best energy</small><strong>Intentional, playful, actually communicative</strong></div>
-          <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, a conversation that keeps going</strong></div>
-          <div class="about-card"><small>Status</small><strong id="aboutStatus">Standard profile</strong></div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <!-- FAB — plus button → opens composer -->
+  <!-- FAB -->
   <button class="fab" onclick="openComposer()" aria-label="Create post">＋</button>
 
   <!-- Tab bar -->
- <!-- Edit Profile Modal -->
+  <nav class="tab-bar">
+    <a class="tab-item" href="index.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Matches</span>
+    </a>
+    <a class="tab-item" href="explore.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span class="tab-label">Explore</span>
+    </a>
+    <a class="tab-item" href="discover.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="tab-label">Discover</span>
+    </a>
+    <a class="tab-item" href="messages.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a class="tab-item on" href="profile.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
+
+  <!-- Edit Modal -->
   <div class="modal-backdrop" id="editModal">
     <div class="modal-card">
       <div class="modal-head">
@@ -1230,24 +619,15 @@
         <button class="close-btn" onclick="closeEdit()">✕</button>
       </div>
       <div class="form-grid">
-        <div class="field">
-          <label>Name</label>
-          <input id="editName" type="text" placeholder="Your name" autocomplete="name" />
-        </div>
-        <div class="field">
-          <label>Bio</label>
-          <textarea id="editBio" placeholder="Say something real about you…"></textarea>
-        </div>
-        <div class="field">
-          <label>Age</label>
-          <input id="editAge" type="number" placeholder="Your age" min="18" max="99" />
-        </div>
+        <div class="field"><label>Name</label><input id="editName" type="text" placeholder="Your name" autocomplete="name" /></div>
+        <div class="field"><label>Bio</label><textarea id="editBio" placeholder="Say something real about you…"></textarea></div>
+        <div class="field"><label>Age</label><input id="editAge" type="number" placeholder="Your age" min="18" max="99" /></div>
       </div>
       <button class="save-btn" onclick="saveEdit()">Save changes</button>
     </div>
   </div>
 
-  <!-- Post Composer Sheet -->
+  <!-- Composer Sheet -->
   <div class="sheet-backdrop" id="composerSheet">
     <div class="sheet-card">
       <div class="sheet-handle"></div>
@@ -1255,8 +635,6 @@
         <div class="sheet-title">New post</div>
         <button class="sheet-post-btn" id="sheetPostBtn" onclick="publishPost()" disabled>Share</button>
       </div>
-
-      <!-- Author row -->
       <div class="composer-author">
         <div class="composer-avatar" id="composerAvatar"></div>
         <div>
@@ -1264,16 +642,7 @@
           <div class="composer-sub">Posting to Discover</div>
         </div>
       </div>
-
-      <!-- Caption input -->
-      <textarea
-        class="caption-input"
-        id="postCaption"
-        placeholder="Say something real… a thought, a vibe, a question."
-        maxlength="300"
-      ></textarea>
-
-      <!-- Media picker zone -->
+      <textarea class="caption-input" id="postCaption" placeholder="Say something real… a thought, a vibe, a question." maxlength="300"></textarea>
       <div class="media-pick-zone" id="mediaPick" onclick="triggerPhotoPicker()">
         <div class="pick-empty" id="pickEmpty">
           <div class="pick-empty-icon">📸</div>
@@ -1286,20 +655,18 @@
         </div>
         <div class="preview-wrap" id="previewWrap" style="display:none;"></div>
       </div>
-
-      <!-- Toolbar -->
       <div class="composer-toolbar">
-        <button class="toolbar-btn" onclick="triggerPhotoPicker()" title="Photo">📷</button>
-        <button class="toolbar-btn" onclick="triggerVideoPicker()" title="Video">🎥</button>
+        <button class="toolbar-btn" onclick="triggerPhotoPicker()">📷</button>
+        <button class="toolbar-btn" onclick="triggerVideoPicker()">🎥</button>
         <span class="toolbar-hint">Photo · Video</span>
       </div>
     </div>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script>
+
     const sb = supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
@@ -1735,28 +1102,7 @@
     }
 
     init();
+  
   </script>
-  <nav class="tab-bar">
-    <a class="tab-item" href="index.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span class="tab-label">Matches</span>
-    </a>
-    <a class="tab-item" href="explore.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-      <span class="tab-label">Explore</span>
-    </a>
-    <a class="tab-item" href="discover.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-      <span class="tab-label">Discover</span>
-    </a>
-    <a class="tab-item" href="messages.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span class="tab-label">Messages</span>
-    </a>
-    <a class="tab-item on" href="profile.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="tab-label">Profile</span>
-    </a>
-  </nav>
 </body>
 </html>
