@@ -870,6 +870,59 @@
     .toast.success { background: rgba(125,255,200,0.12); border: 1px solid rgba(125,255,200,0.28); color: var(--green); }
     .toast.info    { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--soft); }
     .toast.error   { background: rgba(255,112,144,0.12); border: 1px solid rgba(255,112,144,0.28); color: var(--red); }
+    /* ── Account management modal ── */
+    .acct-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .acct-card:hover { background: rgba(255,255,255,0.07); }
+    .acct-card.danger-card { border-color: rgba(255,112,144,0.18); }
+    .acct-card.danger-card:hover { background: rgba(255,112,144,0.06); }
+    .acct-icon { font-size: 24px; flex-shrink: 0; }
+    .acct-body { flex: 1; }
+    .acct-title { font-size: 14px; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+    .acct-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+    .acct-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
+
+    .confirm-icon { font-size: 40px; text-align: center; margin-bottom: 14px; }
+    .confirm-title { font-family: var(--serif); font-size: 24px; font-style: italic; font-weight: 700; color: var(--white); text-align: center; margin-bottom: 10px; }
+    .confirm-body { font-size: 13px; color: var(--muted); line-height: 1.65; text-align: center; margin-bottom: 20px; }
+    .confirm-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: opacity 0.2s;
+    }
+    .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .confirm-btn.danger-btn { background: var(--red); color: var(--white); }
+    .confirm-back {
+      width: 100%;
+      padding: 12px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -896,6 +949,7 @@
           <button class="menu-item" onclick="showToast('Notifications coming soon.', 'info')">🔔 Notifications</button>
           <button class="menu-item" onclick="showToast('Privacy controls coming soon.', 'info')">🔒 Privacy</button>
           <div class="menu-divider"></div>
+          <button class="menu-item" onclick="openAccountModal()">⚙️ Manage account <small>pause or delete</small></button>
           <button class="menu-item danger" onclick="logout()">↗ Sign out</button>
         </div>
       </div>
@@ -1031,6 +1085,55 @@
         <div class="field"><label>Age</label><input id="editAge" type="number" placeholder="Your age" min="18" max="99" /></div>
       </div>
       <button class="save-btn" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+
+  <!-- Account Management Modal -->
+  <div class="modal-backdrop" id="accountModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Manage account</div>
+        <button class="close-btn" onclick="closeAccountModal()">✕</button>
+      </div>
+
+      <!-- Default view: two options -->
+      <div id="accountOptions">
+        <div class="acct-card" onclick="showPauseConfirm()">
+          <div class="acct-icon">⏸️</div>
+          <div class="acct-body">
+            <div class="acct-title">Pause account</div>
+            <div class="acct-desc">Hide your profile from matches and explore. Your data stays safe and you can reactivate any time by logging back in.</div>
+          </div>
+          <div class="acct-arrow">›</div>
+        </div>
+        <div class="acct-card danger-card" onclick="showDeleteConfirm()">
+          <div class="acct-icon">🗑️</div>
+          <div class="acct-body">
+            <div class="acct-title" style="color:var(--red)">Delete account</div>
+            <div class="acct-desc">Permanently remove your profile, posts, matches, and messages. This cannot be undone.</div>
+          </div>
+          <div class="acct-arrow" style="color:var(--red)">›</div>
+        </div>
+      </div>
+
+      <!-- Pause confirm view -->
+      <div id="pauseConfirm" style="display:none;">
+        <div class="confirm-icon">⏸️</div>
+        <div class="confirm-title">Pause your account?</div>
+        <div class="confirm-body">Your profile will be hidden from everyone. Log back in any time to reactivate — nothing will be deleted.</div>
+        <button class="confirm-btn" onclick="pauseAccount()">Yes, pause my account</button>
+        <button class="confirm-back" onclick="showAccountOptions()">← Go back</button>
+      </div>
+
+      <!-- Delete confirm view -->
+      <div id="deleteConfirm" style="display:none;">
+        <div class="confirm-icon">🗑️</div>
+        <div class="confirm-title" style="color:var(--red)">Delete everything?</div>
+        <div class="confirm-body">Your profile, posts, likes, matches, and messages will be permanently deleted. This cannot be undone.</div>
+        <button class="confirm-btn danger-btn" onclick="deleteAccount()">Yes, delete my account</button>
+        <button class="confirm-back" onclick="showAccountOptions()">← Go back</button>
+      </div>
+
     </div>
   </div>
 
@@ -1470,6 +1573,83 @@
       document.getElementById('libraryInput').addEventListener('change', e => {
         if (e.target.files[0]) setPreview(e.target.files[0]);
       });
+    }
+
+    // ── Account management ────────────────────────────────────
+    function openAccountModal() {
+      closeMenu();
+      showAccountOptions();
+      document.getElementById('accountModal').classList.add('show');
+    }
+
+    function closeAccountModal() {
+      document.getElementById('accountModal').classList.remove('show');
+    }
+
+    function showAccountOptions() {
+      document.getElementById('accountOptions').style.display = 'block';
+      document.getElementById('pauseConfirm').style.display  = 'none';
+      document.getElementById('deleteConfirm').style.display = 'none';
+    }
+
+    function showPauseConfirm() {
+      document.getElementById('accountOptions').style.display = 'none';
+      document.getElementById('pauseConfirm').style.display  = 'block';
+    }
+
+    function showDeleteConfirm() {
+      document.getElementById('accountOptions').style.display = 'none';
+      document.getElementById('deleteConfirm').style.display = 'block';
+    }
+
+    async function pauseAccount() {
+      const btn = document.querySelector('#pauseConfirm .confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Pausing…';
+
+      try {
+        const { error } = await sb.from('profiles')
+          .update({ status: 'paused' })
+          .eq('user_id', me.id);
+
+        if (error) throw error;
+
+        await sb.auth.signOut();
+        window.location.replace('auth.html');
+
+      } catch (err) {
+        showToast('Something went wrong. Please try again.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Yes, pause my account';
+      }
+    }
+
+    async function deleteAccount() {
+      const btn = document.querySelector('#deleteConfirm .confirm-btn');
+      btn.disabled = true;
+      btn.textContent = 'Deleting…';
+
+      try {
+        const uid = me.id;
+
+        // Delete all user data across tables
+        await sb.from('post_likes').delete().eq('user_id', uid);
+        await sb.from('post_comments').delete().eq('user_id', uid);
+        await sb.from('user_posts').delete().eq('user_id', uid);
+        await sb.from('matchmaker_preferences').delete().eq('user_id', uid);
+        await sb.from('likes').delete().eq('liker_id', uid);
+        await sb.from('likes').delete().eq('liked_id', uid);
+        await sb.from('messages').delete().eq('sender_id', uid);
+        await sb.from('profiles').delete().eq('user_id', uid);
+
+        await sb.auth.signOut();
+        window.location.replace('auth.html');
+
+      } catch (err) {
+        showToast('Something went wrong. Please try again.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Yes, delete my account';
+      }
     }
 
     // ── Init ──────────────────────────────────────────────────
