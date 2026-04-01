@@ -1009,12 +1009,13 @@
       el.textContent = message;
       el.className = 'status ' + type;
     }
-
-    function clearStatus() {
-      const el = document.getElementById('status');
-      el.textContent = '';
-      el.className = 'status';
-    }
+function setStatus(message, type = 'info') {
+  const el = document.getElementById('status');
+  if (el) {
+    el.textContent = message;
+    el.className = 'status ' + type;
+  }
+}
 
     // ════════════════════════════════════════════════════════════
     //  FIX #4 — Button loading state (prevents double-submit)
