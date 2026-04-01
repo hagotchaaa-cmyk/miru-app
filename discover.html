@@ -196,6 +196,7 @@
     .grid-item:nth-child(7n+1) {
       grid-column: span 2;
       aspect-ratio: auto;
+      min-height: 200px;
     }
 
     .grid-item img,
@@ -334,7 +335,7 @@
     .modal-avatar {
       width: 38px;
       height: 38px;
-      border-radius: 12px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #5F4EB3, #231A54);
       display: flex;
       align-items: center;
@@ -346,7 +347,7 @@
       flex-shrink: 0;
     }
 
-    .modal-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+    .modal-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .modal-username { font-size: 14px; font-weight: 800; color: var(--white); }
     .modal-time     { font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 1px; }
@@ -455,7 +456,7 @@
     .comment-avatar {
       width: 30px;
       height: 30px;
-      border-radius: 10px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #5F4EB3, #231A54);
       display: flex;
       align-items: center;
@@ -467,7 +468,7 @@
       overflow: hidden;
     }
 
-    .comment-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .comment-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .comment-body { flex: 1; min-width: 0; }
     .comment-name { font-size: 12px; font-weight: 800; color: var(--white); margin-bottom: 2px; }
@@ -496,7 +497,7 @@
     .composer-avatar {
       width: 32px;
       height: 32px;
-      border-radius: 10px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #5F4EB3, #231A54);
       display: flex;
       align-items: center;
@@ -508,7 +509,7 @@
       overflow: hidden;
     }
 
-    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+    .composer-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .comment-input {
       flex: 1;
@@ -635,10 +636,14 @@
       <div class="top-row">
         <div class="logo">miru.</div>
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
           <input class="search-input" id="searchInput" placeholder="Search posts…" autocomplete="off" />
         </div>
-        <a class="icon-btn" href="profile.html" title="Profile">👤</a>
+        <a class="icon-btn" href="profile.html" title="Profile">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
       </div>
 
       <div class="cats">
@@ -663,29 +668,6 @@
     </div>
 
   </div>
-
-<nav class="tab-bar">
-    <a class="tab-item" href="index.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-      <span class="tab-label">Matches</span>
-    </a>
-    <a class="tab-item" href="explore.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-      <span class="tab-label">Explore</span>
-    </a>
-    <a class="tab-item on" href="discover.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-      <span class="tab-label">Discover</span>
-    </a>
-    <a class="tab-item" href="messages.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span class="tab-label">Messages</span>
-    </a>
-    <a class="tab-item" href="profile.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="tab-label">Profile</span>
-    </a>
-  </nav>
 
   <!-- Post modal -->
   <div class="modal-backdrop" id="modalBackdrop" onclick="handleBackdropClick(event)">
@@ -736,7 +718,9 @@
       <div class="comment-composer">
         <div class="composer-avatar" id="myAvatar"></div>
         <input class="comment-input" id="commentInput" placeholder="Add a comment…" autocomplete="off" />
-        <button class="send-comment-btn" id="sendCommentBtn" onclick="postComment()">↑</button>
+        <button class="send-comment-btn" id="sendCommentBtn" onclick="postComment()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        </button>
       </div>
     </div>
   </div>

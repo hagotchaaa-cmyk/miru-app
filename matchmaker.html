@@ -5,252 +5,630 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0D0A1A" />
+  <meta name="theme-color" content="#0A0714" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
   <title>Miru — AI Matchmaker</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #0D0A1A;
-      --surface: #171131;
-      --surface-2: #21194A;
-      --border: rgba(196, 184, 240, 0.14);
-      --white: #FFFFFF;
-      --text: #F7F4FF;
-      --text-soft: #D3CBF2;
-      --text-muted: #9E95C9;
-      --lilac: #C4B8F0;
-      --gold: #FFD98E;
-      --success: #7EEDB0;
-      --danger: #FFB4C0;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-      --serif: 'Playfair Display', serif;
-      --sans: 'DM Sans', sans-serif;
+      --bg:         #0A0714;
+      --s1:         #100D22;
+      --border:     rgba(180,170,255,0.10);
+      --border-hi:  rgba(180,170,255,0.22);
+      --white:      #FFFFFF;
+      --text:       #F0ECFF;
+      --soft:       #C4BCEE;
+      --muted:      #7A72AA;
+      --lilac:      #B8AEFF;
+      --gold:       #F5CE7A;
+      --green:      #7DFFC8;
+      --red:        #FF7090;
+      --serif:      'Cormorant Garamond', serif;
+      --sans:       'Cabinet Grotesk', sans-serif;
+      --card-bg:    rgba(255,255,255,0.035);
+      --card-border: rgba(180,170,255,0.11);
+      --shadow:     0 20px 55px rgba(0,0,0,0.50);
     }
+
     html, body {
       min-height: 100%;
-      background:
-        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
-        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      background: var(--bg);
       color: var(--text);
       font-family: var(--sans);
+      overflow-x: hidden;
     }
-    body { padding: 12px 12px 110px; }
-    .shell { width: min(430px, 100%); margin: 0 auto; position: relative; }
-    .top-bar {
-      position: sticky; top: 0; z-index: 50;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 6px 14px;
-      backdrop-filter: blur(18px);
-      background: rgba(13, 10, 26, 0.74);
-    }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon { width: 34px; height: 34px; border-radius: 12px; box-shadow: 0 10px 24px rgba(0,0,0,0.22); }
-    .logo { font-family: var(--serif); font-size: 27px; font-style: italic; font-weight: 700; color: var(--white); }
-    .icon-btn, .save-btn, .ghost-btn, .preset-btn, .chip, .tab {
-      font-family: inherit; border: none; cursor: pointer;
-    }
-    .icon-btn {
-      width: 40px; height: 40px; border-radius: 999px;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text);
-    }
-    .panel {
-      border-radius: 30px; padding: 18px;
+
+    body { padding-bottom: 96px; position: relative; }
+
+    /* ── Ambient ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-        linear-gradient(180deg, #171131 0%, #120D25 100%);
-      border: 1px solid rgba(196,184,240,0.12);
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
-      overflow: hidden;
+        radial-gradient(ellipse 75% 48% at 50% -8%, rgba(80,55,210,0.28), transparent),
+        radial-gradient(ellipse 40% 40% at 90% 55%, rgba(110,80,255,0.07), transparent),
+        radial-gradient(ellipse 30% 30% at 8% 75%, rgba(125,255,200,0.04), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    .shell {
+      max-width: 440px;
+      margin: 0 auto;
       position: relative;
+      z-index: 1;
     }
-    .hero::after {
-      content: ""; position: absolute; right: -50px; top: -30px; width: 180px; height: 180px;
-      border-radius: 999px; background: radial-gradient(circle, rgba(196,184,240,0.22), transparent 62%);
+
+    /* ── Top bar ── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      background: rgba(10,7,20,0.72);
+      border-bottom: 1px solid rgba(180,170,255,0.07);
     }
-    .eyebrow { color: var(--gold); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; margin-bottom: 8px; }
-    .hero h1 { font-family: var(--serif); font-size: 38px; line-height: 0.95; letter-spacing: -1px; margin-bottom: 10px; position: relative; z-index: 1; }
-    .hero h1 em { color: var(--lilac); font-style: italic; }
-    .hero-sub { color: var(--text-soft); font-size: 14px; line-height: 1.7; max-width: 320px; position: relative; z-index: 1; }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.3px;
+    }
+
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.09); }
+
+    /* ── Page ── */
+    .page {
+      padding: 18px 18px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      animation: pageIn 0.4s ease both;
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Cards ── */
+    .card {
+      border-radius: 26px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 22px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ── Hero card ── */
+    .eyebrow {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      opacity: 0.88;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -1.2px;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .hero-title em { color: var(--lilac); font-style: italic; }
+
+    .hero-sub {
+      color: var(--soft);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
     .power-card {
-      margin-top: 16px; padding: 14px; border-radius: 24px;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      position: relative; z-index: 1;
+      padding: 16px 16px 15px;
+      border-radius: 20px;
+      background: rgba(245,206,122,0.05);
+      border: 1px solid rgba(245,206,122,0.15);
+      margin-bottom: 16px;
     }
-    .power-card strong { display: block; font-size: 18px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
-    .power-card p { color: var(--text-soft); font-size: 13px; line-height: 1.6; }
+
+    .power-card strong {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .power-card p {
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    /* ── Toggle row ── */
     .toggle-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px;
-      padding: 14px; border-radius: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--border);
     }
-    .toggle-copy strong { display: block; font-size: 16px; color: var(--white); margin-bottom: 5px; }
-    .toggle-copy span { display: block; color: var(--text-muted); font-size: 12px; line-height: 1.5; }
+
+    .toggle-copy strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .toggle-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .toggle {
-      width: 64px; height: 36px; border-radius: 999px; padding: 4px; border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.08); position: relative; transition: 0.2s ease;
+      flex-shrink: 0;
+      width: 52px;
+      height: 28px;
+      border-radius: 999px;
+      padding: 3px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.07);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.22s, border-color 0.22s;
+      font-family: var(--sans);
     }
+
     .toggle .knob {
-      width: 28px; height: 28px; border-radius: 999px; background: var(--white); position: absolute; left: 4px; top: 3px; transition: 0.2s ease;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--white);
+      position: absolute;
+      left: 3px;
+      top: 2px;
+      transition: left 0.22s cubic-bezier(0.34,1.4,0.64,1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
-    .toggle.on { background: rgba(126,237,176,0.18); border-color: rgba(126,237,176,0.22); }
-    .toggle.on .knob { left: 30px; }
-    .panel-title { font-family: var(--serif); font-size: 24px; color: var(--white); line-height: 1; margin-bottom: 6px; }
-    .panel-sub { color: var(--text-muted); font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
-    .preset-btn, .save-btn, .ghost-btn {
-      width: 100%; padding: 15px 16px; border-radius: 999px; font-size: 14px; font-weight: 800;
+
+    .toggle.on {
+      background: rgba(125,255,200,0.14);
+      border-color: rgba(125,255,200,0.30);
     }
-    .preset-btn, .save-btn { background: var(--white); color: #120D25; box-shadow: 0 10px 24px rgba(255,255,255,0.12); }
-    .ghost-btn { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid rgba(255,255,255,0.08); }
-    .dual-actions { display: grid; gap: 10px; }
-    .section { margin-top: 14px; }
-    .section-label { color: var(--text-soft); font-size: 12px; font-weight: 800; letter-spacing: 0.4px; margin-bottom: 10px; }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .toggle.on .knob { left: 25px; }
+
+    /* ── Card titles ── */
+    .card-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.4px;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    /* ── Chip sections ── */
+    .section { margin-bottom: 16px; }
+
+    .section-label {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 9px;
+    }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
     .chip {
-      padding: 11px 14px; border-radius: 999px; font-size: 12px; font-weight: 800;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text-soft);
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s, box-shadow 0.15s;
     }
-    .chip.on { background: var(--white); color: #120D25; box-shadow: 0 10px 24px rgba(255,255,255,0.12); }
+
+    .chip:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: var(--border-hi);
+    }
+
+    .chip.on {
+      background: var(--white);
+      color: #0A0714;
+      border-color: var(--white);
+      box-shadow: 0 4px 16px rgba(255,255,255,0.13);
+    }
+
+    /* ── Range fields ── */
     .range-row {
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
     }
-    .field {
-      padding: 14px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+
+    .range-field {
+      padding: 14px 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
     }
-    .field small { display: block; color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 800; }
-    .field strong { display: block; color: var(--white); font-size: 16px; }
-    .summary-card {
-      padding: 16px; border-radius: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+
+    .range-field small {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--muted);
+      margin-bottom: 5px;
     }
-    .summary-card strong { display: block; font-size: 18px; color: var(--white); margin-bottom: 6px; }
-    .summary-card p { color: var(--text-soft); font-size: 13px; line-height: 1.6; margin-bottom: 10px; }
-    .summary-card ul { padding-left: 18px; color: var(--text-soft); font-size: 13px; line-height: 1.7; }
-    .status-box { min-height: 22px; color: var(--gold); font-size: 12px; line-height: 1.6; font-weight: 700; margin-top: 12px; }
-    .tabs {
-      position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%);
-      width: min(430px, calc(100% - 16px)); padding: 12px 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-      background: rgba(18, 13, 37, 0.88); border: 1px solid rgba(196,184,240,0.12); border-radius: 24px; backdrop-filter: blur(18px); z-index: 70; box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+
+    .range-field strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--white);
     }
-    .tab { text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 54px; border-radius: 18px; color: var(--text-muted); }
-    .tab.on { background: rgba(255,255,255,0.06); color: var(--white); }
-    .tab-icon { font-size: 20px; }
-    .tab-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 700; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      border: none;
+      background: var(--white);
+      color: #0A0714;
+      box-shadow: 0 6px 22px rgba(255,255,255,0.12);
+      margin-bottom: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(255,255,255,0.18); }
+
+    .btn-ghost {
+      width: 100%;
+      padding: 15px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      transition: background 0.15s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.07); }
+
+    /* ── Summary card ── */
+    .summary-inner {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--card-border);
+      margin-bottom: 14px;
+    }
+
+    .summary-inner strong {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .summary-inner p {
+      color: var(--soft);
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.028);
+      border: 1px solid rgba(180,170,255,0.07);
+    }
+
+    .summary-key {
+      font-size: 11.5px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .summary-val {
+      font-size: 12px;
+      color: var(--white);
+      font-weight: 800;
+      text-align: right;
+    }
+
+    /* ── Status message ── */
+    .status-msg {
+      min-height: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 10px;
+      text-align: center;
+      color: var(--gold);
+      transition: color 0.2s;
+    }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(430px, 100%);
+      padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(10,7,20,0.94);
+      border-top: 1px solid rgba(180,170,255,0.09);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 70;
+    }
+
+    .tab-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      color: rgba(180,170,255,0.35);
+      transition: color 0.18s;
+      position: relative;
+      min-width: 52px;
+    }
+
+    .tab-item.on { color: #FFFFFF; }
+
+    .tab-item.on::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, #B8AEFF, #7DFFC8);
+    }
+
+    .tab-svg { width: 21px; height: 21px; }
+    .tab-item:not(.on) .tab-svg { opacity: 0.40; }
+    .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
   </style>
 </head>
+
 <body>
   <div class="shell">
+
     <div class="top-bar">
-      <div class="brand">
-        <img class="brand-icon" src="icon.svg" alt="Miru icon" />
-        <div class="logo">miru.</div>
-      </div>
-      <button class="icon-btn" onclick="window.location.href='index.html'">←</button>
+      <div class="logo">miru.</div>
+      <button class="back-btn" onclick="window.location.href='index.html'">←</button>
     </div>
 
-    <div class="panel hero">
-      <div class="eyebrow">Optional AI mode</div>
-      <h1>Let Miru <em>search for you</em><br />this week.</h1>
-      <div class="hero-sub">Turn AI Matchmaker on when you don’t want to scroll all day. Miru will curate stronger picks based on your goal, vibe, and what you actually respond to.</div>
+    <div class="page">
 
-      <div class="power-card">
-        <strong>“Do the searching for me this week.”</strong>
-        <p>This mode pauses endless browsing and sends you a smaller set of stronger curated matches instead.</p>
-      </div>
+      <!-- Hero card -->
+      <div class="card">
+        <div class="eyebrow">Optional AI mode</div>
+        <div class="hero-title">Let Miru <em>search<br>for you</em> this week.</div>
+        <div class="hero-sub">Turn AI Matchmaker on when you don't want to scroll all day. Miru will curate stronger picks based on your goal, vibe, and what you actually respond to.</div>
 
-      <div class="toggle-row">
-        <div class="toggle-copy">
-          <strong>AI Matchmaker</strong>
-          <span id="toggleLabel">Off — you browse manually</span>
+        <div class="power-card">
+          <strong>"Do the searching for me this week."</strong>
+          <p>This mode pauses endless browsing and sends you a smaller set of stronger curated matches instead.</p>
         </div>
-        <button class="toggle" id="aiToggle" onclick="toggleAiMode()"><div class="knob"></div></button>
-      </div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-title">Quick start</div>
-      <div class="panel-sub">Use one tap if you want Miru to handle this week for you.</div>
-      <div class="dual-actions">
-        <button class="preset-btn" onclick="applyThisWeekPreset()">Do the searching for me this week</button>
-        <button class="ghost-btn" onclick="resetPreferences()">Reset to manual browsing</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">Match goals</div>
-      <div class="panel-sub">Tell Miru what kind of outcome you want right now.</div>
-
-      <div class="section">
-        <div class="section-label">Looking for</div>
-        <div class="chip-row" id="goalChips">
-          <button class="chip on" data-value="relationship" onclick="selectSingle('goalChips', this)">Relationship</button>
-          <button class="chip" data-value="casual" onclick="selectSingle('goalChips', this)">Casual</button>
-          <button class="chip" data-value="fun_tonight" onclick="selectSingle('goalChips', this)">Fun tonight</button>
-          <button class="chip" data-value="open" onclick="selectSingle('goalChips', this)">Open to anything</button>
+        <div class="toggle-row">
+          <div class="toggle-copy">
+            <strong>AI Matchmaker</strong>
+            <span id="toggleLabel">Off — you browse manually</span>
+          </div>
+          <button class="toggle" id="aiToggle" onclick="toggleAiMode()"><div class="knob"></div></button>
         </div>
       </div>
 
-      <div class="section">
-        <div class="section-label">Preferred vibe</div>
-        <div class="chip-row" id="vibeChips">
-          <button class="chip on" data-value="funny" onclick="toggleChip(this)">Funny</button>
-          <button class="chip on" data-value="deep" onclick="toggleChip(this)">Deep</button>
-          <button class="chip" data-value="creative" onclick="toggleChip(this)">Creative</button>
-          <button class="chip" data-value="chill" onclick="toggleChip(this)">Chill</button>
-          <button class="chip" data-value="outgoing" onclick="toggleChip(this)">Outgoing</button>
-        </div>
+      <!-- Quick start -->
+      <div class="card">
+        <div class="card-title">Quick start</div>
+        <div class="card-sub">Use one tap if you want Miru to handle this week for you.</div>
+        <button class="btn-primary" onclick="applyThisWeekPreset()">✦ Let Miru search this week</button>
+        <button class="btn-ghost" onclick="resetPreferences()">Reset to manual browsing</button>
       </div>
 
-      <div class="section">
-        <div class="section-label">Delivery style</div>
-        <div class="chip-row" id="deliveryChips">
-          <button class="chip on" data-value="3_daily" onclick="selectSingle('deliveryChips', this)">3 best daily</button>
-          <button class="chip" data-value="5_daily" onclick="selectSingle('deliveryChips', this)">5 daily</button>
-          <button class="chip" data-value="only_top" onclick="selectSingle('deliveryChips', this)">Only top matches</button>
-        </div>
-      </div>
+      <!-- Preferences -->
+      <div class="card">
+        <div class="card-title">Your preferences</div>
+        <div class="card-sub">The more specific you are, the better Miru matches.</div>
 
-      <div class="section">
-        <div class="section-label">Range</div>
+        <div class="section">
+          <div class="section-label">What are you looking for?</div>
+          <div class="chip-row" id="goalChips">
+            <button class="chip on" data-value="relationship" onclick="selectSingle('goalChips', this)">Relationship</button>
+            <button class="chip" data-value="connection" onclick="selectSingle('goalChips', this)">Real connection</button>
+            <button class="chip" data-value="casual" onclick="selectSingle('goalChips', this)">Casual</button>
+            <button class="chip" data-value="unsure" onclick="selectSingle('goalChips', this)">Not sure yet</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Your vibe</div>
+          <div class="chip-row" id="vibeChips">
+            <button class="chip on" data-value="funny" onclick="toggleChip(this)">Funny</button>
+            <button class="chip on" data-value="deep" onclick="toggleChip(this)">Deep talks</button>
+            <button class="chip" data-value="chill" onclick="toggleChip(this)">Chill</button>
+            <button class="chip" data-value="ambitious" onclick="toggleChip(this)">Ambitious</button>
+            <button class="chip" data-value="creative" onclick="toggleChip(this)">Creative</button>
+            <button class="chip" data-value="adventurous" onclick="toggleChip(this)">Adventurous</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-label">Match delivery</div>
+          <div class="chip-row" id="deliveryChips">
+            <button class="chip on" data-value="3_daily" onclick="selectSingle('deliveryChips', this)">3 per day</button>
+            <button class="chip" data-value="5_daily" onclick="selectSingle('deliveryChips', this)">5 per day</button>
+            <button class="chip" data-value="weekly_batch" onclick="selectSingle('deliveryChips', this)">Weekly batch</button>
+          </div>
+        </div>
+
         <div class="range-row">
-          <div class="field">
-            <small>Age range</small>
-            <strong id="ageRangeText">24–32</strong>
-          </div>
-          <div class="field">
-            <small>Distance</small>
-            <strong id="distanceText">Within 20 miles</strong>
+          <div class="range-field"><small>Age range</small><strong id="ageRangeText">24–32</strong></div>
+          <div class="range-field"><small>Distance</small><strong id="distanceText">Within 20 miles</strong></div>
+        </div>
+
+        <button class="btn-primary" onclick="savePreferences()">Save preferences</button>
+        <div class="status-msg" id="statusMsg"></div>
+      </div>
+
+      <!-- Summary -->
+      <div class="card">
+        <div class="card-title">Current summary</div>
+        <div class="card-sub">Here's what Miru knows about what you're looking for right now.</div>
+        <div class="summary-inner">
+          <strong>AI Matchmaker status</strong>
+          <p id="summaryCopy">Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.</p>
+          <div class="summary-list">
+            <div class="summary-row">
+              <span class="summary-key">Goal</span>
+              <span class="summary-val" id="summaryGoal">Relationship</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Vibes</span>
+              <span class="summary-val" id="summaryVibes">Funny, deep talks</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Delivery</span>
+              <span class="summary-val" id="summaryDelivery">3 per day</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Age range</span>
+              <span class="summary-val" id="summaryAge">24–32</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Distance</span>
+              <span class="summary-val" id="summaryDistance">Within 20 miles</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="status-box" id="statusMsg"></div>
-      <button class="save-btn" onclick="savePreferences()">Save AI Matchmaker settings</button>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">What Miru will do</div>
-      <div class="panel-sub">This makes the feature feel useful, not mysterious.</div>
-      <div class="summary-card">
-        <strong>Your week with AI Matchmaker</strong>
-        <p id="summaryCopy">Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.</p>
-        <ul>
-          <li>Learn from who you like, skip, and reply to</li>
-          <li>Prioritize people with similar goals and energy</li>
-          <li>Send smaller, stronger curated picks instead of endless browsing</li>
-        </ul>
-      </div>
     </div>
   </div>
 
-  <div class="tabs">
-    <a class="tab on" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
-    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
-    <a class="tab" href="explore.html"><div class="tab-icon">🔍</div><div class="tab-label">Explore</div></a>
-    <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
-  </div>
+  <!-- Tab bar — matchmaker is not a direct tab, so none is active -->
+  <nav class="tab-bar">
+    <a class="tab-item" href="index.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Matches</span>
+    </a>
+    <a class="tab-item" href="explore.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span class="tab-label">Explore</span>
+    </a>
+    <a class="tab-item" href="discover.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="tab-label">Discover</span>
+    </a>
+    <a class="tab-item" href="messages.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a class="tab-item" href="profile.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
 
   <script>
     const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
@@ -268,12 +646,12 @@
     function setStatus(msg, isError = false) {
       const el = document.getElementById('statusMsg');
       el.textContent = msg || '';
-      el.style.color = isError ? '#FFB4C0' : '#FFD98E';
+      el.style.color = isError ? '#FF7090' : '#F5CE7A';
     }
 
     function refreshToggleUI() {
-      const toggle = document.getElementById('aiToggle');
-      const label = document.getElementById('toggleLabel');
+      const toggle  = document.getElementById('aiToggle');
+      const label   = document.getElementById('toggleLabel');
       const summary = document.getElementById('summaryCopy');
       toggle.classList.toggle('on', state.ai_enabled);
       if (state.ai_enabled) {
@@ -281,14 +659,19 @@
           ? 'On — Miru is searching for you this week'
           : 'On — Miru is curating your matches';
         summary.textContent = state.week_mode
-          ? 'Miru will actively search for stronger fits this week so you can stop scrolling and just review curated picks.'
+          ? 'Miru will actively search for stronger fits this week so you can stop scrolling.'
           : 'Miru will add curated picks into your normal flow based on your preferences.';
       } else {
-        label.textContent = 'Off — you browse manually';
+        label.textContent   = 'Off — you browse manually';
         summary.textContent = 'Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.';
       }
-      document.getElementById('ageRangeText').textContent = state.age_range.replace('-', '–');
-      document.getElementById('distanceText').textContent = `Within ${state.distance_miles} miles`;
+      document.getElementById('ageRangeText').textContent    = state.age_range.replace('-', '–');
+      document.getElementById('distanceText').textContent    = `Within ${state.distance_miles} miles`;
+      document.getElementById('summaryGoal').textContent     = state.goal.charAt(0).toUpperCase() + state.goal.slice(1);
+      document.getElementById('summaryVibes').textContent    = state.vibes.join(', ') || 'None selected';
+      document.getElementById('summaryDelivery').textContent = state.delivery_mode === '3_daily' ? '3 per day' : state.delivery_mode === '5_daily' ? '5 per day' : 'Weekly batch';
+      document.getElementById('summaryAge').textContent      = state.age_range.replace('-', '–');
+      document.getElementById('summaryDistance').textContent = `Within ${state.distance_miles} miles`;
     }
 
     function toggleAiMode() {
@@ -298,111 +681,68 @@
     }
 
     function selectSingle(groupId, button) {
-      document.querySelectorAll(`#${groupId} .chip`).forEach((chip) => chip.classList.remove('on'));
+      document.querySelectorAll(`#${groupId} .chip`).forEach(c => c.classList.remove('on'));
       button.classList.add('on');
-      if (groupId === 'goalChips') state.goal = button.dataset.value;
+      if (groupId === 'goalChips')     state.goal          = button.dataset.value;
       if (groupId === 'deliveryChips') state.delivery_mode = button.dataset.value;
+      refreshToggleUI();
     }
 
     function toggleChip(button) {
       button.classList.toggle('on');
-      const active = [...document.querySelectorAll('#vibeChips .chip.on')].map((chip) => chip.dataset.value);
-      state.vibes = active;
+      state.vibes = [...document.querySelectorAll('#vibeChips .chip.on')].map(c => c.dataset.value);
+      refreshToggleUI();
     }
 
     function applyThisWeekPreset() {
-      state.ai_enabled = true;
-      state.week_mode = true;
-      state.goal = 'relationship';
-      state.vibes = ['funny', 'deep', 'chill'];
-      state.delivery_mode = '3_daily';
-      state.age_range = '24-32';
-      state.distance_miles = 20;
-
+      state = { ai_enabled: true, goal: 'relationship', vibes: ['funny', 'deep', 'chill'], delivery_mode: '3_daily', week_mode: true, age_range: '24-32', distance_miles: 20 };
       syncChipState();
       refreshToggleUI();
       setStatus('This week preset applied. Save it to turn AI Matchmaker on.');
     }
 
     function resetPreferences() {
-      state = {
-        ai_enabled: false,
-        goal: 'relationship',
-        vibes: ['funny', 'deep'],
-        delivery_mode: '3_daily',
-        week_mode: false,
-        age_range: '24-32',
-        distance_miles: 20
-      };
+      state = { ai_enabled: false, goal: 'relationship', vibes: ['funny', 'deep'], delivery_mode: '3_daily', week_mode: false, age_range: '24-32', distance_miles: 20 };
       syncChipState();
       refreshToggleUI();
-      setStatus('Reset back to manual browsing.');
+      setStatus('Reset to manual browsing.');
     }
 
     function syncChipState() {
-      document.querySelectorAll('#goalChips .chip').forEach((chip) => chip.classList.toggle('on', chip.dataset.value === state.goal));
-      document.querySelectorAll('#deliveryChips .chip').forEach((chip) => chip.classList.toggle('on', chip.dataset.value === state.delivery_mode));
-      document.querySelectorAll('#vibeChips .chip').forEach((chip) => chip.classList.toggle('on', state.vibes.includes(chip.dataset.value)));
+      document.querySelectorAll('#goalChips .chip').forEach(c => c.classList.toggle('on', c.dataset.value === state.goal));
+      document.querySelectorAll('#deliveryChips .chip').forEach(c => c.classList.toggle('on', c.dataset.value === state.delivery_mode));
+      document.querySelectorAll('#vibeChips .chip').forEach(c => c.classList.toggle('on', state.vibes.includes(c.dataset.value)));
     }
 
     async function ensureUser() {
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) {
-        window.location.href = 'auth.html';
-        return null;
-      }
+      if (!user) { window.location.href = 'auth.html'; return null; }
       return user;
     }
 
     async function loadPreferences() {
-      const { data, error } = await sb
-        .from('matchmaker_preferences')
-        .select('*')
-        .eq('user_id', me.id)
-        .maybeSingle();
-
+      const { data, error } = await sb.from('matchmaker_preferences').select('*').eq('user_id', me.id).maybeSingle();
       if (!error && data) {
-        state.ai_enabled = !!data.ai_enabled;
-        state.goal = data.goal || state.goal;
-        state.vibes = Array.isArray(data.vibes) && data.vibes.length ? data.vibes : state.vibes;
-        state.delivery_mode = data.delivery_mode || state.delivery_mode;
-        state.week_mode = !!data.week_mode;
-        state.age_range = data.age_range || state.age_range;
+        state.ai_enabled     = !!data.ai_enabled;
+        state.goal           = data.goal           || state.goal;
+        state.vibes          = Array.isArray(data.vibes) && data.vibes.length ? data.vibes : state.vibes;
+        state.delivery_mode  = data.delivery_mode  || state.delivery_mode;
+        state.week_mode      = !!data.week_mode;
+        state.age_range      = data.age_range      || state.age_range;
         state.distance_miles = data.distance_miles || state.distance_miles;
       }
-
       syncChipState();
       refreshToggleUI();
     }
 
     async function savePreferences() {
       if (!me) return;
-      if (!state.vibes.length) {
-        setStatus('Choose at least one vibe first.', true);
-        return;
-      }
-
-      const payload = {
-        user_id: me.id,
-        ai_enabled: state.ai_enabled,
-        goal: state.goal,
-        vibes: state.vibes,
-        delivery_mode: state.delivery_mode,
-        week_mode: state.week_mode,
-        age_range: state.age_range,
-        distance_miles: state.distance_miles,
-        updated_at: new Date().toISOString()
-      };
-
-      const { error } = await sb.from('matchmaker_preferences').upsert(payload, { onConflict: 'user_id' });
-      if (error) {
-        setStatus(error.message, true);
-        return;
-      }
-
-      setStatus(state.ai_enabled
-        ? 'AI Matchmaker saved. Miru can now search for you this week.'
-        : 'Preferences saved. Manual browsing stays on.');
+      if (!state.vibes.length) { setStatus('Choose at least one vibe first.', true); return; }
+      const { error } = await sb.from('matchmaker_preferences').upsert({
+        user_id: me.id, ...state, updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+      if (error) { setStatus(error.message, true); return; }
+      setStatus(state.ai_enabled ? 'AI Matchmaker saved. Miru can now search for you.' : 'Preferences saved. Manual browsing stays on.');
     }
 
     async function init() {

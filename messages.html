@@ -174,9 +174,8 @@
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 12px 12px;
+      gap: 10px;
+      padding: 11px 12px;
       border-radius: 14px;
       background: transparent;
       border: none;
@@ -189,7 +188,7 @@
       transition: background 0.12s;
     }
     .dropdown-item:hover { background: rgba(255,255,255,0.06); }
-    .dropdown-item small { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .dropdown-item small { color: var(--muted); font-size: 11px; font-weight: 700; margin-left: auto; }
     .dropdown-item.danger { color: var(--pass); }
 
     /* ── Page layout ── */
@@ -218,11 +217,12 @@
 
     .side-title {
       font-family: var(--serif);
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.6px;
       color: var(--white);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1;
     }
 
     .side-title em { font-style: italic; color: var(--lilac); }
@@ -290,11 +290,11 @@
     .thread {
       width: 100%;
       display: grid;
-      grid-template-columns: 50px 1fr auto;
+      grid-template-columns: 48px 1fr auto;
       gap: 11px;
-      padding: 13px 13px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.03);
+      padding: 12px 12px;
+      border-radius: 18px;
+      background: transparent;
       border: 1px solid transparent;
       color: var(--text);
       cursor: pointer;
@@ -303,22 +303,22 @@
       transition: background 0.15s, border-color 0.15s;
     }
 
-    .thread:hover { background: rgba(255,255,255,0.06); }
+    .thread:hover { background: rgba(255,255,255,0.045); }
 
     .thread.active {
-      background: rgba(255,255,255,0.07);
-      border-color: var(--border-hi);
+      background: rgba(184,174,255,0.07);
+      border-color: rgba(184,174,255,0.15);
     }
 
     .t-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #5F4EB3, #231A54);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       color: var(--white);
       flex-shrink: 0;
@@ -330,7 +330,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 16px;
+      border-radius: 50%;
     }
 
     .t-online {
@@ -354,9 +354,9 @@
       gap: 6px;
     }
 
-    .t-name { font-size: 14px; font-weight: 800; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .t-time { font-size: 10px; font-weight: 700; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
-    .t-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-name { font-size: 13.5px; font-weight: 800; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-time { font-size: 10px; font-weight: 700; color: var(--muted); white-space: nowrap; flex-shrink: 0; letter-spacing: 0.2px; }
+    .t-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
 
     .t-meta { display: flex; align-items: center; justify-content: center; }
 
@@ -454,20 +454,20 @@
     .chat-avatar-wrap { position: relative; flex-shrink: 0; cursor: pointer; }
 
     .chat-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       background: linear-gradient(145deg, #5F4EB3, #231A54);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--white);
       overflow: hidden;
     }
 
-    .chat-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
+    .chat-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
     .chat-online {
       position: absolute;
@@ -482,7 +482,7 @@
     }
 
     .chat-info { min-width: 0; }
-    .chat-name { font-family: var(--serif); font-size: 24px; font-weight: 700; color: var(--white); letter-spacing: -0.4px; line-height: 1; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-name { font-family: var(--sans); font-size: 15px; font-weight: 800; color: var(--white); letter-spacing: -0.2px; line-height: 1; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .chat-status { font-size: 11px; color: var(--muted); font-weight: 700; }
 
     .chat-head-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
@@ -527,25 +527,25 @@
     .msg-row.them { align-self: flex-start; }
 
     .bubble {
-      padding: 11px 14px;
+      padding: 10px 14px;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.58;
       word-break: break-word;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.20);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
     }
 
     .msg-row.me .bubble {
-      background: linear-gradient(145deg, #7B6FCC, #4A3F8A);
+      background: linear-gradient(145deg, #8576D8, #5448A0);
       color: var(--white);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px 6px 20px 20px;
+      border: none;
+      border-radius: 18px 4px 18px 18px;
     }
 
     .msg-row.them .bubble {
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.07);
       color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 6px 20px 20px 20px;
+      border: 1px solid rgba(180,170,255,0.10);
+      border-radius: 4px 18px 18px 18px;
     }
 
     .bubble.media-bubble { padding: 6px; overflow: hidden; }
@@ -649,12 +649,12 @@
     }
 
     .tool-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border);
-      color: var(--text);
+      color: var(--soft);
       font-size: 16px;
       display: flex;
       align-items: center;
@@ -662,8 +662,9 @@
       cursor: pointer;
       transition: background 0.15s;
       font-family: var(--sans);
+      flex-shrink: 0;
     }
-    .tool-btn:hover { background: rgba(255,255,255,0.08); }
+    .tool-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
 
     .tool-hint { font-size: 11px; color: var(--muted); font-weight: 700; margin-left: 2px; }
 
@@ -840,14 +841,31 @@
       <div class="top-right">
         <div class="count-chip" id="convoCount">— chats</div>
         <div class="menu-wrap">
-          <button class="icon-btn" id="appMenuBtn" aria-label="App menu">⋯</button>
+          <button class="icon-btn" id="appMenuBtn" aria-label="App menu">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+          </button>
           <div class="dropdown" id="appMenu">
             <div class="dropdown-title">App menu</div>
-            <button class="dropdown-item" onclick="nav('profile.html')">👤 Profile <small>your page</small></button>
-            <button class="dropdown-item" onclick="nav('premium.html')">⭐ Subscription <small>premium access</small></button>
-            <button class="dropdown-item" onclick="nav('explore.html')">🔍 Explore <small>find people</small></button>
-            <button class="dropdown-item" onclick="nav('matchmaker.html')">🤖 AI Matchmaker <small>let AI find you</small></button>
-            <button class="dropdown-item danger" onclick="logout()">↗ Sign out <small>secure log out</small></button>
+            <button class="dropdown-item" onclick="nav('profile.html')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Profile <small>your page</small>
+            </button>
+            <button class="dropdown-item" onclick="nav('premium.html')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Subscription <small>premium access</small>
+            </button>
+            <button class="dropdown-item" onclick="nav('explore.html')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Explore <small>find people</small>
+            </button>
+            <button class="dropdown-item" onclick="nav('matchmaker.html')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              AI Matchmaker <small>let AI find you</small>
+            </button>
+            <button class="dropdown-item danger" onclick="logout()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign out <small>secure log out</small>
+            </button>
           </div>
         </div>
       </div>
@@ -895,13 +913,27 @@
           </div>
           <div class="chat-head-right">
             <div class="menu-wrap">
-              <button class="icon-btn" id="convoMenuBtn" aria-label="Conversation options">⋯</button>
+              <button class="icon-btn" id="convoMenuBtn" aria-label="Conversation options">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+              </button>
               <div class="dropdown" id="convoMenu">
                 <div class="dropdown-title">Conversation</div>
-                <button class="dropdown-item" onclick="viewProfile()">👤 View profile <small>open their page</small></button>
-                <button class="dropdown-item" onclick="filterMedia()">🖼️ Shared media <small>see photos & videos</small></button>
-                <button class="dropdown-item" onclick="nav('premium.html')">⭐ Upgrade <small>premium features</small></button>
-                <button class="dropdown-item danger" onclick="showToast('Block & report coming soon.', 'info')">🚫 Block or report <small>safety tools</small></button>
+                <button class="dropdown-item" onclick="viewProfile()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  View profile <small>open their page</small>
+                </button>
+                <button class="dropdown-item" onclick="filterMedia()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Shared media <small>see photos &amp; videos</small>
+                </button>
+                <button class="dropdown-item" onclick="nav('premium.html')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  Upgrade <small>premium features</small>
+                </button>
+                <button class="dropdown-item danger" onclick="showToast('Block &amp; report coming soon.', 'info')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Block or report <small>safety tools</small>
+                </button>
               </div>
             </div>
           </div>
@@ -931,17 +963,27 @@
 
           <!-- Tool row -->
           <div class="composer-tools">
-            <button class="tool-btn" onclick="pickPhoto()" title="Send photo">🖼️</button>
-            <button class="tool-btn" onclick="pickVideo()" title="Send video">🎥</button>
-            <button class="tool-btn" onclick="toggleEmoji()" title="Emoji">😊</button>
+            <button class="tool-btn" onclick="pickPhoto()" title="Send photo">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+            <button class="tool-btn" onclick="pickVideo()" title="Send video">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </button>
+            <button class="tool-btn" onclick="toggleEmoji()" title="Emoji">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
             <span class="tool-hint">Text · emoji · photo · video</span>
           </div>
 
           <!-- Input row -->
           <div class="composer-row">
-            <button class="tool-btn" onclick="toggleEmoji()">＋</button>
+            <button class="tool-btn" onclick="toggleEmoji()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
             <textarea id="msgInput" class="msg-input" placeholder="Say something real…" rows="1"></textarea>
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </button>
           </div>
         </div>
 
