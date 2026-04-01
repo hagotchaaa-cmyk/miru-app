@@ -36,8 +36,3 @@ workflows:
             --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
-  publishing:
-      app_store_connect:
-        apple_id: hagotchaaa@gmail.com
-        password: $APP_SPECIFIC_PASSWORD
-        submit_to_testflight: false
