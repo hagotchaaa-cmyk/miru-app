@@ -1037,7 +1037,13 @@ function setStatus(message, type = 'info') {
     // ════════════════════════════════════════════════════════════
     //  Sign up
     // ════════════════════════════════════════════════════════════
-    async function signUp() {
+   function clearStatus() {
+  const el = document.getElementById('status');
+  if (el) {
+    el.textContent = '';
+    el.className = 'status';
+  }
+}
       if (!validateForm()) return;
 
       isSubmitting = true;
