@@ -1023,12 +1023,14 @@
     // ════════════════════════════════════════════════════════════
     function setStatus(message, type = 'info') {
       const el = document.getElementById('status');
+      if (!el) return;
       el.textContent = message;
       el.className = 'status ' + type;
     }
 
     function clearStatus() {
       const el = document.getElementById('status');
+      if (!el) return;
       el.textContent = '';
       el.className = 'status';
     }
@@ -1059,8 +1061,7 @@
       isSubmitting = true;
       setButtonLoading('primaryBtn', true);
       setAllButtonsDisabled(true);
- const statusEl = document.getElementById('status');
-if (statusEl) { statusEl.textContent = ''; statusEl.className = 'status'; }
+      clearStatus();
 
       try {
         const { data, error } = await sb.auth.signUp({
@@ -1141,7 +1142,7 @@ if (statusEl) { statusEl.textContent = ''; statusEl.className = 'status'; }
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/index.html'
+          redirectTo: 'https://miru-app.onrender.com/index.html'
         }
       });
 
