@@ -5,9 +5,9 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.miru.app
+        bundle_identifier: com.miru.dating
       vars:
-        BUNDLE_ID: com.miru.app
+        BUNDLE_ID: com.miru.dating
         XCODE_WORKSPACE: ios/App/App.xcworkspace
         XCODE_SCHEME: App
       node: v18
