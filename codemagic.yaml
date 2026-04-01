@@ -8,6 +8,9 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.miru.dating
+        provisioning_profile: MiruDistribution
+        certificate: MiruCertificate
+        team_id: SYTHFLKFXC
       vars:
         BUNDLE_ID: com.miru.dating
         XCODE_WORKSPACE: ios/App/App.xcworkspace
