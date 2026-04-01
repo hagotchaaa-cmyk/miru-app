@@ -183,9 +183,9 @@
 
     .hero h1 {
       font-family: var(--serif);
-      font-size: 42px;
-      line-height: 0.96;
-      letter-spacing: -1px;
+      font-size: 32px;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
       margin-bottom: 12px;
       position: relative;
       z-index: 1;
@@ -446,84 +446,53 @@
       margin-top: 10px;
     }
 
-    /* Success banner — shown after returning from Stripe */
-    .success-banner {
-      display: none;
-      margin-bottom: 14px;
-      padding: 16px 18px;
-      border-radius: 22px;
-      background: rgba(125, 255, 200, 0.08);
-      border: 1px solid rgba(125, 255, 200, 0.25);
-      color: #7DFFC8;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.55;
-      text-align: center;
-    }
 
-    .success-banner.visible { display: block; }
 
-    /* Cancel banner */
-    .cancel-banner {
-      display: none;
-      margin-bottom: 14px;
-      padding: 16px 18px;
-      border-radius: 22px;
-      background: rgba(255, 143, 171, 0.08);
-      border: 1px solid rgba(255, 143, 171, 0.22);
-      color: #FF8FAB;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 1.55;
-      text-align: center;
-    }
-
-    .cancel-banner.visible { display: block; }
-
-    .tabs {
+    .tab-bar {
       position: fixed;
       left: 50%;
-      bottom: 12px;
+      bottom: 0;
       transform: translateX(-50%);
-      width: min(430px, calc(100% - 16px));
-      padding: 12px 10px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      background: rgba(18, 13, 37, 0.88);
-      border: 1px solid rgba(196,184,240,0.12);
-      border-radius: 24px;
-      backdrop-filter: blur(18px);
+      width: min(430px, 100%);
+      padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(13,10,26,0.94);
+      border-top: 1px solid rgba(196,184,240,0.09);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       z-index: 70;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
     }
 
-    .tab {
+    .tab-item {
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 5px;
-      min-height: 54px;
-      border-radius: 18px;
-      color: var(--text-muted);
-      transition: 0.2s ease;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      color: rgba(196,184,240,0.35);
+      transition: color 0.18s;
+      position: relative;
+      min-width: 52px;
     }
-
-   .tab-icon { font-size: 20px; }
-
-.tab-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.9px;
-  font-weight: 700;
-}
-
-.tab.on {
-  background: rgba(255,255,255,0.06);
-  color: var(--white);
-}
+    .tab-item.on { color: #FFFFFF; }
+    .tab-item.on::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, #C4B8F0, #FFD98E);
+    }
+    .tab-svg { width: 21px; height: 21px; }
+    .tab-item:not(.on) .tab-svg { opacity: 0.40; }
+    .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
 
     @media (max-width: 390px) {
       .hero h1 { font-size: 36px; }
@@ -550,13 +519,7 @@
 
     <div class="page">
 
-      <!-- Success / cancel banners shown after returning from Stripe -->
-      <div class="success-banner" id="successBanner">
-        🎉 Payment successful! Your premium is being activated — this can take a moment. Refresh your profile if it hasn't updated yet.
-      </div>
-      <div class="cancel-banner" id="cancelBanner">
-        Payment cancelled. No charge was made. You can try again any time.
-      </div>
+
 
       <div class="hero">
         <div class="eyebrow">Premium that still feels easy</div>
@@ -613,7 +576,9 @@
               <div>✓ More super likes</div>
               <div>✓ Better visibility and premium profile feel</div>
             </div>
-            <button id="startPremiumCheckout" class="cta-btn">Start Premium — $3.99/month</button>
+            <div style="padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(196,184,240,0.12); color: var(--text-soft); font-size: 13px; line-height: 1.6; text-align: center;">
+              Premium subscriptions are available on our website. Visit <strong style="color: var(--text);">miru-app.onrender.com</strong> in your browser to upgrade.
+            </div>
           </div>
 
           <div class="plan-card">
@@ -633,7 +598,7 @@
           </div>
         </div>
 
-        <div class="foot-note">Payments secured by Stripe. Cancel any time from your profile.</div>
+        <div class="foot-note">Premium features sync automatically once you subscribe.</div>
       </div>
     </div>
   </div>
@@ -662,84 +627,11 @@
   </nav>
 
   <script>
-    // ── Supabase client ──────────────────────────────────────
     const sb = supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
     );
-
-    // ── Handle return from Stripe ────────────────────────────
-    // Stripe redirects back to premium.html?success=true or ?canceled=true
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('success') === 'true') {
-      document.getElementById('successBanner').classList.add('visible');
-      // Clean the URL so refreshing doesn't re-show the banner
-      window.history.replaceState({}, '', 'premium.html');
-    }
-
-    if (params.get('canceled') === 'true') {
-      document.getElementById('cancelBanner').classList.add('visible');
-      window.history.replaceState({}, '', 'premium.html');
-    }
-
-    // ── Premium checkout button ──────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('startPremiumCheckout');
-      if (!btn) return;
-
-      btn.addEventListener('click', async () => {
-        btn.disabled = true;
-        btn.textContent = 'Loading…';
-
-        try {
-          // Get the logged-in user
-          const { data: { user }, error: userError } = await sb.auth.getUser();
-
-          if (userError || !user) {
-            alert('Please sign in first.');
-            window.location.href = 'auth.html';
-            return;
-          }
-
-          // Get the session token to authenticate with the edge function
-          const { data: { session } } = await sb.auth.getSession();
-
-          // Call the create-checkout-session edge function
-          // This passes the user ID as metadata so the webhook
-          // knows exactly who to grant premium to
-          const response = await fetch(
-            `${window.SUPABASE_URL}/functions/v1/create-checkout-session`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type':  'application/json',
-                'Authorization': `Bearer ${session.access_token}`,
-                'apikey':        window.SUPABASE_ANON_KEY || window.SUPABASE_KEY,
-              },
-            }
-          );
-
-          const data = await response.json();
-
-          if (!response.ok || !data.url) {
-            console.error('Checkout error:', data);
-            alert('Could not start checkout. Please try again.');
-            return;
-          }
-
-          // Redirect to Stripe checkout
-          window.location.href = data.url;
-
-        } catch (err) {
-          console.error('Premium checkout error:', err);
-          alert('Something went wrong. Please try again.');
-        } finally {
-          btn.disabled = false;
-          btn.textContent = 'Start Premium — $3.99/month';
-        }
-      });
-    });
+  
   </script>
 </body>
 </html>
