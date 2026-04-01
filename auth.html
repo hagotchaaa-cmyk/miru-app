@@ -767,7 +767,24 @@
         <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
       </button>
 
-  
+      <!-- Status message area -->
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+
+      <!-- Trust signals -->
+      <div class="trust" aria-label="Security information">
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Secure auth via Supabase — your password is never stored in plain text.
+        </div>
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Google sign-in uses OAuth 2.0. We never see your Google password.
+        </div>
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Premium status is verified server-side via Stripe — never client-side.
+        </div>
+      </div>
     </section>
 
   </div>
@@ -1009,13 +1026,12 @@
       el.textContent = message;
       el.className = 'status ' + type;
     }
-function setStatus(message, type = 'info') {
-  const el = document.getElementById('status');
-  if (el) {
-    el.textContent = message;
-    el.className = 'status ' + type;
-  }
-}
+
+    function clearStatus() {
+      const el = document.getElementById('status');
+      el.textContent = '';
+      el.className = 'status';
+    }
 
     // ════════════════════════════════════════════════════════════
     //  FIX #4 — Button loading state (prevents double-submit)
@@ -1037,19 +1053,14 @@ function setStatus(message, type = 'info') {
     // ════════════════════════════════════════════════════════════
     //  Sign up
     // ════════════════════════════════════════════════════════════
-   function clearStatus() {
-  const el = document.getElementById('status');
-  if (el) {
-    el.textContent = '';
-    el.className = 'status';
-  }
-}
+    async function signUp() {
       if (!validateForm()) return;
 
       isSubmitting = true;
       setButtonLoading('primaryBtn', true);
       setAllButtonsDisabled(true);
-      clearStatus();
+ const statusEl = document.getElementById('status');
+if (statusEl) { statusEl.textContent = ''; statusEl.className = 'status'; }
 
       try {
         const { data, error } = await sb.auth.signUp({
@@ -1130,7 +1141,7 @@ function setStatus(message, type = 'info') {
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: {
-        redirectTo: 'https://miru-app.onrender.com/index.html'
+          redirectTo: window.location.origin + '/index.html'
         }
       });
 
