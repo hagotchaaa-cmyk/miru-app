@@ -519,6 +519,29 @@
       border-color: rgba(200, 190, 255, 0.25);
     }
 
+    .btn-apple {
+      background: #000000;
+      border-color: rgba(255,255,255,0.15);
+      color: #FFFFFF;
+      margin-top: 8px;
+    }
+    .btn-apple:hover:not(:disabled) {
+      background: #1a1a1a;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .apple-mark {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 17px;
+      line-height: 1;
+      margin-top: -2px;
+    }
+
     .g-mark {
       width: 20px;
       height: 20px;
@@ -767,6 +790,13 @@
         <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
       </button>
 
+      <!-- Sign in with Apple -->
+      <button class="btn-social btn-apple" id="appleBtn" onclick="signInWithApple()">
+        <span class="apple-mark" aria-hidden="true"></span>
+        <span class="btn-text">Continue with Apple</span>
+        <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
+      </button>
+
       <!-- Status message area -->
       <div class="status" id="status" role="status" aria-live="polite"></div>
 
@@ -802,6 +832,7 @@
         document.getElementById('status').className = 'status error';
         document.getElementById('primaryBtn').disabled = true;
         document.getElementById('googleBtn').disabled = true;
+        document.getElementById('appleBtn').disabled = true;
         throw new Error('[Miru] config.js is missing SUPABASE_URL or SUPABASE_ANON_KEY');
       }
     })();
@@ -1046,7 +1077,7 @@
     }
 
     function setAllButtonsDisabled(disabled) {
-      ['primaryBtn', 'googleBtn', 'tabSignup', 'tabSignin'].forEach(id => {
+      ['primaryBtn', 'googleBtn', 'appleBtn', 'tabSignup', 'tabSignin'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.disabled = disabled;
       });
@@ -1126,6 +1157,28 @@
       } finally {
         isSubmitting = false;
         setButtonLoading('primaryBtn', false);
+        setAllButtonsDisabled(false);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Sign in with Apple
+    // ════════════════════════════════════════════════════════════
+    async function signInWithApple() {
+      setButtonLoading('appleBtn', true);
+      setAllButtonsDisabled(true);
+      clearStatus();
+
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: 'https://miru-app.onrender.com/index.html'
+        }
+      });
+
+      if (error) {
+        setStatus(error.message, 'error');
+        setButtonLoading('appleBtn', false);
         setAllButtonsDisabled(false);
       }
     }
