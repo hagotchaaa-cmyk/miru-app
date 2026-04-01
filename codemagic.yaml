@@ -41,7 +41,6 @@ workflows:
       - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
-        api_key: YXJF3RGB8H
-        key_id: YXJF3RGB8H
-        issuer_id: 9cf2b90b-d18d-4368-865a-95076b20f179
+        apple_id: hagotchaaa@gmail.com
+        password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: false
