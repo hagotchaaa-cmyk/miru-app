@@ -36,7 +36,9 @@ workflows:
             --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
-    publishing:
+  publishing:
       app_store_connect:
         api_key: YXJF3RGB8H
+        key_id: YXJF3RGB8H
+        issuer_id: 90b-d18d-4368-865a-95076b20f179
         submit_to_testflight: false
