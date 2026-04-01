@@ -8,9 +8,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.miru.dating
-        provisioning_profile: MiruDistribution
-        certificate: MiruCertificate
-        team_id: SYTHFLKFXC
       vars:
         BUNDLE_ID: com.miru.dating
         XCODE_WORKSPACE: ios/App/App.xcworkspace
@@ -32,9 +29,16 @@ workflows:
       - name: Install CocoaPods
         script: |
           cd ios/App && pod init && pod install
+      - name: Set up signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files com.miru.dating \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Build iOS
         script: |
-          xcode-project use-profiles
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
             --scheme "$XCODE_SCHEME"
