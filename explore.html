@@ -481,37 +481,49 @@
     .act-btn.undo  .act-label { color: var(--muted); }
 
     /* ── Bottom tab bar ── */
-    .tabs {
-      flex-shrink: 0;
-      padding: 8px 10px 12px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-      background: rgba(10,7,20,0.85);
-      border-top: 1px solid var(--border);
-      backdrop-filter: blur(18px);
+  .tab-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(430px, 100%);
+      padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(10,7,20,0.94);
+      border-top: 1px solid rgba(180,170,255,0.10);
+      backdrop-filter: blur(24px);
+      z-index: 70;
     }
-
-    .tab {
+    .tab-item {
       text-decoration: none;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       gap: 4px;
-      min-height: 50px;
-      border-radius: 16px;
-      color: var(--muted);
-      transition: all 0.15s;
+      padding: 6px 10px;
+      border-radius: 12px;
+      color: rgba(180,170,255,0.38);
+      transition: color 0.18s;
+      position: relative;
+      min-width: 52px;
     }
-
-    .tab-icon { font-size: 19px; }
-    .tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.9px; font-weight: 800; }
-
-    .tab.on {
-      background: rgba(255,255,255,0.06);
-      color: var(--white);
+    .tab-item.on { color: #FFFFFF; }
+    .tab-item.on::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, #B8AEFF, #7DFFC8);
     }
+    .tab-svg { width: 21px; height: 21px; }
+    .tab-item:not(.on) .tab-svg { opacity: 0.45; }
+    .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
 
     /* ── Empty state ── */
     .empty-state {
@@ -794,12 +806,28 @@
     </div>
 
     <!-- Tab bar -->
-    <div class="tabs">
-      <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
-      <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
-     <a class="tab" href="discover.html"><div class="tab-icon">✦</div><div class="tab-label">Discover</div></a>
-      <a class="tab" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
-    </div>
+    <nav class="tab-bar">
+    <a class="tab-item" href="index.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Matches</span>
+    </a>
+    <a class="tab-item on" href="explore.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span class="tab-label">Explore</span>
+    </a>
+    <a class="tab-item" href="discover.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="tab-label">Discover</span>
+    </a>
+    <a class="tab-item" href="messages.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a class="tab-item" href="profile.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
 
   </div>
 

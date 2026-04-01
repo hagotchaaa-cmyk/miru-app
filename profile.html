@@ -1214,12 +1214,28 @@
   <button class="fab" onclick="openComposer()" aria-label="Create post">＋</button>
 
   <!-- Tab bar -->
-  <div class="tabs">
-    <a class="tab" href="index.html"><div class="tab-icon">💜</div><div class="tab-label">Matches</div></a>
-    <a class="tab" href="messages.html"><div class="tab-icon">💬</div><div class="tab-label">Messages</div></a>
-    <a class="tab" href="discover.html"><div class="tab-icon">🔍</div><div class="tab-label">Discover</div></a>
-    <a class="tab on" href="profile.html"><div class="tab-icon">👤</div><div class="tab-label">Profile</div></a>
-  </div>
+ <nav class="tab-bar">
+    <a class="tab-item" href="index.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Matches</span>
+    </a>
+    <a class="tab-item" href="explore.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span class="tab-label">Explore</span>
+    </a>
+    <a class="tab-item" href="discover.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="tab-label">Discover</span>
+    </a>
+    <a class="tab-item" href="messages.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a class="tab-item on" href="profile.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">Profile</span>
+    </a>
+  </nav>
 
   <!-- Edit Profile Modal -->
   <div class="modal-backdrop" id="editModal">
