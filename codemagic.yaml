@@ -28,10 +28,13 @@ workflows:
           npx cap sync ios
       - name: Install CocoaPods
         script: |
-          cd ios/App && pod init && pod install
-      - name: Set up code signing
+          cd ios/App && pod install
+      - name: Set build number
         script: |
-          xcode-project use-profiles --project ios/App/App.xcodeproj
+          BUILD_NUMBER=$(($(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo 0) + 1))
+          echo "Setting build number to $BUILD_NUMBER"
+          agvtool new-version -all $BUILD_NUMBER
+        working_directory: ios/App
       - name: Build iOS
         script: |
           xcode-project build-ipa \
@@ -41,6 +44,6 @@ workflows:
       - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
-        apple_id: avong9708@gmail.com
+        apple_id: hagotchaaa@gmail.com
         password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: false
