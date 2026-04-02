@@ -535,6 +535,27 @@
       text-overflow: ellipsis;
     }
 
+    .cell-stats {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 22px 7px 6px;
+      background: linear-gradient(transparent, rgba(5,3,15,0.82));
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .cell-stat {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--white);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .cell-stat svg { opacity: 0.9; }
+
     .grid-empty {
       grid-column: span 3;
       padding: 52px 24px;
@@ -2048,7 +2069,7 @@
     async function loadPosts() {
       const { data, error } = await sb
         .from('user_posts')
-        .select('id,media_url,media_type,caption,created_at')
+        .select('id,media_url,media_type,caption,created_at,comments_off,post_likes(count),post_comments(count)')
         .eq('user_id', me.id)
         .order('created_at', { ascending: false });
 
@@ -2090,11 +2111,26 @@
           ? `<video src="${esc(post.media_url)}" muted playsinline preload="metadata"></video>`
           : `<img src="${esc(post.media_url)}" alt="${esc(post.caption || '')}" loading="lazy" />`;
 
+        const likes    = post.post_likes?.[0]?.count    ?? 0;
+        const comments = post.post_comments?.[0]?.count ?? 0;
+        const showStats = likes > 0 || comments > 0;
+
         return `
           <div class="grid-cell">
             ${mediaHTML}
-            ${isVideo ? '<div class="cell-badge">▶ Video</div>' : ''}
-            ${post.caption ? `<div class="cell-caption">${esc(post.caption)}</div>` : ''}
+            ${isVideo ? '<div class="cell-badge">▶</div>' : ''}
+            ${showStats ? `
+              <div class="cell-stats">
+                <div class="cell-stat">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  ${likes}
+                </div>
+                ${!post.comments_off ? `
+                <div class="cell-stat">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  ${comments}
+                </div>` : ''}
+              </div>` : ''}
             <button class="post-edit-btn" onclick="event.stopPropagation(); openPostOptions('${post.id}')" title="Edit post">⋯</button>
           </div>
         `;
