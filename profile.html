@@ -949,6 +949,102 @@
     .toast.success { background: rgba(125,255,200,0.12); border: 1px solid rgba(125,255,200,0.28); color: var(--green); }
     .toast.info    { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--soft); }
     .toast.error   { background: rgba(255,112,144,0.12); border: 1px solid rgba(255,112,144,0.28); color: var(--red); }
+    /* ── Settings modal shared styles ── */
+    .settings-modal-body { display: flex; flex-direction: column; gap: 4px; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+    .toggle-sub { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: rgba(255,255,255,0.10);
+      border-radius: 999px;
+      transition: 0.2s;
+      border: 1px solid var(--border);
+    }
+    .toggle-slider::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      top: 2px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--lilac); border-color: var(--lilac); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    .settings-empty { text-align: center; padding: 32px 0; color: var(--muted); font-size: 13px; font-weight: 700; }
+
+    .blocked-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .blocked-item:last-child { border-bottom: none; }
+    .blocked-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+    .blocked-name { flex: 1; font-size: 14px; font-weight: 700; color: var(--white); }
+    .unblock-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .unblock-btn:hover { border-color: var(--lilac); color: var(--lilac); }
+
+    .about-logo-wrap { text-align: center; padding: 10px 0 20px; }
+    .about-app-icon { width: 72px; height: 72px; border-radius: 20px; margin-bottom: 10px; }
+    .about-app-name { font-family: var(--serif); font-size: 28px; font-style: italic; font-weight: 700; color: var(--white); }
+    .about-version { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 4px; }
+    .about-desc { font-size: 13px; color: var(--soft); line-height: 1.7; text-align: center; margin-bottom: 18px; }
+    .about-link {
+      display: block;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--lilac);
+      text-decoration: none;
+    }
+    .about-link:last-of-type { border-bottom: none; margin-bottom: 16px; }
+    .about-copy { text-align: center; font-size: 12px; color: var(--muted); font-weight: 700; padding-top: 8px; }
+
     /* ── Account management modal ── */
     .acct-card {
       display: flex;
@@ -1190,7 +1286,7 @@
           </div>
           <div class="settings-item-arrow">›</div>
         </button>
-        <button class="settings-item" onclick="closeSettings(); showToast('Notifications coming soon.', 'info')">
+        <button class="settings-item" onclick="closeSettings(); openModal('notifSettingsModal'); loadNotifPrefs()">
           <div class="settings-item-icon">🔔</div>
           <div class="settings-item-body">
             <div class="settings-item-label">Notifications</div>
@@ -1198,7 +1294,7 @@
           </div>
           <div class="settings-item-arrow">›</div>
         </button>
-        <button class="settings-item" onclick="closeSettings(); showToast('Privacy controls coming soon.', 'info')">
+        <button class="settings-item" onclick="closeSettings(); openModal('privacySettingsModal'); loadPrivacyPrefs()">
           <div class="settings-item-icon">🔒</div>
           <div class="settings-item-body">
             <div class="settings-item-label">Privacy</div>
@@ -1206,7 +1302,7 @@
           </div>
           <div class="settings-item-arrow">›</div>
         </button>
-        <button class="settings-item" onclick="closeSettings(); showToast('Blocked users coming soon.', 'info')">
+        <button class="settings-item" onclick="closeSettings(); openModal('blockedModal'); loadBlockedUsers()">
           <div class="settings-item-icon">🚫</div>
           <div class="settings-item-body">
             <div class="settings-item-label">Blocked accounts</div>
@@ -1237,7 +1333,7 @@
           </div>
           <div class="settings-item-arrow">›</div>
         </a>
-        <button class="settings-item" onclick="closeSettings(); showToast('Miru v1.0 — Phoenix, AZ', 'info')">
+        <button class="settings-item" onclick="closeSettings(); openModal('aboutModal')">
           <div class="settings-item-icon">ℹ️</div>
           <div class="settings-item-body">
             <div class="settings-item-label">About Miru</div>
@@ -1343,6 +1439,144 @@
         <button class="confirm-back" onclick="showAccountOptions()">← Go back</button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Notifications Settings Modal -->
+  <div class="modal-backdrop" id="notifSettingsModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Notifications</div>
+        <button class="close-btn" onclick="closeModal('notifSettingsModal')">✕</button>
+      </div>
+      <div class="settings-modal-body">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">New matches</div>
+            <div class="toggle-sub">When someone matches with you</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif_matches" checked onchange="saveNotifPref('matches', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">New messages</div>
+            <div class="toggle-sub">When a match sends you a message</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif_messages" checked onchange="saveNotifPref('messages', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">New likes</div>
+            <div class="toggle-sub">When someone likes your profile</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif_likes" checked onchange="saveNotifPref('likes', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Discover activity</div>
+            <div class="toggle-sub">Likes and comments on your posts</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="notif_discover" checked onchange="saveNotifPref('discover', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Settings Modal -->
+  <div class="modal-backdrop" id="privacySettingsModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Privacy</div>
+        <button class="close-btn" onclick="closeModal('privacySettingsModal')">✕</button>
+      </div>
+      <div class="settings-modal-body">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Show my age</div>
+            <div class="toggle-sub">Display your age on your profile</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="priv_show_age" checked onchange="savePrivacyPref('show_age', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Show distance</div>
+            <div class="toggle-sub">Show approximate distance to other users</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="priv_show_distance" checked onchange="savePrivacyPref('show_distance', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Discoverable</div>
+            <div class="toggle-sub">Appear in Explore and match suggestions</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="priv_discoverable" checked onchange="savePrivacyPref('discoverable', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">Show activity status</div>
+            <div class="toggle-sub">Let matches see when you were last active</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="priv_show_activity" checked onchange="savePrivacyPref('show_activity', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Blocked Accounts Modal -->
+  <div class="modal-backdrop" id="blockedModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">Blocked</div>
+        <button class="close-btn" onclick="closeModal('blockedModal')">✕</button>
+      </div>
+      <div class="settings-modal-body" id="blockedList">
+        <div class="settings-empty">No blocked accounts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Miru Modal -->
+  <div class="modal-backdrop" id="aboutModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title">About Miru</div>
+        <button class="close-btn" onclick="closeModal('aboutModal')">✕</button>
+      </div>
+      <div class="settings-modal-body">
+        <div class="about-logo-wrap">
+          <img src="icon.svg" alt="Miru" class="about-app-icon" />
+          <div class="about-app-name">miru.</div>
+          <div class="about-version">Version 1.0 · Phoenix, AZ</div>
+        </div>
+        <div class="about-desc">Miru is a video-first dating app built for real connection. No endless swiping. Just real people, real energy.</div>
+        <a class="about-link" href="privacy.html">Privacy Policy</a>
+        <a class="about-link" href="support.html">Help &amp; Support</a>
+        <div class="about-copy">© 2026 Miru. Made with 💜 in Phoenix.</div>
+      </div>
     </div>
   </div>
 
@@ -1864,6 +2098,88 @@
         btn.disabled = false;
         btn.textContent = 'Yes, delete my account';
       }
+    }
+
+    // ── Generic modal helpers ─────────────────────────────────
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    // ── Notification preferences ──────────────────────────────
+    async function loadNotifPrefs() {
+      const { data } = await sb.from('profiles').select('notification_preferences').eq('user_id', me.id).maybeSingle();
+      if (!data?.notification_preferences) return;
+      const p = data.notification_preferences;
+      ['matches','messages','likes','discover'].forEach(k => {
+        const el = document.getElementById('notif_' + k);
+        if (el) el.checked = p[k] !== false;
+      });
+    }
+
+    async function saveNotifPref(key, val) {
+      const { data } = await sb.from('profiles').select('notification_preferences').eq('user_id', me.id).maybeSingle();
+      const prefs = data?.notification_preferences || { matches: true, messages: true, likes: true, discover: true };
+      prefs[key] = val;
+      await sb.from('profiles').update({ notification_preferences: prefs }).eq('user_id', me.id);
+      showToast('Saved ✓', 'success');
+    }
+
+    // ── Privacy preferences ───────────────────────────────────
+    async function loadPrivacyPrefs() {
+      const { data } = await sb.from('profiles').select('privacy_preferences').eq('user_id', me.id).maybeSingle();
+      if (!data?.privacy_preferences) return;
+      const p = data.privacy_preferences;
+      ['show_age','show_distance','discoverable','show_activity'].forEach(k => {
+        const el = document.getElementById('priv_' + k);
+        if (el) el.checked = p[k] !== false;
+      });
+    }
+
+    async function savePrivacyPref(key, val) {
+      const { data } = await sb.from('profiles').select('privacy_preferences').eq('user_id', me.id).maybeSingle();
+      const prefs = data?.privacy_preferences || { show_age: true, show_distance: true, discoverable: true, show_activity: true };
+      prefs[key] = val;
+      await sb.from('profiles').update({ privacy_preferences: prefs }).eq('user_id', me.id);
+      showToast('Saved ✓', 'success');
+    }
+
+    // ── Blocked accounts ──────────────────────────────────────
+    async function loadBlockedUsers() {
+      const list = document.getElementById('blockedList');
+      list.innerHTML = '<div class="settings-empty">Loading…</div>';
+
+      const { data, error } = await sb
+        .from('blocked_users')
+        .select('id, blocked_id, profiles!blocked_users_blocked_id_fkey(name, avatar_url)')
+        .eq('blocker_id', me.id);
+
+      if (error || !data || data.length === 0) {
+        list.innerHTML = '<div class="settings-empty">No blocked accounts</div>';
+        return;
+      }
+
+      list.innerHTML = data.map(b => {
+        const name = b.profiles?.name || 'Unknown';
+        const avatar = b.profiles?.avatar_url
+          ? `<img src="${esc(b.profiles.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`
+          : name.charAt(0).toUpperCase();
+        return `
+          <div class="blocked-item">
+            <div class="blocked-avatar">${avatar}</div>
+            <div class="blocked-name">${esc(name)}</div>
+            <button class="unblock-btn" onclick="unblockUser('${b.id}')">Unblock</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function unblockUser(blockId) {
+      await sb.from('blocked_users').delete().eq('id', blockId);
+      showToast('User unblocked', 'success');
+      loadBlockedUsers();
     }
 
     // ── Init ──────────────────────────────────────────────────
