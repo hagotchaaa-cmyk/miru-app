@@ -8,115 +8,1549 @@
   <meta name="theme-color" content="#0A0714" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon-180.png" />
-  <title>Miru — Friends</title>
+  <title>Miru — Double Date</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #0A0714; --border: rgba(180,170,255,0.09); --border-hi: rgba(180,170,255,0.18);
-      --white: #FFFFFF; --text: #F0ECFF; --soft: #C4BCEE; --muted: #7A72AA;
-      --lilac: #B8AEFF; --gold: #F5CE7A; --green: #7DFFC8;
-      --serif: 'Cormorant Garamond', serif; --sans: 'Cabinet Grotesk', sans-serif;
+      --bg:         #0A0714;
+      --s1:         #100D22;
+      --border:     rgba(180,170,255,0.10);
+      --border-hi:  rgba(180,170,255,0.22);
+      --white:      #FFFFFF;
+      --text:       #F0ECFF;
+      --soft:       #C4BCEE;
+      --muted:      #7A72AA;
+      --lilac:      #B8AEFF;
+      --gold:       #F5CE7A;
+      --green:      #7DFFC8;
+      --red:        #FF7090;
+      --card-bg:    rgba(255,255,255,0.035);
+      --card-border: rgba(180,170,255,0.11);
+      --serif:      'Cormorant Garamond', serif;
+      --sans:       'Cabinet Grotesk', sans-serif;
     }
-    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
-    body { padding-bottom: 96px; }
-    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(ellipse 70% 45% at 50% -5%, rgba(80,60,200,0.22), transparent); pointer-events: none; z-index: 0; }
-    .shell { max-width: 440px; margin: 0 auto; position: relative; z-index: 1; }
-    .top-bar { position: sticky; top: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; backdrop-filter: blur(20px); background: rgba(10,7,20,0.85); border-bottom: 1px solid var(--border); }
-    .logo { font-family: var(--serif); font-size: 26px; font-style: italic; font-weight: 700; color: var(--white); }
-    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-family: var(--sans); }
-    .page { padding: 18px 16px; }
-    .eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--lilac); margin-bottom: 10px; opacity: 0.85; }
-    .page-title { font-family: var(--serif); font-size: 36px; font-weight: 700; line-height: 0.96; letter-spacing: -1px; color: var(--white); margin-bottom: 10px; }
-    .page-title em { color: var(--lilac); font-style: italic; }
-    .page-sub { color: var(--soft); font-size: 14px; line-height: 1.7; margin-bottom: 20px; }
-    .coming-soon { padding: 20px; border-radius: 20px; background: linear-gradient(135deg, rgba(184,174,255,0.07), rgba(125,255,200,0.04)); border: 1px solid var(--border-hi); margin-bottom: 18px; text-align: center; }
-    .cs-emoji { font-size: 32px; margin-bottom: 10px; }
-    .cs-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--white); margin-bottom: 8px; }
-    .cs-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .section-label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-    .friend-list { display: flex; flex-direction: column; gap: 8px; }
-    .friend-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); cursor: pointer; transition: background 0.15s; }
-    .friend-item:hover { background: rgba(255,255,255,0.07); }
-    .friend-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(145deg, #3D3280, #1A1448); border: 2px solid rgba(184,174,255,0.20); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--white); flex-shrink: 0; overflow: hidden; }
-    .friend-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-    .friend-name { font-size: 14px; font-weight: 800; color: var(--white); margin-bottom: 2px; }
-    .friend-sub { font-size: 12px; color: var(--muted); font-weight: 700; }
-    .friend-action { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); font-size: 13px; display: flex; align-items: center; justify-content: center; }
-    .empty-state { padding: 40px 20px; text-align: center; border-radius: 20px; border: 1px dashed var(--border-hi); background: rgba(255,255,255,0.02); }
-    .empty-emoji { font-size: 36px; margin-bottom: 12px; }
-    .empty-title { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--white); margin-bottom: 8px; }
-    .empty-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .tab-bar { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: min(430px, 100%); padding: 10px 4px calc(12px + env(safe-area-inset-bottom)); display: flex; justify-content: space-around; align-items: center; background: rgba(10,7,20,0.94); border-top: 1px solid rgba(180,170,255,0.10); backdrop-filter: blur(24px); z-index: 70; }
-    .tab-item { text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 12px; color: rgba(180,170,255,0.38); transition: color 0.18s; position: relative; min-width: 52px; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+    body { padding-bottom: 90px; }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 75% 48% at 50% -8%, rgba(80,55,210,0.26), transparent),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(245,206,122,0.05), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    .shell {
+      max-width: 440px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      background: rgba(10,7,20,0.72);
+      border-bottom: 1px solid rgba(180,170,255,0.07);
+    }
+
+    .top-bar-left { display: flex; align-items: center; gap: 10px; }
+
+    .back-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--soft);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.09); }
+
+    .page-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .duo-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(245,206,122,0.10);
+      border: 1px solid rgba(245,206,122,0.22);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Views ── */
+    .view { display: none; flex: 1; }
+    .view.active { display: flex; flex-direction: column; }
+
+    /* ── Invite view ── */
+    .invite-hero {
+      padding: 32px 24px 20px;
+      text-align: center;
+    }
+
+    .invite-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(245,206,122,0.15), rgba(184,174,255,0.10));
+      border: 1px solid rgba(245,206,122,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+    }
+
+    .invite-title {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+
+    .invite-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .invite-card {
+      margin: 0 20px;
+      padding: 20px;
+      border-radius: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    .invite-section-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .search-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 42px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--border-hi); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .search-results {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      margin-bottom: 4px;
+    }
+    .search-results:empty { display: none; }
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      cursor: pointer;
+      transition: background 0.13s;
+      border-bottom: 1px solid var(--border);
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: rgba(255,255,255,0.05); }
+
+    .result-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .result-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .result-name { font-size: 14px; font-weight: 700; color: var(--white); }
+    .result-handle { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    .result-invite-btn {
+      margin-left: auto;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+    .result-invite-btn:hover { opacity: 0.85; }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .or-divider::before, .or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .or-divider span { font-size: 11px; color: var(--muted); font-weight: 700; }
+
+    .share-link-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 14px;
+      background: rgba(245,206,122,0.07);
+      border: 1px solid rgba(245,206,122,0.18);
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .share-link-btn:hover { background: rgba(245,206,122,0.12); }
+
+    /* ── Pending view ── */
+    .pending-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .pending-avatars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .pending-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      border: 3px solid var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--white);
+      overflow: hidden;
+    }
+    .pending-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .pending-avatar.second { margin-left: -18px; background: linear-gradient(145deg, #2a2050, #110e30); }
+
+    .pending-connector {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid rgba(245,206,122,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      z-index: 2;
+    }
+
+    .pending-title {
+      font-family: var(--serif);
+      font-size: 30px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .pending-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 260px;
+      margin: 0 auto 28px;
+    }
+
+    .pending-name {
+      color: var(--lilac);
+      font-weight: 800;
+    }
+
+    .pulse-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(245,206,122,0.2);
+      animation: pulse 2s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+
+    .cancel-invite-btn {
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .cancel-invite-btn:hover { border-color: var(--red); color: var(--red); }
+
+    .reshare-btn {
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: rgba(245,206,122,0.07);
+      border: 1px solid rgba(245,206,122,0.18);
+      color: var(--gold);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    /* ── Swipe view ── */
+    .swipe-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 20px 0;
+      position: relative;
+    }
+
+    .duo-card-wrap {
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .duo-card {
+      width: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .duo-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: 300px;
+      position: relative;
+    }
+
+    .duo-photo {
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+    }
+
+    .duo-photo:first-child { border-radius: 0; }
+
+    .duo-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .duo-photo-initial {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .duo-split-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--bg);
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+
+    .duo-split-heart {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 2px solid rgba(245,206,122,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      z-index: 3;
+    }
+
+    .duo-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 16px 16px;
+      background: linear-gradient(transparent, rgba(5,3,15,0.92));
+    }
+
+    .duo-names {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.3px;
+      margin-bottom: 4px;
+    }
+
+    .duo-detail {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 700;
+    }
+
+    .duo-body {
+      padding: 14px 16px 16px;
+    }
+
+    .duo-vibes {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .duo-vibe {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(184,174,255,0.07);
+      border: 1px solid rgba(184,174,255,0.14);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Swipe action buttons */
+    .swipe-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 0 20px 20px;
+    }
+
+    .swipe-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .swipe-btn-circle {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .swipe-btn-circle:hover { transform: scale(1.08); }
+
+    .swipe-btn-circle.pass {
+      background: rgba(255,112,144,0.10);
+      border: 2px solid rgba(255,112,144,0.22);
+      box-shadow: 0 6px 20px rgba(255,112,144,0.08);
+    }
+    .swipe-btn-circle.pass:hover { box-shadow: 0 8px 28px rgba(255,112,144,0.18); }
+
+    .swipe-btn-circle.like {
+      background: rgba(125,255,200,0.10);
+      border: 2px solid rgba(125,255,200,0.22);
+      box-shadow: 0 6px 20px rgba(125,255,200,0.08);
+      width: 74px;
+      height: 74px;
+      font-size: 30px;
+    }
+    .swipe-btn-circle.like:hover { box-shadow: 0 8px 28px rgba(125,255,200,0.18); }
+
+    .swipe-btn-label {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+
+    /* Duo counter */
+    .duo-counter {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    /* Empty state */
+    .swipe-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .swipe-empty-emoji { font-size: 48px; margin-bottom: 16px; }
+    .swipe-empty-title { font-family: var(--serif); font-size: 28px; font-style: italic; color: var(--white); margin-bottom: 10px; }
+    .swipe-empty-sub { font-size: 13px; color: var(--muted); line-height: 1.65; max-width: 240px; }
+
+    /* Your duo strip */
+    .my-duo-strip {
+      margin: 12px 20px 0;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,206,122,0.05);
+      border: 1px solid rgba(245,206,122,0.12);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .my-duo-avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .my-duo-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      border: 2px solid var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--white);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .my-duo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .my-duo-avatar.second { margin-left: -10px; }
+
+    .my-duo-info { flex: 1; }
+    .my-duo-names { font-size: 13px; font-weight: 800; color: var(--white); }
+    .my-duo-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    .leave-duo-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--sans);
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+    .leave-duo-btn:hover { color: var(--red); }
+
+    /* ── Match view ── */
+    .match-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .match-avatars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .match-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      border: 3px solid var(--bg);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .match-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .match-avatar:not(:first-child) { margin-left: -14px; }
+
+    .match-heart {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #E8B44A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin: 0 4px;
+      box-shadow: 0 8px 24px rgba(245,206,122,0.35);
+      animation: heartPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      flex-shrink: 0;
+    }
+
+    @keyframes heartPop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    .match-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .match-title {
+      font-family: var(--serif);
+      font-size: 44px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .match-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 260px;
+      margin: 0 auto 32px;
+    }
+
+    .match-chat-btn {
+      width: 100%;
+      max-width: 280px;
+      padding: 15px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .match-chat-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,255,255,0.14); }
+
+    .match-keep-btn {
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ── Incoming invite banner ── */
+    .invite-banner {
+      margin: 12px 20px 0;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(184,174,255,0.06);
+      border: 1px solid rgba(184,174,255,0.18);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .invite-banner-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3D3280, #1A1448);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--white);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .invite-banner-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .invite-banner-body { flex: 1; }
+    .invite-banner-text { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+    .invite-banner-sub  { font-size: 11px; color: var(--muted); }
+
+    .invite-banner-actions { display: flex; gap: 7px; }
+    .accept-btn {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+    }
+    .decline-btn {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ── Tab bar ── */
+    .tab-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(430px, 100%);
+      padding: 10px 4px calc(12px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(10,7,20,0.94);
+      border-top: 1px solid rgba(180,170,255,0.09);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 70;
+    }
+
+    .tab-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      color: rgba(180,170,255,0.35);
+      transition: color 0.18s;
+      position: relative;
+      min-width: 52px;
+    }
     .tab-item.on { color: #FFFFFF; }
-    .tab-item.on::before { content: ""; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 24px; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(90deg, #B8AEFF, #7DFFC8); }
+    .tab-item.on::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: linear-gradient(90deg, #B8AEFF, #7DFFC8);
+    }
     .tab-svg { width: 21px; height: 21px; }
-    .tab-item:not(.on) .tab-svg { opacity: 0.45; }
+    .tab-item:not(.on) .tab-svg { opacity: 0.40; }
     .tab-label { font-size: 8.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      backdrop-filter: blur(16px);
+      z-index: 300;
+      opacity: 0;
+      transition: opacity 0.22s, transform 0.22s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: rgba(125,255,200,0.12); border: 1px solid rgba(125,255,200,0.28); color: var(--green); }
+    .toast.info    { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--soft); }
+    .toast.error   { background: rgba(255,112,144,0.12); border: 1px solid rgba(255,112,144,0.28); color: var(--red); }
+
+    /* Loading */
+    .loading-state {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
   <div class="shell">
+
+    <!-- Top bar -->
     <div class="top-bar">
-      <div class="logo">miru.</div>
-      <button class="back-btn" onclick="window.location.href='index.html'">←</button>
-    </div>
-    <div class="page">
-      <div class="eyebrow">Coming soon</div>
-      <div class="page-title">Bring a <em>friend</em><br />along.</div>
-      <div class="page-sub">Double dates, group hangs, bringing a friend into the mix — all coming to Miru soon.</div>
-      <div class="coming-soon">
-        <div class="cs-emoji">👯</div>
-        <div class="cs-title">Friends feature in the works.</div>
-        <div class="cs-body">We're building out double dates and friend invites. Here are the people already on Miru you could connect with.</div>
+      <div class="top-bar-left">
+        <a class="back-btn" href="index.html">←</a>
+        <div class="page-title">Double Date</div>
       </div>
-      <div class="section-label">People on Miru</div>
-      <div class="friend-list" id="friendList"></div>
+      <div class="duo-badge" id="duoBadge" style="display:none;">Your duo ✦</div>
     </div>
+
+    <!-- Loading -->
+    <div class="loading-state" id="loadingView">Loading…</div>
+
+    <!-- ── VIEW: Invite a friend ── -->
+    <div class="view" id="inviteView">
+
+      <!-- Incoming invite banner (if any) -->
+      <div class="invite-banner" id="incomingBanner" style="display:none;">
+        <div class="invite-banner-avatar" id="incomingAvatar"></div>
+        <div class="invite-banner-body">
+          <div class="invite-banner-text" id="incomingText">wants to be your duo</div>
+          <div class="invite-banner-sub">Tap accept to team up</div>
+        </div>
+        <div class="invite-banner-actions">
+          <button class="accept-btn" onclick="acceptInvite()">Accept</button>
+          <button class="decline-btn" onclick="declineInvite()">✕</button>
+        </div>
+      </div>
+
+      <div class="invite-hero">
+        <div class="invite-icon">👯</div>
+        <div class="invite-title">Invite your<br>plus one.</div>
+        <div class="invite-sub">Team up with a friend and get matched with other duos looking for a double date.</div>
+      </div>
+
+      <div class="invite-card">
+        <div class="invite-section-label">Search by name</div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="friendSearch" type="text" placeholder="Find a friend on Miru…" oninput="onSearch(this.value)" autocomplete="off" />
+        </div>
+        <div class="search-results" id="searchResults"></div>
+
+        <div class="or-divider"><span>or</span></div>
+
+        <button class="share-link-btn" onclick="shareInviteLink()">
+          🔗 Share invite link
+        </button>
+      </div>
+    </div>
+
+    <!-- ── VIEW: Pending invite sent ── -->
+    <div class="view" id="pendingView">
+      <div class="pending-wrap">
+        <div class="pending-avatars">
+          <div style="position:relative;">
+            <div class="pending-avatar" id="pendingMyAvatar"></div>
+            <div class="pulse-ring"></div>
+          </div>
+          <div class="pending-connector">⏳</div>
+          <div class="pending-avatar second" id="pendingTheirAvatar"></div>
+        </div>
+        <div class="pending-title">Waiting on<br><span id="pendingName" class="pending-name">your friend</span>…</div>
+        <div class="pending-sub">Share the link again or wait for them to accept your invite.</div>
+        <button class="reshare-btn" onclick="shareInviteLink()">🔗 Share link again</button>
+        <button class="cancel-invite-btn" onclick="cancelInvite()">Cancel invite</button>
+      </div>
+    </div>
+
+    <!-- ── VIEW: Swipe duos ── -->
+    <div class="view" id="swipeView">
+
+      <!-- My duo strip -->
+      <div class="my-duo-strip" id="myDuoStrip">
+        <div class="my-duo-avatars">
+          <div class="my-duo-avatar" id="stripAvatar1"></div>
+          <div class="my-duo-avatar second" id="stripAvatar2"></div>
+        </div>
+        <div class="my-duo-info">
+          <div class="my-duo-names" id="stripNames">You & friend</div>
+          <div class="my-duo-sub">Your duo is active ✦</div>
+        </div>
+        <button class="leave-duo-btn" onclick="leaveDuo()">Leave</button>
+      </div>
+
+      <div class="swipe-area" id="swipeArea">
+        <!-- filled by JS -->
+      </div>
+
+      <div class="swipe-actions" id="swipeActions" style="display:none;">
+        <div class="swipe-btn">
+          <button class="swipe-btn-circle pass" onclick="swipeDuo('pass')">✕</button>
+          <span class="swipe-btn-label">Pass</span>
+        </div>
+        <div class="swipe-btn">
+          <button class="swipe-btn-circle like" onclick="swipeDuo('like')">♡</button>
+          <span class="swipe-btn-label">Date</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIEW: Match! ── -->
+    <div class="view" id="matchView">
+      <div class="match-wrap">
+        <div class="match-avatars" id="matchAvatars"></div>
+        <div class="match-eyebrow">It's a double match</div>
+        <div class="match-title">You're going<br><em>on a date.</em></div>
+        <div class="match-sub">Both duos liked each other. Time to make plans — your group chat is ready.</div>
+        <button class="match-chat-btn" onclick="openGroupChat()">💬 Open group chat</button>
+        <button class="match-keep-btn" onclick="showSwipeView()">Keep browsing</button>
+      </div>
+    </div>
+
   </div>
 
+  <!-- Tab bar -->
   <nav class="tab-bar">
-    <a class="tab-item on" href="index.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="tab-label">Matches</span></a>
-    <a class="tab-item" href="explore.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span class="tab-label">Explore</span></a>
-    <a class="tab-item" href="discover.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span class="tab-label">Discover</span></a>
-    <a class="tab-item" href="messages.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="tab-label">Messages</span></a>
-    <a class="tab-item" href="profile.html"><svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tab-label">Profile</span></a>
+    <a class="tab-item on" href="index.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="tab-label">Matches</span>
+    </a>
+    <a class="tab-item" href="explore.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span class="tab-label">Explore</span>
+    </a>
+    <a class="tab-item" href="discover.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="tab-label">Discover</span>
+    </a>
+    <a class="tab-item" href="messages.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Messages</span>
+    </a>
+    <a class="tab-item" href="profile.html">
+      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="tab-label">Profile</span>
+    </a>
   </nav>
+
+  <div class="toast" id="toast"></div>
 
   <script>
     const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
 
-    function esc(v) { return String(v ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+    let me = null;
+    let myProfile = null;
+    let myDuo = null;
+    let incomingInvite = null;
+    let duoQueue = [];
+    let currentDuoIndex = 0;
+    let matchedDuo = null;
+    let matchedChatId = null;
+
+    // ── Helpers ───────────────────────────────────────────────
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, s =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])
+      );
+    }
+
+    let toastTimer;
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type} show`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
     function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
 
-    async function loadFriends() {
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) { window.location.href = 'auth.html'; return; }
+    function avatarHTML(url, name, size = 32) {
+      if (url) return `<img src="${esc(url)}" alt="" />`;
+      return initial(name);
+    }
 
-      const { data } = await sb.from('profiles').select('user_id,name,avatar_url,bio').neq('user_id', user.id).limit(20);
-      const list = document.getElementById('friendList');
+    function showView(id) {
+      document.getElementById('loadingView').style.display = 'none';
+      ['inviteView','pendingView','swipeView','matchView'].forEach(v => {
+        document.getElementById(v).classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
 
-      if (!data?.length) {
-        list.innerHTML = '<div class="empty-state"><div class="empty-emoji">✨</div><div class="empty-title">No one here yet.</div><div class="empty-body">Invite friends to join Miru so you can see them here.</div></div>';
+    // ── Search ────────────────────────────────────────────────
+    let searchTimer;
+    async function onSearch(val) {
+      clearTimeout(searchTimer);
+      const results = document.getElementById('searchResults');
+      if (!val.trim()) { results.innerHTML = ''; return; }
+      searchTimer = setTimeout(async () => {
+        const { data } = await sb
+          .from('profiles')
+          .select('user_id,name,avatar_url')
+          .ilike('name', `%${val}%`)
+          .neq('user_id', me.id)
+          .limit(6);
+
+        if (!data || !data.length) {
+          results.innerHTML = '<div style="padding:12px 14px;font-size:13px;color:var(--muted);font-weight:700;">No users found</div>';
+          return;
+        }
+
+        results.innerHTML = data.map(u => `
+          <div class="search-result-item">
+            <div class="result-avatar">${u.avatar_url ? `<img src="${esc(u.avatar_url)}" />` : initial(u.name)}</div>
+            <div>
+              <div class="result-name">${esc(u.name)}</div>
+              <div class="result-handle">@${esc((u.name||'').toLowerCase().replace(/\s+/g,'.'))}</div>
+            </div>
+            <button class="result-invite-btn" onclick="sendInvite('${u.user_id}','${esc(u.name)}')">Invite</button>
+          </div>
+        `).join('');
+      }, 300);
+    }
+
+    // ── Invite link ───────────────────────────────────────────
+    async function shareInviteLink() {
+      // Generate or reuse invite token
+      let token = myDuo?.invite_token;
+
+      if (!token) {
+        // Create a pending duo with just user_a set
+        const { data, error } = await sb
+          .from('double_date_duos')
+          .insert({ user_a: me.id, status: 'pending' })
+          .select()
+          .single();
+
+        if (error) { showToast('Could not create invite', 'error'); return; }
+        myDuo = data;
+        token = data.invite_token;
+      }
+
+      const link = `${window.location.origin}/double_date.html?invite=${token}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: `${myProfile?.name} wants a double date on Miru`,
+          text: 'Join me for a double date on Miru 👯',
+          url: link
+        }).catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(link);
+        showToast('Invite link copied! 🔗', 'success');
+      }
+    }
+
+    // ── Send invite by search ─────────────────────────────────
+    async function sendInvite(userId, userName) {
+      document.getElementById('searchResults').innerHTML = '';
+      document.getElementById('friendSearch').value = '';
+
+      const { data, error } = await sb
+        .from('double_date_duos')
+        .insert({ user_a: me.id, user_b: userId, status: 'pending' })
+        .select()
+        .single();
+
+      if (error) { showToast('Could not send invite', 'error'); return; }
+
+      myDuo = data;
+      showToast(`Invite sent to ${userName}! ✦`, 'success');
+      renderPendingView({ name: userName, avatar_url: null });
+      showView('pendingView');
+    }
+
+    // ── Accept/decline invite ─────────────────────────────────
+    async function acceptInvite() {
+      if (!incomingInvite) return;
+
+      const { error } = await sb
+        .from('double_date_duos')
+        .update({ user_b: me.id, status: 'active' })
+        .eq('id', incomingInvite.id);
+
+      if (error) { showToast('Could not accept invite', 'error'); return; }
+
+      incomingInvite.user_b = me.id;
+      incomingInvite.status = 'active';
+      myDuo = incomingInvite;
+      incomingInvite = null;
+
+      document.getElementById('incomingBanner').style.display = 'none';
+      showToast("You're a duo! 👯 Start browsing.", 'success');
+      document.getElementById('duoBadge').style.display = 'flex';
+      await loadDuoQueue();
+      renderSwipeView();
+      showView('swipeView');
+    }
+
+    async function declineInvite() {
+      if (!incomingInvite) return;
+      await sb.from('double_date_duos').delete().eq('id', incomingInvite.id);
+      incomingInvite = null;
+      document.getElementById('incomingBanner').style.display = 'none';
+      showToast('Invite declined', 'info');
+    }
+
+    async function cancelInvite() {
+      if (!myDuo) return;
+      await sb.from('double_date_duos').delete().eq('id', myDuo.id);
+      myDuo = null;
+      showView('inviteView');
+      showToast('Invite cancelled', 'info');
+    }
+
+    async function leaveDuo() {
+      if (!myDuo) return;
+      if (!confirm('Leave your duo? You will both need to re-invite each other.')) return;
+      await sb.from('double_date_duos').delete().eq('id', myDuo.id);
+      myDuo = null;
+      document.getElementById('duoBadge').style.display = 'none';
+      duoQueue = [];
+      showView('inviteView');
+      showToast('Left duo', 'info');
+    }
+
+    // ── Handle invite link ────────────────────────────────────
+    async function handleInviteParam() {
+      const params = new URLSearchParams(window.location.search);
+      const token  = params.get('invite');
+      if (!token) return false;
+
+      // Clean URL
+      window.history.replaceState({}, '', 'double_date.html');
+
+      const { data: duo } = await sb
+        .from('double_date_duos')
+        .select('*, profiles!double_date_duos_user_a_fkey(name,avatar_url)')
+        .eq('invite_token', token)
+        .eq('status', 'pending')
+        .maybeSingle();
+
+      if (!duo) { showToast('This invite has expired or already been used', 'error'); return false; }
+      if (duo.user_a === me.id) { showToast("That's your own invite link!", 'info'); return false; }
+
+      // Show as incoming invite
+      incomingInvite = duo;
+      const sender = duo.profiles;
+      const avatarEl = document.getElementById('incomingAvatar');
+      if (sender?.avatar_url) {
+        avatarEl.innerHTML = `<img src="${esc(sender.avatar_url)}" />`;
+      } else {
+        avatarEl.textContent = initial(sender?.name);
+      }
+      document.getElementById('incomingText').textContent = `${esc(sender?.name || 'Someone')} wants to be your duo`;
+      document.getElementById('incomingBanner').style.display = 'flex';
+      return false; // still show invite view with the banner
+    }
+
+    // ── Load duo queue ────────────────────────────────────────
+    async function loadDuoQueue() {
+      if (!myDuo) return;
+
+      // Get duos we've already swiped on
+      const { data: seenData } = await sb
+        .from('double_date_likes')
+        .select('target_duo_id')
+        .eq('duo_id', myDuo.id);
+
+      const seenIds = (seenData || []).map(d => d.target_duo_id);
+      seenIds.push(myDuo.id); // exclude self
+
+      // Get active duos
+      let query = sb
+        .from('double_date_duos')
+        .select(`
+          id, invite_token,
+          profile_a:profiles!double_date_duos_user_a_fkey(user_id,name,age,avatar_url),
+          profile_b:profiles!double_date_duos_user_b_fkey(user_id,name,age,avatar_url)
+        `)
+        .eq('status', 'active')
+        .not('id', 'in', `(${seenIds.length ? seenIds.join(',') : '00000000-0000-0000-0000-000000000000'})`);
+
+      const { data } = await query.limit(20);
+      duoQueue = (data || []).filter(d =>
+        d.profile_a?.user_id !== me.id && d.profile_b?.user_id !== me.id
+      );
+      currentDuoIndex = 0;
+    }
+
+    // ── Render swipe view ─────────────────────────────────────
+    function renderSwipeView() {
+      const area    = document.getElementById('swipeArea');
+      const actions = document.getElementById('swipeActions');
+
+      // Populate my duo strip
+      if (myDuo) {
+        const pa = myDuo.profile_a || {};
+        const pb = myDuo.profile_b || {};
+        const a1 = document.getElementById('stripAvatar1');
+        const a2 = document.getElementById('stripAvatar2');
+        if (pa.avatar_url) a1.innerHTML = `<img src="${esc(pa.avatar_url)}" />`;
+        else a1.textContent = initial(pa.name);
+        if (pb.avatar_url) a2.innerHTML = `<img src="${esc(pb.avatar_url)}" />`;
+        else a2.textContent = initial(pb.name);
+        document.getElementById('stripNames').textContent = `${pa.name || 'You'} & ${pb.name || 'Friend'}`;
+      }
+
+      if (!duoQueue.length || currentDuoIndex >= duoQueue.length) {
+        area.innerHTML = `
+          <div class="swipe-empty">
+            <div class="swipe-empty-emoji">👯</div>
+            <div class="swipe-empty-title">That's everyone!</div>
+            <div class="swipe-empty-sub">No more duos right now. Check back later — new people join every day.</div>
+          </div>
+        `;
+        actions.style.display = 'none';
         return;
       }
 
-      list.innerHTML = data.map(p => `
-        <div class="friend-item" onclick="window.location.href='messages.html'">
-          <div class="friend-avatar">${p.avatar_url ? `<img src="${esc(p.avatar_url)}" alt="" />` : esc(initial(p.name))}</div>
-          <div style="flex:1;min-width:0;">
-            <div class="friend-name">${esc(p.name || 'Miru user')}</div>
-            <div class="friend-sub">${esc(p.bio ? p.bio.slice(0, 40) : 'On Miru')}</div>
+      const duo = duoQueue[currentDuoIndex];
+      const pa  = duo.profile_a || {};
+      const pb  = duo.profile_b || {};
+
+      const photoA = pa.avatar_url
+        ? `<img src="${esc(pa.avatar_url)}" alt="${esc(pa.name)}" />`
+        : `<div class="duo-photo-initial">${initial(pa.name)}</div>`;
+
+      const photoB = pb.avatar_url
+        ? `<img src="${esc(pb.avatar_url)}" alt="${esc(pb.name)}" />`
+        : `<div class="duo-photo-initial">${initial(pb.name)}</div>`;
+
+      const ageA = pa.age ? `, ${pa.age}` : '';
+      const ageB = pb.age ? `, ${pb.age}` : '';
+
+      area.innerHTML = `
+        <div class="duo-counter">${currentDuoIndex + 1} of ${duoQueue.length} duos</div>
+        <div class="duo-card-wrap">
+          <div class="duo-card">
+            <div class="duo-photos">
+              <div class="duo-photo">${photoA}</div>
+              <div class="duo-photo">${photoB}</div>
+              <div class="duo-split-line"></div>
+              <div class="duo-split-heart">👯</div>
+              <div class="duo-overlay">
+                <div class="duo-names">${esc(pa.name || '?')} &amp; ${esc(pb.name || '?')}</div>
+                <div class="duo-detail">${esc(pa.name || '?')}${ageA} · ${esc(pb.name || '?')}${ageB} · Phoenix, AZ</div>
+              </div>
+            </div>
+            <div class="duo-body">
+              <div class="duo-vibes">
+                <div class="duo-vibe">double date</div>
+                <div class="duo-vibe">phoenix</div>
+                <div class="duo-vibe">miru duo</div>
+              </div>
+            </div>
           </div>
-          <div class="friend-action">→</div>
         </div>
-      `).join('');
+      `;
+
+      actions.style.display = 'flex';
     }
 
-    loadFriends();
+    async function swipeDuo(action) {
+      if (currentDuoIndex >= duoQueue.length) return;
+      const duo = duoQueue[currentDuoIndex];
+      currentDuoIndex++;
+
+      if (action === 'like') {
+        // Insert like
+        await sb.from('double_date_likes').insert({
+          duo_id: myDuo.id,
+          target_duo_id: duo.id
+        });
+
+        // Check if they liked us back
+        const { data: theirLike } = await sb
+          .from('double_date_likes')
+          .select('id')
+          .eq('duo_id', duo.id)
+          .eq('target_duo_id', myDuo.id)
+          .maybeSingle();
+
+        if (theirLike) {
+          // It's a match!
+          const { data: chat } = await sb
+            .from('double_date_chats')
+            .insert({
+              duo_a: myDuo.id,
+              duo_b: duo.id,
+              user_a1: myDuo.user_a,
+              user_a2: myDuo.user_b,
+              user_b1: duo.profile_a?.user_id,
+              user_b2: duo.profile_b?.user_id
+            })
+            .select()
+            .single();
+
+          matchedDuo  = duo;
+          matchedChatId = chat?.id;
+          showMatchView(duo);
+          return;
+        }
+      }
+
+      renderSwipeView();
+    }
+
+    // ── Match view ────────────────────────────────────────────
+    function showMatchView(duo) {
+      const container = document.getElementById('matchAvatars');
+      const allProfiles = [
+        myDuo?.profile_a,
+        myDuo?.profile_b,
+        duo?.profile_a,
+        duo?.profile_b
+      ].filter(Boolean);
+
+      container.innerHTML = allProfiles.map((p, i) => {
+        const content = p.avatar_url ? `<img src="${esc(p.avatar_url)}" />` : initial(p.name);
+        if (i === 1) {
+          return `<div class="match-avatar">${content}</div><div class="match-heart">💛</div>`;
+        }
+        return `<div class="match-avatar">${content}</div>`;
+      }).join('');
+
+      showView('matchView');
+    }
+
+    function openGroupChat() {
+      if (matchedChatId) {
+        window.location.href = `messages.html?chat=${matchedChatId}&type=group`;
+      } else {
+        window.location.href = 'messages.html';
+      }
+    }
+
+    function showSwipeView() {
+      showView('swipeView');
+      renderSwipeView();
+    }
+
+    // ── Render pending view ───────────────────────────────────
+    function renderPendingView(theirProfile) {
+      const myAvEl = document.getElementById('pendingMyAvatar');
+      if (myProfile?.avatar_url) myAvEl.innerHTML = `<img src="${esc(myProfile.avatar_url)}" />`;
+      else myAvEl.textContent = initial(myProfile?.name);
+
+      const theirAvEl = document.getElementById('pendingTheirAvatar');
+      if (theirProfile?.avatar_url) theirAvEl.innerHTML = `<img src="${esc(theirProfile.avatar_url)}" />`;
+      else theirAvEl.textContent = initial(theirProfile?.name);
+
+      document.getElementById('pendingName').textContent = theirProfile?.name || 'your friend';
+    }
+
+    // ── Init ──────────────────────────────────────────────────
+    async function init() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) { window.location.replace('auth.html'); return; }
+      me = user;
+
+      const { data: prof } = await sb.from('profiles').select('*').eq('user_id', me.id).maybeSingle();
+      myProfile = prof || {};
+
+      // Check for invite link param first
+      await handleInviteParam();
+
+      // Check if user already has a duo
+      const { data: existingDuo } = await sb
+        .from('double_date_duos')
+        .select(`
+          *,
+          profile_a:profiles!double_date_duos_user_a_fkey(user_id,name,age,avatar_url),
+          profile_b:profiles!double_date_duos_user_b_fkey(user_id,name,age,avatar_url)
+        `)
+        .or(`user_a.eq.${me.id},user_b.eq.${me.id}`)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existingDuo) {
+        myDuo = existingDuo;
+
+        if (existingDuo.status === 'active') {
+          document.getElementById('duoBadge').style.display = 'flex';
+          await loadDuoQueue();
+          renderSwipeView();
+          showView('swipeView');
+          return;
+        }
+
+        if (existingDuo.status === 'pending' && existingDuo.user_a === me.id) {
+          // I sent an invite, waiting
+          const theirProfile = existingDuo.user_b
+            ? existingDuo.profile_b
+            : { name: 'your friend', avatar_url: null };
+          renderPendingView(theirProfile);
+          showView('pendingView');
+          return;
+        }
+
+        if (existingDuo.status === 'pending' && existingDuo.user_b === me.id) {
+          // Someone invited me and I haven't responded — show banner
+          incomingInvite = existingDuo;
+          const sender = existingDuo.profile_a;
+          const avatarEl = document.getElementById('incomingAvatar');
+          if (sender?.avatar_url) avatarEl.innerHTML = `<img src="${esc(sender.avatar_url)}" />`;
+          else avatarEl.textContent = initial(sender?.name);
+          document.getElementById('incomingText').textContent = `${esc(sender?.name || 'Someone')} wants to be your duo`;
+          document.getElementById('incomingBanner').style.display = 'flex';
+          showView('inviteView');
+          return;
+        }
+      }
+
+      // No duo — show invite screen
+      showView('inviteView');
+    }
+
+    init();
   </script>
 </body>
 </html>
