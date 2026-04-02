@@ -109,46 +109,125 @@
     }
     .icon-btn:hover { background: rgba(255,255,255,0.09); }
 
-    /* ── Dropdown menu ── */
-    .menu {
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
-      width: 215px;
-      border-radius: 20px;
-      background: rgba(14,11,28,0.98);
-      border: 1px solid var(--border-hi);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.60);
-      padding: 8px;
+    /* ── Settings sheet (Instagram-style) ── */
+    .settings-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(5,3,15,0.7);
+      backdrop-filter: blur(8px);
       display: none;
-      z-index: 100;
-      backdrop-filter: blur(20px);
+      align-items: flex-end;
+      justify-content: center;
     }
-    .menu.show { display: block; }
-    .menu-title { padding: 7px 10px 5px; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
-    .menu-item {
+    .settings-backdrop.show { display: flex; }
+
+    .settings-sheet {
+      width: min(440px, 100%);
+      max-height: 90vh;
+      background: #100D22;
+      border-radius: 28px 28px 0 0;
+      border: 1px solid var(--border-hi);
+      border-bottom: none;
+      padding: 0 0 calc(24px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+    }
+
+    .settings-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      margin: 14px auto 0;
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px 10px;
+    }
+
+    .settings-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .settings-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+    }
+
+    .settings-section {
+      padding: 8px 12px 4px;
+    }
+
+    .settings-section-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      padding: 6px 8px 4px;
+    }
+
+    .settings-item {
       width: 100%;
-      text-align: left;
-      padding: 11px 12px;
-      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 10px;
+      border-radius: 14px;
       background: transparent;
       border: none;
       color: var(--text);
       font-family: var(--sans);
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.13s;
+      text-decoration: none;
+    }
+    .settings-item:hover { background: rgba(255,255,255,0.05); }
+
+    .settings-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      cursor: pointer;
-      transition: background 0.13s;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
     }
-    .menu-item:hover { background: rgba(255,255,255,0.06); }
-    .menu-item small { color: var(--muted); font-size: 11px; }
-    .menu-item.premium { color: var(--gold); }
-    .menu-item.danger { color: var(--red); }
-    .menu-divider { height: 1px; background: var(--border); margin: 5px 4px; }
+
+    .settings-item-body { flex: 1; }
+    .settings-item-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .settings-item-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .settings-item-arrow { color: var(--muted); font-size: 16px; flex-shrink: 0; }
+
+    .settings-item.danger .settings-item-label { color: var(--red); }
+    .settings-item.danger .settings-item-icon { background: rgba(255,112,144,0.08); }
+
+    .settings-item.gold .settings-item-label { color: var(--gold); }
+    .settings-item.gold .settings-item-icon { background: rgba(245,206,122,0.08); }
+
+    .settings-divider { height: 1px; background: var(--border); margin: 6px 10px; }
 
     /* ── Banner ── */
     .banner-wrap {
@@ -939,19 +1018,7 @@
     <div class="top-bar">
       <div class="logo">miru.</div>
       <div class="top-actions">
-        <button class="icon-btn" onclick="toggleMenu()">⋯</button>
-        <div class="menu" id="profileMenu">
-          <div class="menu-title">Profile</div>
-          <button class="menu-item" onclick="openEdit()">✏️ Edit profile <small>name &amp; bio</small></button>
-          <button class="menu-item" onclick="triggerAvatarUpload()">🖼️ Change photo <small>update avatar</small></button>
-          <button class="menu-item" onclick="triggerBannerUpload()">🏞️ Change banner <small>update cover</small></button>
-          <div class="menu-divider"></div>
-          <button class="menu-item" onclick="showToast('Notifications coming soon.', 'info')">🔔 Notifications</button>
-          <button class="menu-item" onclick="showToast('Privacy controls coming soon.', 'info')">🔒 Privacy</button>
-          <div class="menu-divider"></div>
-          <button class="menu-item" onclick="openAccountModal()">⚙️ Manage account <small>pause or delete</small></button>
-          <button class="menu-item danger" onclick="logout()">↗ Sign out</button>
-        </div>
+        <button class="icon-btn" onclick="openSettings()">⋯</button>
       </div>
     </div>
 
@@ -1071,6 +1138,148 @@
       <span class="tab-label">Profile</span>
     </a>
   </nav>
+
+  <!-- Settings Sheet (Instagram-style) -->
+  <div class="settings-backdrop" id="settingsBackdrop" onclick="closeSettingsOutside(event)">
+    <div class="settings-sheet" id="settingsSheet">
+      <div class="settings-handle"></div>
+      <div class="settings-header">
+        <div class="settings-title">Settings</div>
+        <button class="settings-close" onclick="closeSettings()">✕</button>
+      </div>
+
+      <!-- Profile -->
+      <div class="settings-section">
+        <div class="settings-section-label">Profile</div>
+        <button class="settings-item" onclick="closeSettings(); openEdit()">
+          <div class="settings-item-icon">✏️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Edit profile</div>
+            <div class="settings-item-sub">Name, bio, and age</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); triggerAvatarUpload()">
+          <div class="settings-item-icon">🖼️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Change photo</div>
+            <div class="settings-item-sub">Update your avatar</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); triggerBannerUpload()">
+          <div class="settings-item-icon">🏞️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Change banner</div>
+            <div class="settings-item-sub">Update your cover image</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <!-- Preferences -->
+      <div class="settings-section">
+        <div class="settings-section-label">Preferences</div>
+        <button class="settings-item" onclick="closeSettings(); window.location.href='matchmaker.html'">
+          <div class="settings-item-icon">🤖</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">AI Matchmaker</div>
+            <div class="settings-item-sub">Configure your match preferences</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); showToast('Notifications coming soon.', 'info')">
+          <div class="settings-item-icon">🔔</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Notifications</div>
+            <div class="settings-item-sub">Manage alerts and reminders</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); showToast('Privacy controls coming soon.', 'info')">
+          <div class="settings-item-icon">🔒</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Privacy</div>
+            <div class="settings-item-sub">Control who sees your profile</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); showToast('Blocked users coming soon.', 'info')">
+          <div class="settings-item-icon">🚫</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Blocked accounts</div>
+            <div class="settings-item-sub">Manage who you have blocked</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <!-- Support & About -->
+      <div class="settings-section">
+        <div class="settings-section-label">Support &amp; About</div>
+        <a class="settings-item" href="support.html">
+          <div class="settings-item-icon">❓</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Help &amp; Support</div>
+            <div class="settings-item-sub">FAQs and contact</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </a>
+        <a class="settings-item" href="privacy.html">
+          <div class="settings-item-icon">📄</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Privacy Policy</div>
+            <div class="settings-item-sub">How we handle your data</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </a>
+        <button class="settings-item" onclick="closeSettings(); showToast('Miru v1.0 — Phoenix, AZ', 'info')">
+          <div class="settings-item-icon">ℹ️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">About Miru</div>
+            <div class="settings-item-sub">Version and app info</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <!-- Account -->
+      <div class="settings-section">
+        <div class="settings-section-label">Account</div>
+        <button class="settings-item" onclick="closeSettings(); openAccountModal()">
+          <div class="settings-item-icon">⚙️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Manage account</div>
+            <div class="settings-item-sub">Pause or delete your account</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item" onclick="closeSettings(); logout()">
+          <div class="settings-item-icon">↗️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Sign out</div>
+            <div class="settings-item-sub">Log out of your account</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+        <button class="settings-item danger" onclick="closeSettings(); showDeleteConfirmDirect()">
+          <div class="settings-item-icon">🗑️</div>
+          <div class="settings-item-body">
+            <div class="settings-item-label">Delete account</div>
+            <div class="settings-item-sub">Permanently remove your data</div>
+          </div>
+          <div class="settings-item-arrow">›</div>
+        </button>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Edit Modal -->
   <div class="modal-backdrop" id="editModal">
@@ -1208,29 +1417,34 @@
 
     function initial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
 
-    // ── Menu ──────────────────────────────────────────────────
-    function toggleMenu() {
-      document.getElementById('profileMenu').classList.toggle('show');
+    // ── Settings sheet ────────────────────────────────────────
+    function openSettings() {
+      document.getElementById('settingsBackdrop').classList.add('show');
+      document.body.style.overflow = 'hidden';
     }
 
-    function closeMenu() {
-      document.getElementById('profileMenu').classList.remove('show');
+    function closeSettings() {
+      document.getElementById('settingsBackdrop').classList.remove('show');
+      document.body.style.overflow = '';
     }
 
-    document.addEventListener('click', e => {
-      const menu    = document.getElementById('profileMenu');
-      const actions = document.querySelector('.top-actions');
-      if (menu.classList.contains('show') && !actions.contains(e.target)) closeMenu();
-    });
+    function closeSettingsOutside(e) {
+      if (e.target === document.getElementById('settingsBackdrop')) closeSettings();
+    }
+
+    function closeMenu() {} // kept for compatibility
+
+    function showDeleteConfirmDirect() {
+      openAccountModal();
+      setTimeout(() => showDeleteConfirm(), 50);
+    }
 
     // ── Avatar ────────────────────────────────────────────────
     function triggerAvatarUpload() {
-      closeMenu();
       document.getElementById('avatarInput').click();
     }
 
     function triggerBannerUpload() {
-      closeMenu();
       document.getElementById('bannerInput').click();
     }
 
