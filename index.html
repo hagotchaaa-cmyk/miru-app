@@ -491,23 +491,6 @@
 
     .strip-stat-label { font-size: 11px; color: var(--muted); font-weight: 700; }
 
-    .premium-strip {
-      padding: 14px 16px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(245,206,122,0.12), rgba(232,146,10,0.06));
-      border: 1px solid rgba(245,206,122,0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .premium-strip:hover { background: linear-gradient(135deg, rgba(245,206,122,0.18), rgba(232,146,10,0.10)); }
-
-    .premium-strip-inner { text-align: center; }
-    .premium-strip-icon { font-size: 18px; margin-bottom: 2px; }
-    .premium-strip-label { font-size: 11px; font-weight: 800; color: var(--gold); }
-
     /* Quick actions */
     .quick-grid {
       display: grid;
@@ -975,10 +958,8 @@
           <div class="strip-stat-val" id="superCount">—</div>
           <div class="strip-stat-label">⚡ Super likes</div>
         </div>
-        <div class="premium-strip" onclick="window.location.href='premium.html'" id="premiumStrip">
-          <div class="premium-strip-inner">
-            <div class="premium-strip-icon">⭐</div>
-            <div class="premium-strip-label" id="premiumLabel">Upgrade</div>
+        
+            
           </div>
         </div>
       </div>

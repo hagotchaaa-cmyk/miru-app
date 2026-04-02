@@ -650,7 +650,7 @@
         <button class="cat" data-cat="video">Videos</button>
         <button class="cat" data-cat="photo">Photos</button>
         <button class="cat" data-cat="new">New faces</button>
-        <button class="cat" data-cat="premium">Premium</button>
+        
       </div>
     </div>
 
@@ -893,7 +893,7 @@
 
         if (activeCategory === 'video')   return p.media_type === 'video';
         if (activeCategory === 'photo')   return p.media_type !== 'video';
-        if (activeCategory === 'premium') return !!prof.is_premium;
+
         if (activeCategory === 'new') {
           const diff = (Date.now() - new Date(p.created_at)) / 1000 / 3600;
           return diff < 72; // last 3 days

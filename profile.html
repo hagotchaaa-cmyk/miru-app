@@ -336,19 +336,6 @@
       line-height: 1.1;
     }
 
-    .premium-badge {
-      display: none;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, rgba(245,206,122,0.16), rgba(232,146,10,0.08));
-      border: 1px solid rgba(245,206,122,0.28);
-      color: var(--gold);
-      font-size: 10px;
-      font-weight: 900;
-      font-family: var(--sans);
-      vertical-align: middle;
-    }
-    .premium-badge.show { display: inline-flex; }
 
     .profile-handle {
       font-size: 12.5px;
@@ -1139,7 +1126,6 @@
       <!-- Name -->
       <div class="profile-name">
         <span id="nameEl">Loading…</span>
-        <div class="premium-badge" id="premiumBadge">⭐ Premium</div>
       </div>
 
       <!-- Handle -->
@@ -1748,10 +1734,8 @@
       document.getElementById('bioEl').textContent        = p.bio || 'Say something real.';
       document.getElementById('composerName').textContent = p.name || 'You';
 
-      const badge = document.getElementById('premiumBadge');
-      badge.classList.toggle('show', !!p.is_premium);
 
-      document.getElementById('aboutStatus').textContent = p.is_premium ? 'Premium ✦' : 'Standard profile';
+      document.getElementById('aboutStatus').textContent = 'Miru member';
 
       renderAvatar(p.avatar_url, p.name);
       renderBanner(p.banner_url || null);

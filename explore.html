@@ -746,7 +746,7 @@
     <div class="filters">
       <div class="filter-scroll">
         <button class="fchip on" data-filter="all">For you</button>
-        <button class="fchip" data-filter="premium">Premium</button>
+        
         <button class="fchip" data-filter="new">New faces</button>
         <button class="fchip" data-filter="boosted">Boosted</button>
         <button class="fchip" data-filter="nearby">Nearby</button>
@@ -885,14 +885,12 @@
     }
 
     function swipesRemaining() {
-      if (myProfile?.is_premium) return Infinity;
       return Math.max(FREE_LIMIT - loadSwipeCount(), 0);
     }
 
     function renderSwipeBadge() {
       const badge = document.getElementById('swipeBadge');
       if (!badge) return;
-      if (myProfile?.is_premium) { badge.textContent = '∞ swipes'; badge.style.color = '#F5CE7A'; return; }
       const left = swipesRemaining();
       badge.textContent = `${left} swipe${left !== 1 ? 's' : ''} left`;
       badge.style.color = left <= 5 ? '#FF7090' : left <= 15 ? '#F5CE7A' : '';
@@ -900,7 +898,6 @@
 
     // Returns true if allowed, false if blocked (shows paywall)
     function useSwipe() {
-      if (myProfile?.is_premium) return true;
       const used = loadSwipeCount();
       if (used >= FREE_LIMIT) { showPaywall(); return false; }
       saveSwipeCount(used + 1);
@@ -948,7 +945,6 @@
     function getPrompt(i)      { return PROMPTS[i % PROMPTS.length]; }
     function getVibes(p, i)    {
       const base = [];
-      if (p.is_premium) base.push('premium');
       base.push(VIBES[i % VIBES.length]);
       base.push(VIBES[(i + 2) % VIBES.length]);
       return base.slice(0, 3);
@@ -1005,7 +1001,7 @@
     // ── Filter logic ──────────────────────────────────────────
     function applyFilter(type) {
       switch (type) {
-        case 'premium': profiles = allProfiles.filter(p => p.is_premium); break;
+
         case 'new':     profiles = [...allProfiles].reverse(); break;
         case 'boosted': profiles = allProfiles.filter(p => p.boost_until && new Date(p.boost_until) > new Date()); break;
         default:        profiles = allProfiles; break;
@@ -1067,7 +1063,7 @@
         <div class="card-content">
           <div class="card-name-row">
             <div class="card-name">${esc(p.name || 'Someone')}${p.age ? `, ${esc(String(p.age))}` : ''}</div>
-            ${p.is_premium ? '<div class="card-premium">✦ Premium</div>' : ''}
+            
           </div>
           <div class="card-loc">📍 Nearby · Miru</div>
           <div class="card-bio">${esc(p.bio || 'No bio yet — but the vibe is promising.')}</div>
@@ -1344,22 +1340,11 @@
       modal.innerHTML = `
         <div class="pw-backdrop" onclick="closePaywall()"></div>
         <div class="pw-card">
-          <div class="pw-icon">🔒</div>
-          <div class="pw-title">You're out of<br/><em>swipes.</em></div>
-          <div class="pw-sub">You've used all <strong>40 free swipes</strong> for today.<br/>Upgrade to keep going — matches are still waiting.</div>
-          <div class="pw-perks">
-            <div class="pw-perk"><div class="pw-perk-icon">∞</div><div class="pw-perk-text"><strong>Unlimited swipes</strong><span>Never hit a wall again</span></div></div>
-            <div class="pw-perk"><div class="pw-perk-icon">👁️</div><div class="pw-perk-text"><strong>See who liked you</strong><span>Know before you swipe</span></div></div>
-            <div class="pw-perk"><div class="pw-perk-icon">⚡</div><div class="pw-perk-text"><strong>10 super likes/day</strong><span>Stand out from the crowd</span></div></div>
-            <div class="pw-perk"><div class="pw-perk-icon">🎯</div><div class="pw-perk-text"><strong>Priority matching</strong><span>Get shown to more people</span></div></div>
-          </div>
-          <div class="pw-price-row">
-            <div class="pw-price">$3.99</div>
-            <div class="pw-price-sub">per<br/>month</div>
-          </div>
-          <button class="pw-cta" onclick="window.location.href='premium.html'">⭐ Unlock Premium — $3.99/mo</button>
-          <button class="pw-skip" onclick="closePaywall()">Maybe tomorrow — close</button>
-          <div class="pw-reset">Free swipes reset in <span id="pwTimer">--:--:--</span></div>
+          <div class="pw-icon">⏰</div>
+          <div class="pw-title">Out of swipes<br/><em>for today.</em></div>
+          <div class="pw-sub">You've used all your swipes for today. Come back tomorrow — new people are always joining.</div>
+          <button class="pw-skip" onclick="closePaywall()">Got it — close</button>
+          <div class="pw-reset">Swipes reset in <span id="pwTimer">--:--:--</span></div>
         </div>
       `;
       document.body.appendChild(modal);
