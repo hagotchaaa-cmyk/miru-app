@@ -1032,6 +1032,203 @@
     .about-link:last-of-type { border-bottom: none; margin-bottom: 16px; }
     .about-copy { text-align: center; font-size: 12px; color: var(--muted); font-weight: 700; padding-top: 8px; }
 
+    /* ── Post edit overlay button ── */
+    .post-edit-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(10,7,20,0.72);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: var(--white);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: var(--sans);
+      backdrop-filter: blur(8px);
+      z-index: 5;
+      font-weight: 900;
+      line-height: 1;
+      transition: background 0.15s;
+    }
+    .post-edit-btn:hover { background: rgba(10,7,20,0.92); }
+
+    /* ── Post options sheet ── */
+    .post-options-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 10px;
+      cursor: pointer;
+      transition: background 0.13s;
+      border-radius: 14px;
+      margin: 0 2px;
+    }
+    .post-options-item:hover { background: rgba(255,255,255,0.05); }
+    .post-options-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .post-options-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .post-options-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .post-options-item.danger .post-options-label { color: var(--red); }
+    .post-options-item.danger .post-options-icon { background: rgba(255,112,144,0.08); }
+    .post-options-divider { height: 1px; background: var(--border); margin: 4px 10px; }
+
+    /* ── Photo editor ── */
+    .editor-preview {
+      width: 100%;
+      max-height: 280px;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .editor-preview img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      display: block;
+      transition: filter 0.18s;
+    }
+    .filter-strip {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 14px 18px;
+      scrollbar-width: none;
+    }
+    .filter-strip::-webkit-scrollbar { display: none; }
+    .filter-thumb {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .filter-thumb-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: border-color 0.15s;
+      background: rgba(255,255,255,0.05);
+    }
+    .filter-thumb-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.18s;
+    }
+    .filter-thumb.on .filter-thumb-img { border-color: var(--lilac); }
+    .filter-thumb-label { font-size: 10px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+    .filter-thumb.on .filter-thumb-label { color: var(--lilac); }
+
+    .editor-controls { padding: 4px 18px 14px; }
+    .editor-control-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .editor-control-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 68px;
+      flex-shrink: 0;
+    }
+    .editor-range {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+      outline: none;
+      cursor: pointer;
+    }
+    .editor-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .editor-range::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .editor-val { font-size: 12px; font-weight: 700; color: var(--soft); width: 34px; text-align: right; flex-shrink: 0; }
+    .editor-save-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #0A0714;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      margin: 4px 0 0;
+      transition: opacity 0.2s;
+    }
+    .editor-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── About editable cards ── */
+    .about-card { cursor: pointer; position: relative; transition: background 0.15s; }
+    .about-card:hover { background: rgba(255,255,255,0.055); }
+    .about-card-edit {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      font-size: 13px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .about-card:hover .about-card-edit { opacity: 1; }
+    .about-edit-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+    .about-edit-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
+    .about-edit-input {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .about-edit-input:focus { border-color: var(--border-hi); }
+
     /* ── Account management modal ── */
     .acct-card {
       display: flex;
@@ -1108,7 +1305,6 @@
     <!-- Banner -->
     <div class="banner-wrap">
       <img id="bannerImg" src="" alt="banner" />
-      <button class="banner-edit-btn" onclick="triggerBannerUpload()" title="Change banner">✎</button>
     </div>
 
     <!-- Centered profile header -->
@@ -1185,10 +1381,26 @@
     <!-- About section -->
     <div class="about-section" id="aboutSection">
       <div class="about-grid">
-        <div class="about-card"><small>Looking for</small><strong>Connection with chemistry and a real vibe</strong></div>
-        <div class="about-card"><small>Best energy</small><strong>Intentional, playful, actually communicative</strong></div>
-        <div class="about-card"><small>Ideal night</small><strong>Food, music, a walk, a conversation that keeps going</strong></div>
-        <div class="about-card"><small>Status</small><strong id="aboutStatus">Standard profile</strong></div>
+        <div class="about-card" onclick="openAboutEdit('looking_for')">
+          <span class="about-card-edit">✏️</span>
+          <small>Looking for</small>
+          <strong id="about_looking_for">Connection with chemistry and a real vibe</strong>
+        </div>
+        <div class="about-card" onclick="openAboutEdit('best_energy')">
+          <span class="about-card-edit">✏️</span>
+          <small>Best energy</small>
+          <strong id="about_best_energy">Intentional, playful, actually communicative</strong>
+        </div>
+        <div class="about-card" onclick="openAboutEdit('ideal_night')">
+          <span class="about-card-edit">✏️</span>
+          <small>Ideal night</small>
+          <strong id="about_ideal_night">Food, music, a walk, a conversation that keeps going</strong>
+        </div>
+        <div class="about-card" onclick="openAboutEdit('status')">
+          <span class="about-card-edit">✏️</span>
+          <small>Status</small>
+          <strong id="about_status">Miru member</strong>
+        </div>
       </div>
     </div>
 
@@ -1374,6 +1586,10 @@
         <div class="field"><label>Name</label><input id="editName" type="text" placeholder="Your name" autocomplete="name" /></div>
         <div class="field"><label>Bio</label><textarea id="editBio" placeholder="Say something real about you…"></textarea></div>
         <div class="field"><label>Age</label><input id="editAge" type="number" placeholder="Your age" min="18" max="99" /></div>
+        <div class="field">
+          <label>Banner photo</label>
+          <button type="button" onclick="triggerBannerUpload()" style="width:100%;padding:12px 15px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--soft);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:border-color 0.15s;" onmouseover="this.style.borderColor='rgba(180,170,255,0.22)'" onmouseout="this.style.borderColor='rgba(180,170,255,0.10)'">🏞️ &nbsp;Upload banner image</button>
+        </div>
       </div>
       <button class="save-btn" onclick="saveEdit()">Save changes</button>
     </div>
@@ -1566,6 +1782,70 @@
     </div>
   </div>
 
+  <!-- Post Options Sheet -->
+  <div class="settings-backdrop" id="postOptionsBackdrop" onclick="closePostOptionsOutside(event)">
+    <div class="settings-sheet" id="postOptionsSheet">
+      <div class="settings-handle"></div>
+      <div class="settings-header">
+        <div class="settings-title">Post options</div>
+        <button class="settings-close" onclick="closePostOptions()">✕</button>
+      </div>
+      <div class="settings-section" id="postOptionsBody">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo Editor Modal -->
+  <div class="settings-backdrop" id="photoEditorBackdrop">
+    <div class="settings-sheet" id="photoEditorSheet" style="max-height:95vh;">
+      <div class="settings-handle"></div>
+      <div class="settings-header">
+        <div class="settings-title">Edit photo</div>
+        <button class="settings-close" onclick="closePhotoEditor()">✕</button>
+      </div>
+      <div class="editor-preview">
+        <img id="editorImg" src="" alt="editing" />
+      </div>
+      <div class="filter-strip" id="filterStrip">
+        <!-- filled by JS -->
+      </div>
+      <div class="editor-controls">
+        <div class="editor-control-row">
+          <span class="editor-control-label">Exposure</span>
+          <input type="range" class="editor-range" id="expRange" min="0" max="200" value="100" oninput="updateEditorFilter()">
+          <span class="editor-val" id="expVal">0</span>
+        </div>
+        <div class="editor-control-row">
+          <span class="editor-control-label">Contrast</span>
+          <input type="range" class="editor-range" id="conRange" min="0" max="200" value="100" oninput="updateEditorFilter()">
+          <span class="editor-val" id="conVal">0</span>
+        </div>
+        <div class="editor-control-row">
+          <span class="editor-control-label">Warmth</span>
+          <input type="range" class="editor-range" id="warmRange" min="-60" max="60" value="0" oninput="updateEditorFilter()">
+          <span class="editor-val" id="warmVal">0</span>
+        </div>
+        <button class="editor-save-btn" id="editorSaveBtn" onclick="saveEditedPhoto()">Save changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About Edit Modal -->
+  <div class="modal-backdrop" id="aboutEditModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div class="modal-title" id="aboutEditTitle">Edit</div>
+        <button class="close-btn" onclick="closeModal('aboutEditModal')">✕</button>
+      </div>
+      <div class="about-edit-field">
+        <div class="about-edit-label" id="aboutEditLabel">Value</div>
+        <input class="about-edit-input" id="aboutEditInput" type="text" maxlength="80" placeholder="Type something…" />
+      </div>
+      <button class="save-btn" onclick="saveAboutField()">Save</button>
+    </div>
+  </div>
+
   <!-- Composer Sheet -->
   <div class="sheet-backdrop" id="composerSheet">
     <div class="sheet-card">
@@ -1734,8 +2014,12 @@
       document.getElementById('bioEl').textContent        = p.bio || 'Say something real.';
       document.getElementById('composerName').textContent = p.name || 'You';
 
-
-      document.getElementById('aboutStatus').textContent = 'Miru member';
+      // About section
+      const am = p.about_me || {};
+      document.getElementById('about_looking_for').textContent = am.looking_for || 'Connection with chemistry and a real vibe';
+      document.getElementById('about_best_energy').textContent = am.best_energy || 'Intentional, playful, actually communicative';
+      document.getElementById('about_ideal_night').textContent = am.ideal_night || 'Food, music, a walk, a conversation that keeps going';
+      document.getElementById('about_status').textContent      = am.status      || 'Miru member';
 
       renderAvatar(p.avatar_url, p.name);
       renderBanner(p.banner_url || null);
@@ -1811,6 +2095,7 @@
             ${mediaHTML}
             ${isVideo ? '<div class="cell-badge">▶ Video</div>' : ''}
             ${post.caption ? `<div class="cell-caption">${esc(post.caption)}</div>` : ''}
+            <button class="post-edit-btn" onclick="event.stopPropagation(); openPostOptions('${post.id}')" title="Edit post">⋯</button>
           </div>
         `;
       }).join('');
@@ -2166,6 +2451,243 @@
       loadBlockedUsers();
     }
 
+    // ── Post options ──────────────────────────────────────────
+    let activePostId = null;
+
+    function openPostOptions(postId) {
+      activePostId = postId;
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+
+      const commentsOff = post.comments_off || false;
+      const isImage = post.media_type === 'image';
+
+      document.getElementById('postOptionsBody').innerHTML = `
+        ${isImage ? `
+        <div class="post-options-item" onclick="openPhotoEditor('${postId}'); closePostOptions();">
+          <div class="post-options-icon">✨</div>
+          <div>
+            <div class="post-options-label">Edit photo</div>
+            <div class="post-options-sub">Filters, exposure, contrast</div>
+          </div>
+        </div>` : ''}
+        <div class="post-options-item" onclick="toggleComments('${postId}')">
+          <div class="post-options-icon">${commentsOff ? '💬' : '🔇'}</div>
+          <div>
+            <div class="post-options-label">${commentsOff ? 'Turn comments on' : 'Turn comments off'}</div>
+            <div class="post-options-sub">${commentsOff ? 'Let people comment again' : 'Disable comments on this post'}</div>
+          </div>
+        </div>
+        <div class="post-options-divider"></div>
+        <div class="post-options-item danger" onclick="confirmDeletePost('${postId}')">
+          <div class="post-options-icon">🗑️</div>
+          <div>
+            <div class="post-options-label">Delete post</div>
+            <div class="post-options-sub">Permanently remove this post</div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('postOptionsBackdrop').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePostOptions() {
+      document.getElementById('postOptionsBackdrop').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function closePostOptionsOutside(e) {
+      if (e.target === document.getElementById('postOptionsBackdrop')) closePostOptions();
+    }
+
+    async function toggleComments(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post) return;
+      const newVal = !post.comments_off;
+      const { error } = await sb.from('user_posts').update({ comments_off: newVal }).eq('id', postId);
+      if (error) { showToast(error.message, 'error'); return; }
+      post.comments_off = newVal;
+      showToast(newVal ? 'Comments turned off' : 'Comments turned on', 'success');
+      closePostOptions();
+    }
+
+    async function confirmDeletePost(postId) {
+      closePostOptions();
+      if (!confirm('Delete this post? This cannot be undone.')) return;
+      const { error } = await sb.from('user_posts').delete().eq('id', postId);
+      if (error) { showToast(error.message, 'error'); return; }
+      posts = posts.filter(p => p.id !== postId);
+      document.getElementById('statPosts').textContent = posts.length;
+      renderPosts();
+      showToast('Post deleted', 'success');
+    }
+
+    // ── Photo editor ──────────────────────────────────────────
+    const FILTERS = [
+      { name: 'Natural',  css: '' },
+      { name: 'Warm',     css: 'sepia(0.28) saturate(1.5) brightness(1.05)' },
+      { name: 'Cool',     css: 'saturate(0.75) hue-rotate(16deg) brightness(1.06)' },
+      { name: 'Fade',     css: 'contrast(0.82) brightness(1.12) saturate(0.75)' },
+      { name: 'Vivid',    css: 'saturate(1.9) contrast(1.08)' },
+      { name: 'Noir',     css: 'grayscale(1) contrast(1.22) brightness(1.04)' },
+      { name: 'Miru',     css: 'hue-rotate(265deg) saturate(1.35) brightness(0.96)' },
+      { name: 'Golden',   css: 'sepia(0.55) saturate(1.6) brightness(1.08) contrast(0.95)' },
+    ];
+
+    let editorPostId    = null;
+    let editorFilter    = '';
+    let editorOrigUrl   = '';
+
+    function openPhotoEditor(postId) {
+      const post = posts.find(p => p.id === postId);
+      if (!post || post.media_type !== 'image') return;
+      editorPostId  = postId;
+      editorOrigUrl = post.media_url;
+      editorFilter  = '';
+
+      // Reset sliders
+      document.getElementById('expRange').value  = 100;
+      document.getElementById('conRange').value  = 100;
+      document.getElementById('warmRange').value = 0;
+      document.getElementById('expVal').textContent  = '0';
+      document.getElementById('conVal').textContent  = '0';
+      document.getElementById('warmVal').textContent = '0';
+
+      // Set image
+      document.getElementById('editorImg').src = editorOrigUrl;
+      updateEditorFilter();
+
+      // Build filter strip
+      const strip = document.getElementById('filterStrip');
+      strip.innerHTML = FILTERS.map((f, i) => `
+        <div class="filter-thumb ${i === 0 ? 'on' : ''}" onclick="selectFilter(${i}, this)">
+          <div class="filter-thumb-img">
+            <img src="${esc(editorOrigUrl)}" style="filter:${f.css || 'none'};" />
+          </div>
+          <span class="filter-thumb-label">${f.name}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('photoEditorBackdrop').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePhotoEditor() {
+      document.getElementById('photoEditorBackdrop').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function selectFilter(idx, el) {
+      editorFilter = FILTERS[idx].css;
+      document.querySelectorAll('#filterStrip .filter-thumb').forEach(t => t.classList.remove('on'));
+      el.classList.add('on');
+      updateEditorFilter();
+    }
+
+    function updateEditorFilter() {
+      const exp  = document.getElementById('expRange').value;
+      const con  = document.getElementById('conRange').value;
+      const warm = document.getElementById('warmRange').value;
+
+      document.getElementById('expVal').textContent  = exp  - 100;
+      document.getElementById('conVal').textContent  = con  - 100;
+      document.getElementById('warmVal').textContent = warm;
+
+      const brightness = `brightness(${exp / 100})`;
+      const contrast   = `contrast(${con / 100})`;
+      const hue        = warm !== '0' ? `hue-rotate(${warm * -0.5}deg) sepia(${Math.abs(warm) / 120})` : '';
+
+      const combined = [brightness, contrast, hue, editorFilter].filter(Boolean).join(' ');
+      document.getElementById('editorImg').style.filter = combined || 'none';
+    }
+
+    async function saveEditedPhoto() {
+      const btn = document.getElementById('editorSaveBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
+      try {
+        const img = document.getElementById('editorImg');
+        const computedFilter = img.style.filter;
+
+        // Draw to canvas with filter applied for high-quality export
+        const canvas  = document.createElement('canvas');
+        const tempImg = new Image();
+        tempImg.crossOrigin = 'anonymous';
+
+        await new Promise((res, rej) => {
+          tempImg.onload = res;
+          tempImg.onerror = rej;
+          tempImg.src = editorOrigUrl + (editorOrigUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+        });
+
+        canvas.width  = tempImg.naturalWidth;
+        canvas.height = tempImg.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.filter = computedFilter || 'none';
+        ctx.drawImage(tempImg, 0, 0);
+
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.95));
+        const file = new File([blob], `edited_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+        const post = posts.find(p => p.id === editorPostId);
+        const path = `${me.id}/image/${Date.now()}_edited.jpg`;
+
+        const { error: upErr } = await sb.storage.from('posts').upload(path, file, { upsert: false });
+        if (upErr) throw upErr;
+
+        const { data: urlData } = sb.storage.from('posts').getPublicUrl(path);
+        const newUrl = urlData.publicUrl;
+
+        const { error: dbErr } = await sb.from('user_posts').update({ media_url: newUrl }).eq('id', editorPostId);
+        if (dbErr) throw dbErr;
+
+        post.media_url = newUrl;
+        renderPosts();
+        closePhotoEditor();
+        showToast('Photo saved! ✨', 'success');
+      } catch (err) {
+        showToast('Could not save. Try again.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save changes';
+      }
+    }
+
+    // ── About edit ────────────────────────────────────────────
+    const ABOUT_META = {
+      looking_for: { label: 'Looking for', placeholder: 'What are you looking for?' },
+      best_energy: { label: 'Best energy', placeholder: 'Describe your best energy…' },
+      ideal_night: { label: 'Ideal night', placeholder: 'Your perfect evening looks like…' },
+      status:      { label: 'Status',      placeholder: 'Single, exploring, open to…' },
+    };
+
+    let activeAboutField = null;
+
+    function openAboutEdit(field) {
+      activeAboutField = field;
+      const meta = ABOUT_META[field];
+      document.getElementById('aboutEditTitle').textContent    = `Edit ${meta.label}`;
+      document.getElementById('aboutEditLabel').textContent    = meta.label;
+      document.getElementById('aboutEditInput').placeholder    = meta.placeholder;
+      document.getElementById('aboutEditInput').value          = document.getElementById(`about_${field}`).textContent;
+      openModal('aboutEditModal');
+    }
+
+    async function saveAboutField() {
+      const val  = document.getElementById('aboutEditInput').value.trim();
+      if (!val) return;
+      const current = myProfile.about_me || {};
+      current[activeAboutField] = val;
+      const { error } = await sb.from('profiles').update({ about_me: current }).eq('user_id', me.id);
+      if (error) { showToast(error.message, 'error'); return; }
+      myProfile.about_me = current;
+      document.getElementById(`about_${activeAboutField}`).textContent = val;
+      closeModal('aboutEditModal');
+      showToast('Saved ✓', 'success');
+    }
+
     // ── Init ──────────────────────────────────────────────────
     async function init() {
       bindInputs();
@@ -2183,7 +2705,7 @@
       if (!prof) {
         const fallback = me.email?.split('@')[0] || 'New User';
         await sb.from('profiles').insert({
-          user_id: me.id, name: fallback, bio: '', avatar_url: '', is_premium: true
+          user_id: me.id, name: fallback, bio: '', avatar_url: '', is_premium: false
         });
         const { data: fresh } = await sb.from('profiles').select('*').eq('user_id', me.id).maybeSingle();
         prof = fresh || {};
