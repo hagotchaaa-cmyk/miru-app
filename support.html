@@ -4,16 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0A0714" />
-  <title>Miru — Support</title>
+  <title>Miru &#8212; Support</title>
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon-180.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:     #0A0714;
       --white:  #FFFFFF;
@@ -21,20 +19,11 @@
       --soft:   #C4BCEE;
       --muted:  #7A72AA;
       --lilac:  #B8AEFF;
-      --gold:   #F5CE7A;
-      --green:  #7DFFC8;
       --border: rgba(180,170,255,0.10);
       --serif:  'Cormorant Garamond', serif;
       --sans:   'Cabinet Grotesk', sans-serif;
     }
-
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-    }
-
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
     body::before {
       content: "";
       position: fixed;
@@ -43,189 +32,61 @@
       pointer-events: none;
       z-index: 0;
     }
-
-    .shell {
-      position: relative;
-      z-index: 1;
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 48px 24px 80px;
-    }
-
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 48px;
-    }
-
-    .logo {
-      font-family: var(--serif);
-      font-size: 28px;
-      font-style: italic;
-      font-weight: 700;
-      color: var(--white);
-      text-decoration: none;
-    }
-
-    .back-btn {
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      transition: color 0.15s;
-    }
+    .shell { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; }
+    .logo { font-family: var(--serif); font-size: 28px; font-style: italic; font-weight: 700; color: var(--white); text-decoration: none; }
+    .back-btn { font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--muted); text-decoration: none; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); transition: color 0.15s; }
     .back-btn:hover { color: var(--text); }
-
-    .page-eyebrow {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--lilac);
-      margin-bottom: 12px;
-      opacity: 0.85;
-    }
-
-    .page-title {
-      font-family: var(--serif);
-      font-size: 48px;
-      font-weight: 700;
-      font-style: italic;
-      letter-spacing: -1px;
-      line-height: 1;
-      color: var(--white);
-      margin-bottom: 12px;
-    }
-
-    .page-sub {
-      font-size: 15px;
-      color: var(--soft);
-      line-height: 1.7;
-      max-width: 480px;
-      margin-bottom: 48px;
-    }
-
-    .contact-card {
-      padding: 28px;
-      border-radius: 24px;
-      background: rgba(184,174,255,0.05);
-      border: 1px solid rgba(184,174,255,0.14);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 18px;
-    }
-
-    .contact-icon {
-      font-size: 28px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
+    .page-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--lilac); margin-bottom: 12px; opacity: 0.85; }
+    .page-title { font-family: var(--serif); font-size: 48px; font-weight: 700; font-style: italic; letter-spacing: -1px; line-height: 1; color: var(--white); margin-bottom: 12px; }
+    .page-sub { font-size: 15px; color: var(--soft); line-height: 1.7; max-width: 480px; margin-bottom: 48px; }
+    .contact-card { padding: 28px; border-radius: 24px; background: rgba(184,174,255,0.05); border: 1px solid rgba(184,174,255,0.14); margin-bottom: 16px; display: flex; align-items: flex-start; gap: 18px; }
+    .contact-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
     .contact-body { flex: 1; }
-
-    .contact-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--white);
-      margin-bottom: 6px;
-    }
-
-    .contact-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      margin-bottom: 12px;
-    }
-
-    .contact-link {
-      display: inline-block;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--lilac);
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 999px;
-      background: rgba(184,174,255,0.08);
-      border: 1px solid rgba(184,174,255,0.18);
-      transition: background 0.15s;
-    }
+    .contact-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+    .contact-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 12px; }
+    .contact-link { display: inline-block; font-size: 14px; font-weight: 800; color: var(--lilac); text-decoration: none; padding: 10px 18px; border-radius: 999px; background: rgba(184,174,255,0.08); border: 1px solid rgba(184,174,255,0.18); transition: background 0.15s; }
     .contact-link:hover { background: rgba(184,174,255,0.14); }
-
-    .faq-section {
-      margin-top: 48px;
-    }
-
-    .faq-title {
-      font-family: var(--serif);
-      font-size: 32px;
-      font-weight: 700;
-      font-style: italic;
-      color: var(--white);
-      margin-bottom: 24px;
-      letter-spacing: -0.5px;
-    }
-
-    .faq-item {
-      padding: 20px 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .faq-section { margin-top: 48px; }
+    .faq-title { font-family: var(--serif); font-size: 32px; font-weight: 700; font-style: italic; color: var(--white); margin-bottom: 24px; letter-spacing: -0.5px; }
+    .faq-item { padding: 20px 0; border-bottom: 1px solid var(--border); }
     .faq-item:last-child { border-bottom: none; }
-
-    .faq-q {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-
-    .faq-a {
-      font-size: 14px;
-      color: var(--soft);
-      line-height: 1.7;
-    }
-
+    .faq-q { font-size: 15px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
+    .faq-a { font-size: 14px; color: var(--soft); line-height: 1.7; }
     a { color: var(--lilac); text-decoration: none; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="shell">
-
     <div class="top-bar">
       <a class="logo" href="index.html">miru.</a>
-      <a class="back-btn" href="index.html">← Back to app</a>
+      <a class="back-btn" href="index.html">&#8592; Back to app</a>
     </div>
 
     <div class="page-eyebrow">Help</div>
     <h1 class="page-title">Support</h1>
-    <p class="page-sub">Need help with Miru? We're a small team and we read every message. Reach out and we'll get back to you as soon as we can.</p>
+    <p class="page-sub">Need help with Miru? We are a small team and we read every message. Reach out and we will get back to you as soon as we can.</p>
 
     <div class="contact-card">
-      <div class="contact-icon">✉️</div>
+      <div class="contact-icon">&#9993;&#65039;</div>
       <div class="contact-body">
         <div class="contact-title">Email support</div>
         <div class="contact-desc">For account issues, bug reports, billing questions, or anything else — email us directly. We typically respond within 1–2 business days.</div>
-        <a class="contact-link" href="mailto:contact@miruclub.com">contact@miruclub.com</a>
+        <a class="contact-link" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#99;&#111;&#110;&#116;&#97;&#99;&#116;&#64;&#109;&#105;&#114;&#117;&#99;&#108;&#117;&#98;&#46;&#99;&#111;&#109;">contact at miruclub.com</a>
       </div>
     </div>
 
     <div class="contact-card">
-      <div class="contact-icon">🗑️</div>
+      <div class="contact-icon">&#128465;&#65039;</div>
       <div class="contact-body">
         <div class="contact-title">Delete your account</div>
-        <div class="contact-desc">You can pause or permanently delete your account directly inside the app. Go to your Profile tab, tap the ⋯ menu in the top right, and select Manage account.</div>
+        <div class="contact-desc">You can pause or permanently delete your account directly inside the app. Go to your Profile tab, tap the &#8943; menu in the top right, and select Manage account.</div>
       </div>
     </div>
 
     <div class="contact-card">
-      <div class="contact-icon">🔒</div>
+      <div class="contact-icon">&#128274;</div>
       <div class="contact-body">
         <div class="contact-title">Privacy questions</div>
         <div class="contact-desc">For questions about your data, privacy rights, or data deletion requests, see our Privacy Policy or contact us directly.</div>
@@ -238,12 +99,12 @@
 
       <div class="faq-item">
         <div class="faq-q">How do I reset my password?</div>
-        <div class="faq-a">On the login screen, tap Log in then tap Forgot password? Enter your email and we'll send you a reset link.</div>
+        <div class="faq-a">On the login screen, tap Log in then tap Forgot password? Enter your email and we will send you a reset link.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q">How do I update my profile photo?</div>
-        <div class="faq-a">Go to the Profile tab and tap your avatar or the ✦ button on your photo. You can upload a new photo from your library.</div>
+        <div class="faq-a">Go to the Profile tab and tap your avatar or the &#10022; button on your photo. You can upload a new photo from your library.</div>
       </div>
 
       <div class="faq-item">
@@ -253,21 +114,19 @@
 
       <div class="faq-item">
         <div class="faq-q">How do I report someone?</div>
-        <div class="faq-a">Email us at <a href="mailto:contact@miruclub.com">contact@miruclub.com</a> with the user's name or profile details and we will review and take action promptly.</div>
+        <div class="faq-a">Email us at contact@miruclub.com with the user's name or profile details and we will review and take action promptly.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q">How do I cancel my Premium subscription?</div>
-        <div class="faq-a">If you subscribed via our website, email us at <a href="mailto:contact@miruclub.com">contact@miruclub.com</a> and we'll cancel it immediately with no questions asked.</div>
+        <div class="faq-a">If you subscribed via our website, email us at contact@miruclub.com and we will cancel it immediately with no questions asked.</div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q">Is Miru available outside Phoenix?</div>
         <div class="faq-a">Miru is currently focused on the Phoenix, AZ area. We plan to expand to more cities soon.</div>
       </div>
-
     </div>
-
   </div>
 </body>
 </html>
