@@ -852,18 +852,21 @@
     //    • User is already logged in (tab reload)
     // ════════════════════════════════════════════════════════════
     sb.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        setStatus('Signing you in…', 'info');
-        await ensureProfile(session.user, session.user.email);
-        window.location.replace('index.html');
-      }
+  if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
+    setStatus('Signing you in…', 'info');
+    await ensureProfile(session.user, session.user.email);
+    window.location.replace('index.html');
+    return;
+  }
+  if (event === 'USER_UPDATED' || event === 'EMAIL_CONFIRMED') {
+    setStatus('Email confirmed! Redirecting…', 'success');
+    setTimeout(() => window.location.replace('index.html'), 1200);
+  }
+});
 
-      // FIX #6 — Email confirmation return handling
-      if (event === 'USER_UPDATED' || event === 'EMAIL_CONFIRMED') {
-        setStatus('Email confirmed! Redirecting…', 'success');
-        setTimeout(() => window.location.replace('index.html'), 1200);
-      }
-    });
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session?.user) window.location.replace('index.html');
+});
 
     // ════════════════════════════════════════════════════════════
     //  State
