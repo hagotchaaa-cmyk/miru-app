@@ -2,6 +2,7 @@ workflows:
   ios-workflow:
     name: Miru iOS Build
     max_build_duration: 60
+
     environment:
       groups:
         - default
@@ -17,7 +18,7 @@ workflows:
       cocoapods: default
 
     scripts:
-      - name: Install Capacitor
+      - name: Install Capacitor CLI
         script: |
           npm install -g @capacitor/cli
 
@@ -25,20 +26,16 @@ workflows:
         script: |
           npm install
 
-      - name: Add iOS platform
+      - name: Prepare iOS platform
         script: |
           npx cap add ios || true
           npx cap sync ios
-
-      - name: Install CocoaPods
-        script: |
-          cd ios/App && pod install
 
       - name: Set up code signing
         script: |
           xcode-project use-profiles
 
-      - name: Build iOS
+      - name: Build IPA
         script: |
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
