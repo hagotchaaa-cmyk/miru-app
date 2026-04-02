@@ -41,6 +41,6 @@ workflows:
       - build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
-        git add codemagic.yaml
+        apple_id: avong9708@gmail.com
         password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: false
