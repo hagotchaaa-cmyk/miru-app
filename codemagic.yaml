@@ -8,8 +8,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.miru.dating
-        provisioning_profile_name: MiruDistribution
-        certificate_name: MiruDistribution
       vars:
         BUNDLE_ID: com.miru.dating
         XCODE_PROJECT: ios/App/App.xcodeproj
