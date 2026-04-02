@@ -728,6 +728,39 @@
       from { transform: scale(0.88) translateY(20px); opacity: 0; }
       to   { transform: scale(1) translateY(0); opacity: 1; }
     }
+
+    /* ── AI Matchmaker banner ── */
+    .ai-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 16px 0;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(184,174,255,0.07);
+      border: 1px solid rgba(184,174,255,0.18);
+    }
+    .ai-banner.show { display: flex; }
+    .ai-banner-icon { font-size: 16px; flex-shrink: 0; }
+    .ai-banner-text { flex: 1; font-size: 12px; font-weight: 700; color: var(--lilac); line-height: 1.4; }
+    .ai-banner-text span { color: var(--white); }
+    .ai-banner-link { font-size: 11px; font-weight: 700; color: var(--muted); text-decoration: none; flex-shrink: 0; }
+    .ai-banner-link:hover { color: var(--lilac); }
+    .ai-pick-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(184,174,255,0.18);
+      border: 1px solid rgba(184,174,255,0.35);
+      color: var(--lilac);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(8px);
+      z-index: 3;
+    }
   </style>
 </head>
 
@@ -759,6 +792,13 @@
         <button class="fchip" data-filter="boosted">Boosted</button>
         <button class="fchip" data-filter="nearby">Nearby</button>
       </div>
+    </div>
+
+    <!-- AI Matchmaker banner -->
+    <div class="ai-banner" id="aiBanner">
+      <div class="ai-banner-icon">🤖</div>
+      <div class="ai-banner-text">AI Matchmaker — <span id="aiBannerText">curating your picks</span></div>
+      <a class="ai-banner-link" href="matchmaker.html">Edit ›</a>
     </div>
 
     <!-- Card stack -->
@@ -920,7 +960,6 @@
       badge.style.color = left <= 5 ? '#FF7090' : left <= 15 ? '#F5CE7A' : '';
     }
 
-    // Returns true if allowed, false if blocked (shows paywall)
     function useSwipe() {
       const used = loadSwipeCount();
       if (used >= FREE_LIMIT) { showPaywall(); return false; }
@@ -928,6 +967,7 @@
       renderSwipeBadge();
       return true;
     }
+
     let dragStartX = 0;
     let dragStartY = 0;
     let dragX = 0;
@@ -993,16 +1033,90 @@
       await loadProfiles();
     }
 
+    // ── AI scoring ────────────────────────────────────────────
+    const VIBE_KEYWORDS = {
+      funny:       ['funny', 'humor', 'humour', 'laugh', 'hilarious', 'jokes', 'witty', 'sarcastic', 'comedian'],
+      deep:        ['deep', 'thoughtful', 'meaningful', 'conversations', 'philosophy', 'introspective', 'intellectual', 'mind', 'ideas'],
+      chill:       ['chill', 'relaxed', 'easygoing', 'laid back', 'lowkey', 'easy going', 'mellow', 'vibe'],
+      ambitious:   ['ambitious', 'driven', 'goals', 'career', 'motivated', 'hustle', 'success', 'grind', 'startup'],
+      creative:    ['creative', 'art', 'music', 'design', 'write', 'paint', 'draw', 'create', 'artist', 'musician', 'writer'],
+      adventurous: ['adventurous', 'travel', 'explore', 'outdoor', 'hike', 'adventure', 'spontaneous', 'outdoors', 'roadtrip'],
+      romantic:    ['romantic', 'romance', 'love', 'sweet', 'thoughtful', 'gestures'],
+      homebody:    ['homebody', 'cozy', 'home', 'netflix', 'cooking', 'quiet', 'stay in'],
+    };
+
+    const GOAL_KEYWORDS = {
+      relationship: ['relationship', 'serious', 'long-term', 'commitment', 'forever', 'partner', 'settle'],
+      connection:   ['connection', 'genuine', 'real', 'meaningful', 'authentic', 'connect'],
+      casual:       ['casual', 'fun', 'see where', 'no pressure', 'keep it chill'],
+      unsure:       [],
+    };
+
+    function scoreProfile(p, prefs) {
+      let score = 50;
+      const bio         = (p.bio   || '').toLowerCase();
+      const theirVibes  = Array.isArray(p.vibes) ? p.vibes : [];
+      const myVibes     = prefs.vibes || [];
+      const theirGoal   = p.goal  || '';
+      const myGoal      = prefs.goal || '';
+
+      // Direct vibe-to-vibe overlap (most powerful signal)
+      const overlap = myVibes.filter(v => theirVibes.includes(v)).length;
+      score += overlap * 15;
+
+      // Goal match
+      if (theirGoal && myGoal && theirGoal === myGoal) score += 20;
+
+      // Bio keyword fallback (for users who haven't set vibes yet)
+      if (!theirVibes.length) {
+        myVibes.forEach(vibe => {
+          (VIBE_KEYWORDS[vibe] || []).forEach(kw => {
+            if (bio.includes(kw)) score += 5;
+          });
+        });
+      }
+      if (!theirGoal) {
+        (GOAL_KEYWORDS[myGoal] || []).forEach(kw => {
+          if (bio.includes(kw)) score += 3;
+        });
+      }
+
+      // Boosted profiles rank higher
+      if (p.boost_until && new Date(p.boost_until) > new Date()) score += 12;
+
+      return Math.min(score, 99);
+    }
+
     // ── Load profiles from Supabase ───────────────────────────
     async function loadProfiles() {
       showLoading(true);
 
-      const { data, error } = await sb
+      // Fetch matchmaker preferences
+      const { data: prefs } = await sb
+        .from('matchmaker_preferences')
+        .select('*')
+        .eq('user_id', me.id)
+        .maybeSingle();
+
+      const aiEnabled = prefs?.ai_enabled || false;
+
+      // Build base query
+      let query = sb
         .from('profiles')
-        .select('user_id,name,age,bio,avatar_url,boost_until')
+        .select('user_id,name,age,bio,avatar_url,boost_until,status,vibes,goal')
         .neq('user_id', me.id)
+        .neq('status', 'paused')
         .order('boost_until', { ascending: false, nullsFirst: false });
 
+      // Age range filter (applied at DB level when AI is on)
+      if (aiEnabled && prefs?.age_range) {
+        const [minAge, maxAge] = prefs.age_range.split('-').map(Number);
+        if (!isNaN(minAge) && !isNaN(maxAge)) {
+          query = query.or(`age.gte.${minAge},age.is.null`).lte('age', maxAge);
+        }
+      }
+
+      const { data, error } = await query;
       showLoading(false);
 
       if (error) {
@@ -1017,8 +1131,23 @@
         .eq('user_id', me.id);
 
       const likedIds = new Set((myLikes || []).map(l => l.target_user_id));
+      let filtered = (data || []).filter(p => !likedIds.has(p.user_id));
 
-      allProfiles = (data || []).filter(p => !likedIds.has(p.user_id));
+      if (aiEnabled && prefs) {
+        // Score and sort — no limit, show all matches
+        filtered = filtered.map(p => ({ ...p, ai_score: scoreProfile(p, prefs), ai_pick: true }));
+        filtered.sort((a, b) => b.ai_score - a.ai_score);
+
+        // Show AI banner
+        const banner = document.getElementById('aiBanner');
+        banner.classList.add('show');
+        document.getElementById('aiBannerText').textContent =
+          `AI sorted · ${prefs.goal || 'connection'} focused`;
+      } else {
+        document.getElementById('aiBanner').classList.remove('show');
+      }
+
+      allProfiles = filtered;
       applyFilter('all');
     }
 
@@ -1060,7 +1189,7 @@
         return;
       }
 
-      const score   = compatibility(current);
+      const score   = p.ai_pick ? p.ai_score : compatibility(current);
       const prompt  = getPrompt(current);
       const vibes   = getVibes(p, current);
       const bgStyle = p.avatar_url
@@ -1079,8 +1208,9 @@
         <div class="card-bg" style="${bgStyle}"></div>
         <div class="card-gradient"></div>
 
+        ${p.ai_pick ? '<div class="ai-pick-badge">🤖 AI Pick</div>' : ''}
+
         <div class="card-top">
-          <div class="prompt-badge">${esc(prompt)}</div>
           <div class="compat-badge">${score}% match</div>
         </div>
 
