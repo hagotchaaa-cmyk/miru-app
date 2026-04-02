@@ -2183,7 +2183,7 @@
       if (!prof) {
         const fallback = me.email?.split('@')[0] || 'New User';
         await sb.from('profiles').insert({
-          user_id: me.id, name: fallback, bio: '', avatar_url: '', is_premium: false
+          user_id: me.id, name: fallback, bio: '', avatar_url: '', is_premium: true
         });
         const { data: fresh } = await sb.from('profiles').select('*').eq('user_id', me.id).maybeSingle();
         prof = fresh || {};

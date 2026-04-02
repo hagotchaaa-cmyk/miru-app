@@ -958,10 +958,6 @@
           <div class="strip-stat-val" id="superCount">—</div>
           <div class="strip-stat-label">⚡ Super likes</div>
         </div>
-        
-            
-          </div>
-        </div>
       </div>
 
       <!-- Quick actions — NO DUPLICATES -->
@@ -1127,7 +1123,7 @@
           name:       fallbackName,
           bio:        '',
           avatar_url: '',
-          is_premium: false
+          is_premium: true
           // age is NOT set here — collected during onboarding
         });
 
@@ -1148,7 +1144,7 @@
 
       document.getElementById('likeCount').textContent  = likes  ?? 0;
       document.getElementById('superCount').textContent = supers ?? 0;
-      document.getElementById('premiumLabel').textContent = myProfile?.is_premium ? 'Premium ✦' : 'Upgrade';
+
     }
 
     // ── Load match feed ───────────────────────────────────────
@@ -1233,7 +1229,7 @@
             <div class="mc-status-row">
               <span class="status-dot"></span>
               <span class="status-text">Active on Miru</span>
-              ${p.is_premium ? '<span class="mc-tag" style="margin-left:auto;">✦ Premium</span>' : ''}
+
             </div>
             ${p.bio ? `<div class="mc-bio">${esc(p.bio)}</div>` : ''}
             <div class="mc-tags">
