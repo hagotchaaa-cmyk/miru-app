@@ -22,19 +22,19 @@ workflows:
       - name: Install dependencies
         script: |
           npm install
-      - name: Add iOS platform
+      - name: Add iOS platform and sync
         script: |
           npx cap add ios || true
           npx cap sync ios
       - name: Install CocoaPods
         script: |
-          cd ios/App && pod install
+          cd ios/App && pod install --repo-update
       - name: Set build number
         script: |
+          cd ios/App
           BUILD_NUMBER=$(($(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo 0) + 1))
           echo "Setting build number to $BUILD_NUMBER"
           agvtool new-version -all $BUILD_NUMBER
-        working_directory: ios/App
       - name: Build iOS
         script: |
           xcode-project build-ipa \
