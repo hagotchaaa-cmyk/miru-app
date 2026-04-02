@@ -943,38 +943,28 @@
       if (!user?.id) return;
 
       try {
-        const { data: existing, error: readErr } = await sb
+        const { data: existing } = await sb
           .from('profiles')
           .select('user_id')
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (readErr) {
-          console.error('[Miru] Profile read error:', readErr.message);
-          return; // Don't block login if read fails
-        }
-
-        if (existing) return; // Profile already exists — nothing to do
+        if (existing) return;
 
         const fallbackName = email ? email.split('@')[0] : 'New User';
 
-        const { error: insertErr } = await sb.from('profiles').insert({
+        await sb.from('profiles').insert({
+          id:         user.id,
           user_id:    user.id,
           name:       fallbackName,
-          // FIX #9 — DO NOT hardcode age; let user set it in onboarding
           bio:        '',
           avatar_url: '',
-          is_premium: false
-          // NOTE: is_premium is ONLY ever set to true by the Stripe webhook.
-          //       Never update this field from the client.
+          is_premium: false,
+          status:     'active'
         });
 
-        if (insertErr) {
-          console.error('[Miru] Profile creation error:', insertErr.message);
-          // Not fatal — user is still logged in; surface in Sentry/logs
-        }
       } catch (err) {
-        console.error('[Miru] Unexpected error in ensureProfile:', err);
+        console.error('[Miru] ensureProfile error:', err);
       }
     }
 
