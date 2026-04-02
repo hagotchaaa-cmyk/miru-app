@@ -42,5 +42,5 @@ workflows:
     publishing:
       app_store_connect:
         apple_id: avong9708@gmail.com
-        password: APP_SPECIFIC_PASSWORD
+        password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: false
