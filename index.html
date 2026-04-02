@@ -3,6 +3,7 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./notifications.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0A0714" />
@@ -132,6 +133,63 @@
       text-decoration: none;
     }
     .icon-btn:hover { background: rgba(255,255,255,0.09); }
+
+    .notif-btn { position: relative; }
+    .notif-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      border: 2px solid var(--bg);
+    }
+
+    /* Notification panel */
+    .notif-panel {
+      position: fixed;
+      top: 70px;
+      right: max(12px, calc(50% - 210px));
+      width: 320px;
+      max-height: 420px;
+      overflow-y: auto;
+      background: #100D22;
+      border: 1px solid rgba(180,170,255,0.18);
+      border-radius: 20px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.60);
+      z-index: 200;
+      display: none;
+    }
+    .notif-panel.show { display: block; }
+    .notif-panel-head {
+      padding: 14px 16px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--white);
+      border-bottom: 1px solid rgba(180,170,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .notif-panel-head span { color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; }
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(180,170,255,0.06);
+      cursor: pointer;
+      transition: background 0.13s;
+    }
+    .notif-item:hover { background: rgba(255,255,255,0.04); }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .notif-body { flex: 1; }
+    .notif-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.45; margin-bottom: 3px; }
+    .notif-time { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .notif-unread { background: rgba(184,174,255,0.05); }
+    .notif-empty { padding: 32px 16px; text-align: center; color: var(--muted); font-size: 13px; font-weight: 700; }
 
     .avatar-btn {
       width: 38px;
@@ -1062,9 +1120,10 @@
         : initial;
 
       document.getElementById('topRight').innerHTML = `
-        <a class="icon-btn" href="messages.html" title="Messages">💬</a>
+        <button class="icon-btn notif-btn" id="notifBtn" onclick="toggleNotifPanel()" title="Notifications">
+          🔔<span class="notif-badge" id="notifBadge" style="display:none"></span>
+        </button>
         <button class="avatar-btn" onclick="window.location.href='profile.html'" title="Profile">${avatarHTML}</button>
-        <button class="icon-btn" onclick="logout()" title="Sign out" style="font-size:13px;">↗</button>
       `;
     }
 
@@ -1320,6 +1379,92 @@
     }
 
     init();
+
+    // ── Notifications ─────────────────────────────────────────
+    async function loadNotifications() {
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) return;
+
+        const { data } = await sb.from('notifications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (!data) return;
+
+        const unread = data.filter(n => !n.read).length;
+        const badge = document.getElementById('notifBadge');
+        if (badge) badge.style.display = unread > 0 ? 'block' : 'none';
+
+        const panel = document.getElementById('notifList');
+        if (!panel) return;
+
+        if (data.length === 0) {
+          panel.innerHTML = '<div class="notif-empty">No notifications yet</div>';
+          return;
+        }
+
+        panel.innerHTML = data.map(n => `
+          <div class="notif-item ${n.read ? '' : 'notif-unread'}" onclick="markRead('${n.id}')">
+            <div class="notif-icon">${n.type === 'match' ? '💜' : n.type === 'like' ? '❤️' : n.type === 'message' ? '💬' : '🔔'}</div>
+            <div class="notif-body">
+              <div class="notif-text">${n.message}</div>
+              <div class="notif-time">${timeAgo(n.created_at)}</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) { console.error(e); }
+    }
+
+    async function markRead(id) {
+      await sb.from('notifications').update({ read: true }).eq('id', id);
+      loadNotifications();
+    }
+
+    async function markAllRead() {
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+      await sb.from('notifications').update({ read: true }).eq('user_id', user.id);
+      loadNotifications();
+    }
+
+    function toggleNotifPanel() {
+      const panel = document.getElementById('notifPanel');
+      const isOpen = panel.classList.contains('show');
+      panel.classList.toggle('show');
+      if (!isOpen) loadNotifications();
+    }
+
+    document.addEventListener('click', e => {
+      const panel = document.getElementById('notifPanel');
+      const btn = document.getElementById('notifBtn');
+      if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+        panel.classList.remove('show');
+      }
+    });
+
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'just now';
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      return `${Math.floor(h / 24)}d ago`;
+    }
+
+    loadNotifications();
   </script>
+  <!-- Notification Panel -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-head">
+      Notifications
+      <span onclick="markAllRead()">Mark all read</span>
+    </div>
+    <div id="notifList"><div class="notif-empty">Loading…</div></div>
+  </div>
+
 </body>
 </html>

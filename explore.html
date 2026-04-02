@@ -3,6 +3,7 @@
 <head>
   <script src="./config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./notifications.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0A0714" />
@@ -734,7 +735,10 @@
       <div class="nav-right">
         <div class="deck-pill" id="swipeBadge">40 swipes left</div>
         <div class="deck-pill" id="deckPill">— nearby</div>
-        <button class="icon-btn" onclick="window.location.href='profile.html'">⚙️</button>
+        <button class="icon-btn notif-btn" onclick="miruNotif.toggle()" title="Notifications">🔔<span class="notif-badge"></span></button>
+        <button class="icon-btn" onclick="window.location.href='profile.html'" title="Profile">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
       </div>
     </div>
 
