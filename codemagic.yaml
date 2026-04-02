@@ -14,9 +14,8 @@ workflows:
         XCODE_SCHEME: App
       node: v18
       xcode: latest
-      cocoapods: default
     scripts:
-      - name: Install Capacitor
+      - name: Install Capacitor CLI
         script: |
           npm install -g @capacitor/cli
       - name: Install dependencies
@@ -26,9 +25,6 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
-      - name: Install CocoaPods
-        script: |
-          cd ios/App && pod install --repo-update
       - name: Set build number
         script: |
           cd ios/App

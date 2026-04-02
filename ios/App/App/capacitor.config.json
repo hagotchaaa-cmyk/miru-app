@@ -2,5 +2,42 @@
 	"appId": "com.miru.dating",
 	"appName": "Miru",
 	"webDir": "www",
+	"ios": {
+		"contentInset": "automatic",
+		"allowsLinkPreview": false,
+		"scrollEnabled": true
+	},
+	"plugins": {
+		"Camera": {
+			"ios": {
+				"NSCameraUsageDescription": "Miru uses your camera to take profile photos and record videos to share with your matches.",
+				"NSPhotoLibraryUsageDescription": "Miru needs access to your photo library so you can choose photos and videos for your profile and posts.",
+				"NSPhotoLibraryAddUsageDescription": "Miru saves photos to your library when you download shared media from your matches.",
+				"NSMicrophoneUsageDescription": "Miru uses your microphone to record video messages and profile videos."
+			}
+		},
+		"LocalNotifications": {
+			"smallIcon": "ic_stat_icon_config_sample",
+			"iconColor": "#B8AEFF",
+			"sound": "beep.wav"
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
+		},
+		"SplashScreen": {
+			"launchShowDuration": 2000,
+			"launchAutoHide": true,
+			"backgroundColor": "#0A0714",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false,
+			"splashFullScreen": true,
+			"splashImmersive": true
+		}
+	},
 	"packageClassList": []
 }
