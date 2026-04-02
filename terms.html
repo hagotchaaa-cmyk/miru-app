@@ -1,167 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0A0714" />
-  <title>Miru &#8212; Terms of Service</title>
-  <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon-180.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:     #0A0714;
-      --white:  #FFFFFF;
-      --text:   #F0ECFF;
-      --soft:   #C4BCEE;
-      --muted:  #7A72AA;
-      --lilac:  #B8AEFF;
-      --border: rgba(180,170,255,0.10);
-      --serif:  'Cormorant Garamond', serif;
-      --sans:   'Cabinet Grotesk', sans-serif;
-    }
-    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse 75% 48% at 50% -8%, rgba(80,55,210,0.22), transparent);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .shell { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 48px; }
-    .logo { font-family: var(--serif); font-size: 28px; font-style: italic; font-weight: 700; color: var(--white); text-decoration: none; }
-    .back-btn { font-family: var(--sans); font-size: 13px; font-weight: 700; color: var(--muted); text-decoration: none; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); transition: color 0.15s; }
-    .back-btn:hover { color: var(--text); }
-    .page-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--lilac); margin-bottom: 12px; opacity: 0.85; }
-    .page-title { font-family: var(--serif); font-size: 48px; font-weight: 700; font-style: italic; letter-spacing: -1px; line-height: 1; color: var(--white); margin-bottom: 12px; }
-    .page-meta { font-size: 13px; color: var(--muted); font-weight: 700; margin-bottom: 48px; }
-    .section { margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid var(--border); }
-    .section:last-child { border-bottom: none; }
-    .section-title { font-family: var(--serif); font-size: 24px; font-weight: 700; color: var(--white); margin-bottom: 14px; letter-spacing: -0.3px; }
-    p { font-size: 15px; line-height: 1.75; color: var(--soft); margin-bottom: 12px; }
-    p:last-child { margin-bottom: 0; }
-    ul { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    ul li { font-size: 15px; line-height: 1.65; color: var(--soft); padding-left: 18px; position: relative; }
-    ul li::before { content: "&#8212;"; position: absolute; left: 0; color: var(--lilac); font-weight: 700; }
-    a { color: var(--lilac); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .contact-card { margin-top: 16px; padding: 20px 22px; border-radius: 20px; background: rgba(184,174,255,0.05); border: 1px solid rgba(184,174,255,0.14); }
-    .contact-card p { margin-bottom: 6px; font-size: 14px; }
-    .contact-card strong { color: var(--white); font-weight: 800; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F8F6FF">
+<title>Miru — Terms of Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F8F6FF;--surface:#FFFFFF;--border:#E4DEFF;
+  --purple:#7C5CBF;--purple-mid:#9B7FD4;--purple-pale:#EDE8FF;
+  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;
+  --radius:16px;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.7;}
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;background:rgba(248,246,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.back{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);text-decoration:none;}
+.nav-title{font-family:var(--serif);font-size:18px;font-weight:700;}
+.content{max-width:680px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+.last-updated{font-size:12px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2rem;}
+h1{font-family:var(--serif);font-size:36px;font-weight:700;line-height:1.1;margin-bottom:.5rem;}
+h1 em{font-style:italic;color:var(--purple);}
+h2{font-family:var(--serif);font-size:22px;font-weight:700;margin:2rem 0 .75rem;}
+p{color:var(--text2);margin-bottom:1rem;}
+ul{color:var(--text2);padding-left:1.5rem;margin-bottom:1rem;}
+ul li{margin-bottom:.4rem;}
+.highlight-box{padding:1rem 1.25rem;border-radius:var(--radius);background:var(--purple-pale);border:1px solid var(--border);margin-bottom:1.5rem;}
+.highlight-box p{color:var(--purple);margin:0;font-weight:500;}
+a{color:var(--purple);}
+</style>
 </head>
 <body>
-  <div class="shell">
+<div class="nav">
+  <a href="www/auth.html" class="back">←</a>
+  <div class="nav-title">Terms of Service</div>
+</div>
+<div class="content">
+  <div class="last-updated">Last updated: March 28, 2026</div>
+  <h1>Terms of<br><em>Service.</em></h1>
 
-    <div class="top-bar">
-      <a class="logo" href="index.html">miru.</a>
-      <a class="back-btn" href="index.html">&#8592; Back to app</a>
-    </div>
-
-    <div class="page-eyebrow">Legal</div>
-    <h1 class="page-title">Terms of Service</h1>
-    <div class="page-meta">Effective date: April 1, 2026 &nbsp;&#183;&nbsp; Operated by Miru</div>
-
-    <div class="section">
-      <div class="section-title">Agreement to Terms</div>
-      <p>By creating an account or using Miru, you agree to these Terms of Service. If you do not agree, do not use the app. These terms apply to all users of Miru, including the iOS app and website at miru-app.onrender.com.</p>
-      <p>We may update these terms from time to time. Continued use of Miru after changes are posted means you accept the updated terms.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Eligibility</div>
-      <p>You must be at least 18 years old to use Miru. By creating an account, you confirm that you are 18 or older. We reserve the right to terminate accounts found to belong to anyone under 18.</p>
-      <p>You must be a human. Accounts created by bots or automated tools are not permitted.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Your Account</div>
-      <p>You are responsible for your account and everything that happens under it. Keep your password secure and do not share your account with anyone.</p>
-      <p>You must provide accurate information when creating your account. Impersonating another person or using a false identity is prohibited and may result in immediate termination.</p>
-      <p>You can delete your account at any time from the Profile tab inside the app. Upon deletion, your data will be permanently removed.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Acceptable Use</div>
-      <p>Miru is for genuine human connection. You agree not to:</p>
-      <ul>
-        <li>Harass, threaten, or harm other users</li>
-        <li>Post false, misleading, or deceptive content</li>
-        <li>Upload photos or videos that are not of yourself or that you do not have rights to share</li>
-        <li>Solicit money, goods, or services from other users</li>
-        <li>Use Miru for any commercial purpose without our written consent</li>
-        <li>Create multiple accounts or fake profiles</li>
-        <li>Attempt to access other users&#39; accounts or data</li>
-        <li>Use bots, scrapers, or automated tools of any kind</li>
-        <li>Post content that is sexually explicit, violent, or illegal</li>
-        <li>Discriminate against or harass users based on race, gender, religion, sexual orientation, or any other protected characteristic</li>
-      </ul>
-      <p>Violation of these rules may result in your account being suspended or permanently removed.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Content You Post</div>
-      <p>You retain ownership of the photos, videos, and text you post on Miru. By posting content, you grant Miru a non-exclusive, royalty-free license to display and distribute your content within the app for the purpose of operating the service.</p>
-      <p>You are solely responsible for the content you post. Do not post anything you would not want others to see or that violates these terms.</p>
-      <p>We reserve the right to remove any content that violates these terms or that we determine is harmful to the community, without notice.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Premium Subscription</div>
-      <p>Miru offers an optional Premium subscription that unlocks additional features. Premium subscriptions are available for purchase on our website at miru-app.onrender.com.</p>
-      <p>Subscriptions automatically renew unless cancelled. You can cancel at any time by contacting us at contact@miruclub.com. Refunds are handled on a case-by-case basis — reach out and we will do our best to make it right.</p>
-      <p>We reserve the right to change Premium pricing or features at any time, with reasonable notice to existing subscribers.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Safety</div>
-      <p>Your safety matters to us. Please use common sense when meeting people from Miru in person — meet in public places, tell someone where you are going, and trust your instincts.</p>
-      <p>If you experience harassment, threats, or inappropriate behavior from another user, report it to us immediately at contact@miruclub.com. We take all reports seriously and will investigate promptly.</p>
-      <p>Miru is not responsible for the conduct of users on or off the platform. We do not conduct background checks on users.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Intellectual Property</div>
-      <p>Miru and its original content, features, and functionality are owned by Miru and are protected by copyright and other intellectual property laws. You may not copy, modify, distribute, or reverse engineer any part of the app without our written permission.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Disclaimers</div>
-      <p>Miru is provided "as is" without warranties of any kind. We do not guarantee that the app will be error-free, uninterrupted, or that you will find matches or connections through it.</p>
-      <p>We are not responsible for any interactions between users, whether online or in person. Use the app at your own risk.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Limitation of Liability</div>
-      <p>To the maximum extent permitted by law, Miru shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the app, even if we have been advised of the possibility of such damages.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Termination</div>
-      <p>We reserve the right to suspend or terminate your account at any time for violation of these terms, without notice. You may also delete your account at any time from within the app.</p>
-      <p>Upon termination, your right to use Miru ceases immediately and your data will be deleted in accordance with our Privacy Policy.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Governing Law</div>
-      <p>These terms are governed by the laws of the State of Arizona, United States. Any disputes arising from these terms or your use of Miru will be resolved in the courts of Arizona.</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Contact Us</div>
-      <p>If you have any questions about these Terms of Service, please contact us.</p>
-      <div class="contact-card">
-        <p><strong>Miru</strong></p>
-        <p>Email: <a href="mailto:contact@miruclub.com">contact@miruclub.com</a></p>
-        <p>App: <a href="https://miru-app.onrender.com">miru-app.onrender.com</a></p>
-      </div>
-    </div>
-
+  <div class="highlight-box">
+    <p>✦ By using Miru you agree to these terms. Please read them — they're written in plain English, not legalese.</p>
   </div>
+
+  <h2>1. Who Can Use Miru</h2>
+  <p>You must be at least <strong>18 years old</strong> to use Miru. By creating an account, you confirm that you are 18 or older. We reserve the right to terminate accounts belonging to minors immediately and without notice.</p>
+
+  <h2>2. Your Account</h2>
+  <ul>
+    <li>You are responsible for keeping your login credentials secure</li>
+    <li>You may only create one account per person</li>
+    <li>Your account is personal and non-transferable</li>
+    <li>You must provide accurate information when creating your profile</li>
+    <li>You are responsible for all activity that occurs under your account</li>
+  </ul>
+
+  <h2>3. What You Can Do</h2>
+  <ul>
+    <li>Create a genuine profile representing yourself</li>
+    <li>Upload photos and videos of yourself</li>
+    <li>Connect and message other users who have matched with you</li>
+    <li>Use AI matching features to find compatible people</li>
+    <li>Subscribe to Miru Premium for additional features</li>
+    <li>Report users who violate these terms</li>
+  </ul>
+
+  <h2>4. What You Cannot Do</h2>
+  <p>The following are strictly prohibited and will result in immediate account termination:</p>
+  <ul>
+    <li>Creating a fake profile or impersonating another person</li>
+    <li>Uploading photos or videos of someone else without their consent</li>
+    <li>Sending harassing, abusive, threatening, or hateful messages</li>
+    <li>Soliciting money or financial information from other users</li>
+    <li>Posting sexually explicit content</li>
+    <li>Using Miru for commercial solicitation or spam</li>
+    <li>Attempting to bypass or hack our systems</li>
+    <li>Using automated bots or scripts</li>
+    <li>Sharing other users' personal information without consent</li>
+    <li>Any illegal activity</li>
+  </ul>
+
+  <h2>5. Your Content</h2>
+  <p>You own the photos and videos you upload. By uploading content to Miru, you grant us a limited license to display that content to other users within the app. We will never sell or license your content to third parties.</p>
+  <p>You are solely responsible for the content you upload. Content must not violate any laws or the rights of others.</p>
+
+  <h2>6. Premium Subscription</h2>
+  <ul>
+    
+    <li>Subscriptions auto-renew unless cancelled</li>
+    <li>You can cancel anytime from your account settings</li>
+    <li>Cancellation takes effect at the end of the current billing period</li>
+    <li>We do not offer refunds for partial months</li>
+    <li>Prices may change with 30 days notice</li>
+  </ul>
+
+  <h2>7. Safety</h2>
+  <p>Your safety is important to us. While we work hard to keep Miru safe, we cannot guarantee the conduct of all users. Please:</p>
+  <ul>
+    <li>Meet new connections in public places first</li>
+    <li>Tell a friend or family member where you're going</li>
+    <li>Trust your instincts — if something feels wrong, leave</li>
+    <li>Report any suspicious or abusive behavior immediately</li>
+  </ul>
+
+  <h2>8. Account Termination</h2>
+  <p>We reserve the right to suspend or terminate any account that violates these Terms at any time and without notice. You may also delete your account at any time from your profile settings. Upon deletion, your data will be permanently removed within 30 days.</p>
+
+  <h2>9. Disclaimers</h2>
+  <p>Miru is provided "as is." We do not guarantee that you will find a match, relationship, or any particular outcome from using the app. We are not responsible for the actions of other users.</p>
+
+  <h2>10. Limitation of Liability</h2>
+  <p>To the maximum extent permitted by law, Miru shall not be liable for any indirect, incidental, or consequential damages arising from your use of the app.</p>
+
+  <h2>11. Changes to Terms</h2>
+  <p>We may update these Terms from time to time. We will notify you of significant changes via email and in-app notification at least 30 days before they take effect. Continued use of Miru after changes take effect constitutes acceptance of the new terms.</p>
+
+  <h2>12. Governing Law</h2>
+  <p>These Terms are governed by the laws of the State of Arizona, United States.</p>
+
+  <h2>13. Contact</h2>
+  <p>Questions about these Terms? Contact us at <a href="mailto:legal@miru.app">legal@miru.app</a></p>
+</div>
 </body>
 </html>
