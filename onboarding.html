@@ -1,121 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Miru - Setup</title>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0714" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Miru &#8212; Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0714; --white: #FFFFFF; --text: #F0ECFF; --soft: #C4BCEE;
+      --muted: #7A72AA; --lilac: #B8AEFF; --gold: #F5CE7A; --green: #7DFFC8;
+      --red: #FF7090; --border: rgba(180,170,255,0.10); --border-hi: rgba(180,170,255,0.22);
+      --serif: 'Cormorant Garamond', serif; --sans: 'Cabinet Grotesk', sans-serif;
+    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+    body::before {
+      content: ""; position: fixed; inset: 0;
+      background: radial-gradient(ellipse 75% 48% at 50% -8%, rgba(80,55,210,0.26), transparent),
+                  radial-gradient(ellipse 40% 40% at 90% 55%, rgba(110,80,255,0.07), transparent);
+      pointer-events: none; z-index: 0;
+    }
+    .shell {
+      position: relative; z-index: 1; max-width: 440px; margin: 0 auto;
+      min-height: 100vh; display: flex; flex-direction: column; padding: 0 0 32px;
+    }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #ffffff;
-  color: #333;
-}
+    /* Progress bar */
+    .progress-bar {
+      display: flex; gap: 6px; padding: 20px 20px 0;
+    }
+    .progress-seg {
+      flex: 1; height: 3px; border-radius: 999px;
+      background: rgba(184,174,255,0.15); transition: background 0.3s;
+    }
+    .progress-seg.done { background: var(--lilac); }
+    .progress-seg.active { background: var(--white); }
 
-.container {
-  max-width: 400px;
-  margin: 60px auto;
-  padding: 20px;
-}
+    /* Steps */
+    .step { display: none; flex: 1; flex-direction: column; padding: 32px 20px 20px; }
+    .step.active { display: flex; }
 
-.step { display: none; }
-.step.active { display: block; }
+    .step-eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--lilac); margin-bottom: 10px; opacity: 0.85;
+    }
+    .step-title {
+      font-family: var(--serif); font-size: 38px; font-weight: 700; font-style: italic;
+      line-height: 1.0; letter-spacing: -0.8px; color: var(--white); margin-bottom: 8px;
+    }
+    .step-sub { font-size: 14px; color: var(--soft); line-height: 1.65; margin-bottom: 28px; }
 
-h1 { font-size: 26px; margin-bottom: 10px; }
-p { color: #666; margin-bottom: 20px; }
+    /* Fields */
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .field label { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); }
+    .field input, .field select {
+      width: 100%; padding: 14px 16px; border-radius: 16px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--sans); font-size: 14px;
+      outline: none; transition: border-color 0.15s; -webkit-appearance: none;
+    }
+    .field input::placeholder { color: var(--muted); }
+    .field input:focus, .field select:focus { border-color: var(--border-hi); }
+    .field select option { background: #100D22; color: var(--text); }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-}
+    /* Pills */
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+    .pill {
+      padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--soft); font-family: var(--sans);
+      font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+      user-select: none;
+    }
+    .pill:hover { border-color: var(--border-hi); color: var(--white); }
+    .pill.on {
+      background: rgba(184,174,255,0.12); border-color: var(--lilac);
+      color: var(--white);
+    }
 
-button {
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 25px;
-  background: #7C5CBF;
-  color: white;
-  font-size: 16px;
-}
+    /* Continue button */
+    .continue-btn {
+      width: 100%; padding: 15px; border-radius: 999px; border: none;
+      background: var(--white); color: #0A0714; font-family: var(--sans);
+      font-size: 14px; font-weight: 900; cursor: pointer; margin-top: auto;
+      box-shadow: 0 8px 24px rgba(255,255,255,0.10);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .continue-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(255,255,255,0.16); }
+    .continue-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-.pill {
-  display: inline-block;
-  padding: 10px 14px;
-  margin: 5px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-}
-
-.pill.active {
-  background: #7C5CBF;
-  color: white;
-}
-</style>
+    /* Done screen */
+    .done-wrap {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 32px 20px; text-align: center;
+    }
+    .done-icon { font-size: 64px; margin-bottom: 20px; }
+    .done-title { font-family: var(--serif); font-size: 42px; font-style: italic; font-weight: 700; color: var(--white); letter-spacing: -1px; margin-bottom: 10px; }
+    .done-sub { font-size: 15px; color: var(--soft); line-height: 1.7; max-width: 280px; margin: 0 auto 32px; }
+    .done-btn {
+      padding: 15px 40px; border-radius: 999px; border: none; background: var(--white);
+      color: #0A0714; font-family: var(--sans); font-size: 15px; font-weight: 900;
+      cursor: pointer; box-shadow: 0 8px 24px rgba(255,255,255,0.12);
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
+  <div class="shell">
 
-<div class="step active" id="step1">
-  <h1>Tell us about you</h1>
-  <input placeholder="Your name">
-  <input placeholder="Age">
-  <input placeholder="City">
-  <button onclick="next()">Continue</button>
-</div>
+    <!-- Progress -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-seg active" id="seg0"></div>
+      <div class="progress-seg" id="seg1"></div>
+      <div class="progress-seg" id="seg2"></div>
+    </div>
 
-<div class="step" id="step2">
-  <h1>What are you looking for?</h1>
-  <div class="pill" onclick="select(this)">?? Relationship</div>
-  <div class="pill" onclick="select(this)">?? Fun</div>
-  <div class="pill" onclick="select(this)">?? Friends</div>
-  <button onclick="next()">Continue</button>
-</div>
+    <!-- Step 1: Basic info -->
+    <div class="step active" id="step0">
+      <div class="step-eyebrow">Step 1 of 3</div>
+      <div class="step-title">Tell us about you.</div>
+      <div class="step-sub">Just the basics — you can always update this later.</div>
 
-<div class="step" id="step3">
-  <h1>Your vibe</h1>
-  <div class="pill" onclick="select(this)">?? Funny</div>
-  <div class="pill" onclick="select(this)">?? Chill</div>
-  <div class="pill" onclick="select(this)">?? Spontaneous</div>
-  <button onclick="finish()">Finish</button>
-</div>
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="inputName" placeholder="What do people call you?" autocomplete="given-name" />
+      </div>
+      <div class="field">
+        <label>Age</label>
+        <input type="number" id="inputAge" placeholder="Must be 18 or older" min="18" max="99" />
+      </div>
+      <div class="field">
+        <label>I am a</label>
+        <select id="inputGender">
+          <option value="">Select...</option>
+          <option value="man">Man</option>
+          <option value="woman">Woman</option>
+          <option value="nonbinary">Non-binary</option>
+          <option value="other">Other</option>
+          <option value="prefer_not">Prefer not to say</option>
+        </select>
+      </div>
 
-<div class="step" id="done">
-  <h1>? You�re in</h1>
-  <p>Finding your matches...</p>
-</div>
+      <button class="continue-btn" onclick="goStep(1)">Continue</button>
+    </div>
 
-</div>
+    <!-- Step 2: Looking for -->
+    <div class="step" id="step1">
+      <div class="step-eyebrow">Step 2 of 3</div>
+      <div class="step-title">What are you looking for?</div>
+      <div class="step-sub">Pick everything that applies — no judgment here.</div>
 
-<script>
-let current = 1;
+      <div class="pills" id="intentPills">
+        <div class="pill" onclick="togglePill(this)">💜 A real relationship</div>
+        <div class="pill" onclick="togglePill(this)">😊 Something casual</div>
+        <div class="pill" onclick="togglePill(this)">👋 Making new friends</div>
+        <div class="pill" onclick="togglePill(this)">🔥 Dating around</div>
+        <div class="pill" onclick="togglePill(this)">✨ Not sure yet</div>
+      </div>
 
-function next() {
-  document.getElementById("step" + current).classList.remove("active");
-  current++;
-  document.getElementById("step" + current).classList.add("active");
-}
+      <button class="continue-btn" onclick="goStep(2)">Continue</button>
+    </div>
 
-function select(el) {
-  el.classList.toggle("active");
-}
+    <!-- Step 3: Vibe -->
+    <div class="step" id="step2">
+      <div class="step-eyebrow">Step 3 of 3</div>
+      <div class="step-title">What's your vibe?</div>
+      <div class="step-sub">Pick what feels like you. We use this to find better matches.</div>
 
-function finish() {
-  document.getElementById("step3").classList.remove("active");
-  document.getElementById("done").classList.add("active");
+      <div class="pills" id="vibePills">
+        <div class="pill" onclick="togglePill(this)">😂 Funny</div>
+        <div class="pill" onclick="togglePill(this)">😌 Chill</div>
+        <div class="pill" onclick="togglePill(this)">⚡ Spontaneous</div>
+        <div class="pill" onclick="togglePill(this)">🎯 Ambitious</div>
+        <div class="pill" onclick="togglePill(this)">🎨 Creative</div>
+        <div class="pill" onclick="togglePill(this)">🌙 Homebody</div>
+        <div class="pill" onclick="togglePill(this)">🌍 Adventurous</div>
+        <div class="pill" onclick="togglePill(this)">📚 Intellectual</div>
+      </div>
 
-  setTimeout(() => {
-    document.querySelector("#done p").textContent =
-      "?? 24 people match your vibe";
-  }, 1200);
-}
-</script>
+      <button class="continue-btn" onclick="finish()">Let's go</button>
+    </div>
 
+    <!-- Done -->
+    <div class="step" id="stepDone">
+      <div class="done-wrap">
+        <div class="done-icon">💜</div>
+        <div class="done-title">You're all set.</div>
+        <div class="done-sub" id="doneMsg">Finding people who match your vibe in Phoenix...</div>
+        <button class="done-btn" onclick="window.location.replace('index.html')">Start exploring</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+    let currentStep = 0;
+    const totalSteps = 3;
+
+    function updateProgress(step) {
+      for (let i = 0; i < totalSteps; i++) {
+        const seg = document.getElementById('seg' + i);
+        if (i < step) seg.className = 'progress-seg done';
+        else if (i === step) seg.className = 'progress-seg active';
+        else seg.className = 'progress-seg';
+      }
+    }
+
+    function goStep(next) {
+      // Validate step 0
+      if (currentStep === 0) {
+        const name = document.getElementById('inputName').value.trim();
+        const age  = parseInt(document.getElementById('inputAge').value);
+        if (!name) { alert('Please enter your name.'); return; }
+        if (!age || age < 18) { alert('You must be 18 or older to use Miru.'); return; }
+      }
+
+      document.getElementById('step' + currentStep).classList.remove('active');
+      currentStep = next;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress(currentStep);
+    }
+
+    function togglePill(el) {
+      el.classList.toggle('on');
+    }
+
+    async function finish() {
+      // Collect all data
+      const name   = document.getElementById('inputName').value.trim();
+      const age    = parseInt(document.getElementById('inputAge').value);
+      const gender = document.getElementById('inputGender').value;
+
+      const intents = [...document.querySelectorAll('#intentPills .pill.on')]
+        .map(p => p.textContent.trim());
+      const vibes = [...document.querySelectorAll('#vibePills .pill.on')]
+        .map(p => p.textContent.trim());
+
+      // Show done screen
+      document.getElementById('step' + currentStep).classList.remove('active');
+      document.getElementById('stepDone').classList.add('active');
+      document.getElementById('progressBar').style.display = 'none';
+
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) { window.location.replace('auth.html'); return; }
+
+        await sb.from('profiles').update({
+          name,
+          age,
+          gender,
+          bio: vibes.length > 0 ? vibes.join(' · ') : '',
+          status: 'active'
+        }).eq('user_id', user.id);
+
+        document.getElementById('doneMsg').textContent =
+          `Finding people who match your vibe in Phoenix...`;
+
+      } catch(e) {
+        console.error('Onboarding save error:', e);
+      }
+    }
+  </script>
 </body>
 </html>

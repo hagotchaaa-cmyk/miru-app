@@ -775,6 +775,19 @@
         </button>
       </div>
 
+      <!-- 18+ confirmation — only shown in signup mode -->
+      <div id="ageGateRow" style="display:none; margin-bottom:12px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="ageConfirm" style="width:18px;height:18px;margin-top:2px;accent-color:#B8AEFF;flex-shrink:0;" />
+          <span style="font-size:12px;color:#C4BCEE;line-height:1.55;font-family:'Cabinet Grotesk',sans-serif;font-weight:700;">
+            I confirm I am 18 years of age or older and agree to the
+            <a href="terms.html" style="color:#B8AEFF;">Terms of Service</a> and
+            <a href="privacy.html" style="color:#B8AEFF;">Privacy Policy</a>.
+          </span>
+        </label>
+        <span id="age-error" style="display:none;font-size:11px;font-weight:700;color:#FF8FAB;padding-left:4px;margin-top:4px;">You must confirm you are 18 or older to continue.</span>
+      </div>
+
       <!-- Primary action -->
       <button class="btn-primary" id="primaryBtn" onclick="handlePrimary()" style="margin-bottom: 8px;">
         <span class="btn-text" id="primaryBtnText">Create account</span>
@@ -887,6 +900,7 @@
       document.getElementById('tabSignin').setAttribute('aria-selected', String(!isSignup));
 
       document.getElementById('primaryBtnText').textContent = isSignup ? 'Create account' : 'Log in';
+      document.getElementById('ageGateRow').style.display = isSignup ? 'block' : 'none';
       document.getElementById('formSubText').textContent = isSignup
         ? 'Create your account — it takes less than a minute.'
         : 'Welcome back. Log in to your Miru account.';
@@ -1081,6 +1095,15 @@
     // ════════════════════════════════════════════════════════════
     async function signUp() {
       if (!validateForm()) return;
+
+      // 18+ age gate check
+      const ageConfirm = document.getElementById('ageConfirm');
+      const ageError = document.getElementById('age-error');
+      if (!ageConfirm.checked) {
+        ageError.style.display = 'block';
+        return;
+      }
+      ageError.style.display = 'none';
 
       isSubmitting = true;
       setButtonLoading('primaryBtn', true);
