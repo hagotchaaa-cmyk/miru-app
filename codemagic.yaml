@@ -11,7 +11,7 @@ workflows:
         bundle_identifier: com.miru.dating
       vars:
         BUNDLE_ID: com.miru.dating
-        XCODE_WORKSPACE: ios/App/App.xcworkspace
+        XCODE_PROJECT: ios/App/App.xcodeproj
         XCODE_SCHEME: App
       node: v18
       xcode: latest
@@ -38,7 +38,7 @@ workflows:
       - name: Build IPA
         script: |
           xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
+            --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME"
 
     artifacts:
@@ -46,6 +46,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        apple_id: hagotchaaa@gmail.com
+        apple_id: avong9708@gmail.com
         password: $APP_SPECIFIC_PASSWORD
         submit_to_testflight: false
