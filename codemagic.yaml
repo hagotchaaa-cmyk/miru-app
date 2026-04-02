@@ -28,7 +28,7 @@ workflows:
           npx cap sync ios
       - name: Install CocoaPods
         script: |
-         cd ios/App && pod install --repo-update
+          cd ios/App && pod install --repo-update
       - name: Set build number
         script: |
           cd ios/App
