@@ -32,10 +32,8 @@ workflows:
       - name: Set build number
         script: |
           cd ios/App
-          LATEST=$(app-store-connect get-latest-testflight-build-number "$BUNDLE_ID" 2>/dev/null || echo 0)
-          BUILD_NUMBER=$((LATEST + 1))
-          echo "Build number: $BUILD_NUMBER"
           agvtool new-version -all $BUILD_NUMBER
+        working_directory: ios/App
       - name: Set up code signing
         script: |
           xcode-project use-profiles --project ios/App/App.xcodeproj
