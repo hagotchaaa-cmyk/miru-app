@@ -1077,14 +1077,6 @@
       document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
     }
 
-    document.getElementById('appMenuBtn').addEventListener('click', e => {
-      e.stopPropagation();
-      const menu = document.getElementById('appMenu');
-      const isOpen = menu.classList.contains('open');
-      closeAllMenus();
-      if (!isOpen) menu.classList.add('open');
-    });
-
     document.getElementById('convoMenuBtn').addEventListener('click', e => {
       e.stopPropagation();
       const menu = document.getElementById('convoMenu');
