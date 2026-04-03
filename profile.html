@@ -1663,6 +1663,8 @@
         <div class="field"><label>Name</label><input id="editName" type="text" placeholder="Your name" autocomplete="name" /></div>
         <div class="field"><label>Bio</label><textarea id="editBio" placeholder="Say something real about you…"></textarea></div>
         <div class="field"><label>Age</label><input id="editAge" type="number" placeholder="Your age" min="18" max="99" /></div>
+        <div class="field"><label>Prompt question</label><select id="editPromptQ"><option value="">Pick a prompt…</option><option value="Make me laugh...">"Make me laugh..."</option><option value="Something weird about you...">"Something weird about you..."</option><option value="Tell me a story...">"Tell me a story..."</option><option value="What are you really like?">"What are you really like?"</option><option value="Change my mind about...">"Change my mind about..."</option><option value="The way to my heart is...">"The way to my heart is..."</option><option value="I get too excited about...">"I get too excited about..."</option></select></div>
+        <div class="field"><label>Your answer</label><textarea id="editPromptA" placeholder="Write your answer…" maxlength="200"></textarea></div>
         <div class="field">
           <label>Banner photo</label>
           <button type="button" onclick="triggerBannerUpload()" style="width:100%;padding:12px 15px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--soft);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:border-color 0.15s;" onmouseover="this.style.borderColor='rgba(180,170,255,0.22)'" onmouseout="this.style.borderColor='rgba(180,170,255,0.10)'">🏞️ &nbsp;Upload banner image</button>
@@ -2142,6 +2144,8 @@
       document.getElementById('editName').value = p.name || '';
       document.getElementById('editBio').value  = p.bio  || '';
       document.getElementById('editAge').value  = p.age  || '';
+      document.getElementById('editPromptQ').value = p.prompt_question || '';
+      document.getElementById('editPromptA').value = p.prompt_answer   || '';
     }
 
     // ── Counts ────────────────────────────────────────────────
@@ -2256,9 +2260,11 @@
       const age   = parseInt(document.getElementById('editAge').value) || null;
       const vibes = [...document.querySelectorAll('#editVibeChips .pers-chip.on')].map(c => c.dataset.value);
       const goal  = document.querySelector('#editGoalChips .pers-chip.on')?.dataset.value || null;
+      const prompt_question = document.getElementById('editPromptQ').value || null;
+      const prompt_answer   = document.getElementById('editPromptA').value.trim() || null;
 
       const { error } = await sb.from('profiles')
-        .update({ name: name || myProfile.name, bio, age, vibes, goal })
+        .update({ name: name || myProfile.name, bio, age, vibes, goal, prompt_question, prompt_answer })
         .eq('user_id', me.id);
 
       if (error) { showToast(error.message, 'error'); return; }
@@ -2268,6 +2274,8 @@
       myProfile.age   = age;
       myProfile.vibes = vibes;
       myProfile.goal  = goal;
+      myProfile.prompt_question = prompt_question;
+      myProfile.prompt_answer   = prompt_answer;
       renderProfile(myProfile);
       closeEdit();
       showToast('Profile saved! ✨', 'success');

@@ -597,7 +597,9 @@
       backdrop-filter: blur(10px);
     }
 
-    .mc-hero-prompt {
+    .mc-hero-prompt { cursor: pointer; user-select: none; transition: opacity 0.15s; }
+    .mc-hero-prompt:active { opacity: 0.7; }
+    .mc-hero-prompt-orig {
       position: absolute;
       top: 14px;
       left: 14px;
@@ -1175,6 +1177,17 @@
 
     function compat(i) { return Math.max(80, 97 - i * 4); }
 
+    function togglePromptAnswer(el, answer) {
+      const existing = el.querySelector('.prompt-answer');
+      if (existing) { existing.remove(); el.querySelector('.prompt-hint').style.display = 'inline'; return; }
+      el.querySelector('.prompt-hint').style.display = 'none';
+      const ans = document.createElement('div');
+      ans.className = 'prompt-answer';
+      ans.style.cssText = 'margin-top:6px;font-size:13px;font-weight:600;color:#fff;line-height:1.4;';
+      ans.textContent = answer;
+      el.appendChild(ans);
+    }
+
     async function loadMatches() {
       // Get already-liked IDs so we don't show them
       const { data: myLikes } = await sb
@@ -1186,7 +1199,7 @@
 
       const { data, error } = await sb
         .from('profiles')
-        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until')
+        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until,prompt_question,prompt_answer')
         .neq('user_id', me.id)
         .order('boost_until', { ascending: false, nullsFirst: false })
         .limit(20);
@@ -1217,7 +1230,13 @@
         <div class="match-card">
           <div class="mc-hero" style="${bgStyle(p, i)}">
             <div class="mc-hero-score">${compat(i)}% match</div>
-            <div class="mc-hero-prompt">${esc(PROMPTS[i % PROMPTS.length])}</div>
+            ${(p.prompt_question && p.prompt_answer)
+              ? `<div class="mc-hero-prompt" onclick="togglePromptAnswer(this, '${esc(p.prompt_answer.replace(/'/g, "\'"))}')">
+                  <span class="prompt-q">${esc(p.prompt_question)}</span>
+                  <span class="prompt-hint" style="font-size:10px;opacity:0.6;margin-left:6px;">tap ↓</span>
+                </div>`
+              : `<div class="mc-hero-prompt">${esc(PROMPTS[i % PROMPTS.length])}</div>`
+            }
             <div class="mc-hero-bottom">
               <div>
                 <div class="mc-hero-name">${esc(p.name || 'Match')}${p.age ? `, ${esc(String(p.age))}` : ''}</div>
