@@ -2893,10 +2893,55 @@
 
       myProfile = prof;
       renderProfile(myProfile);
+      updatePrefLabel();
       await Promise.all([loadCounts(), loadPosts()]);
     }
 
     init();
+  </script>
+
+  <!-- Interested In Modal -->
+  <div id="prefBackdrop" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(5,3,15,0.85);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;" onclick="closePrefModal()">
+    <div onclick="event.stopPropagation()" style="background:#100D22;border:1px solid rgba(180,170,255,0.18);border-radius:28px 28px 0 0;width:min(440px,100%);padding:24px 20px calc(32px + env(safe-area-inset-bottom));">
+      <div style="width:36px;height:4px;border-radius:999px;background:rgba(255,255,255,0.15);margin:0 auto 20px;"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;font-style:italic;color:#fff;margin-bottom:6px;">Interested in</div>
+      <div style="font-size:13px;color:#7A72AA;margin-bottom:20px;">Only profiles matching your preference will show on Explore.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+        <button onclick="savePref('men')" id="prefMen" style="width:100%;padding:14px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(180,170,255,0.12);color:#F0ECFF;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:left;">👨 Men</button>
+        <button onclick="savePref('women')" id="prefWomen" style="width:100%;padding:14px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(180,170,255,0.12);color:#F0ECFF;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:left;">👩 Women</button>
+        <button onclick="savePref('everyone')" id="prefEveryone" style="width:100%;padding:14px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(180,170,255,0.12);color:#F0ECFF;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-align:left;">💜 Everyone</button>
+      </div>
+      <button onclick="closePrefModal()" style="width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(180,170,255,0.15);color:#7A72AA;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+  <script>
+    function openPrefModal() {
+      const pref = myProfile?.interested_in || 'everyone';
+      ['men','women','everyone'].forEach(p => {
+        const btn = document.getElementById('pref' + p.charAt(0).toUpperCase() + p.slice(1));
+        if (btn) btn.style.borderColor = p === pref ? '#B8AEFF' : 'rgba(180,170,255,0.12)';
+      });
+      document.getElementById('prefBackdrop').style.display = 'flex';
+    }
+    function closePrefModal() {
+      document.getElementById('prefBackdrop').style.display = 'none';
+    }
+    async function savePref(val) {
+      await sb.from('profiles').update({ interested_in: val }).eq('user_id', me.id);
+      myProfile.interested_in = val;
+      const label = val === 'men' ? 'Men' : val === 'women' ? 'Women' : 'Everyone';
+      const el = document.getElementById('prefLabel');
+      if (el) el.textContent = label;
+      closePrefModal();
+      showToast('Preference saved ✓', 'success');
+    }
+    // Update label when profile loads
+    function updatePrefLabel() {
+      const pref = myProfile?.interested_in || 'everyone';
+      const label = pref === 'men' ? 'Men' : pref === 'women' ? 'Women' : 'Everyone';
+      const el = document.getElementById('prefLabel');
+      if (el) el.textContent = label;
+    }
   </script>
 </body>
 </html>

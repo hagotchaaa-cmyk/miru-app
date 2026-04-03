@@ -1024,7 +1024,7 @@
       // Load profile to check premium status
       const { data: profile } = await sb
         .from('profiles')
-        .select('user_id')
+        .select('user_id,gender,interested_in')
         .eq('user_id', me.id)
         .maybeSingle();
       myProfile = profile || {};
@@ -1104,10 +1104,18 @@
       // Build base query
       let query = sb
         .from('profiles')
-        .select('user_id,name,age,bio,avatar_url,boost_until,status,vibes,goal')
+        .select('user_id,name,age,bio,avatar_url,boost_until,status,vibes,goal,gender')
         .neq('user_id', me.id)
         .neq('status', 'paused')
         .order('boost_until', { ascending: false, nullsFirst: false });
+
+      // Gender preference filter
+      const interestedIn = myProfile?.interested_in || 'everyone';
+      if (interestedIn === 'men') {
+        query = query.eq('gender', 'man');
+      } else if (interestedIn === 'women') {
+        query = query.eq('gender', 'woman');
+      }
 
       // Age range filter (applied at DB level when AI is on)
       if (aiEnabled && prefs?.age_range) {
