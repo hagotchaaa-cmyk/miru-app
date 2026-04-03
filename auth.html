@@ -895,6 +895,7 @@
     // ════════════════════════════════════════════════════════════
     let currentMode = 'signup';
     let isSubmitting = false;
+    let ageConfirmed = false;  // age gate
 
     // ════════════════════════════════════════════════════════════
     //  Mode switching
@@ -904,7 +905,6 @@
       const isSignup = mode === 'signup';
 
       document.getElementById('tabSignup').classList.toggle('active', isSignup);
-      if (isSignup && !ageConfirmed) { setTimeout(() => { document.getElementById('ageModal').style.display = 'flex'; }, 100); }
       document.getElementById('tabSignup').setAttribute('aria-selected', String(isSignup));
       document.getElementById('tabSignin').classList.toggle('active', !isSignup);
       document.getElementById('tabSignin').setAttribute('aria-selected', String(!isSignup));
@@ -1108,15 +1108,14 @@
     // ════════════════════════════════════════════════════════════
     async function signUp() {
       if (!validateForm()) return;
-      sessionStorage.setItem('miru_new_signup', '1');
 
       // 18+ age gate check
-      const ageError = document.getElementById('age-error');
       if (!ageConfirmed) {
-        ageError.style.display = 'block';
+        document.getElementById('ageModal').style.display = 'flex';
         return;
       }
-      ageError.style.display = 'none';
+
+      sessionStorage.setItem('miru_new_signup', '1');
 
       isSubmitting = true;
       setButtonLoading('primaryBtn', true);
@@ -1273,6 +1272,20 @@
     //  Init — default to signup mode
     // ════════════════════════════════════════════════════════════
     setMode('signup');
+
+    // Age gate functions
+    function confirmAge() {
+      ageConfirmed = true;
+      document.getElementById('ageModal').style.display = 'none';
+    }
+    function denyAge() {
+      window.location.href = 'https://www.google.com';
+    }
+
+    // Show age modal on page load
+    window.addEventListener('load', function() {
+      document.getElementById('ageModal').style.display = 'flex';
+    });
   </script>
 
   <!-- Age Verification Modal -->
@@ -1285,21 +1298,6 @@
       <button onclick="denyAge()" style="width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(180,170,255,0.2);color:#7A72AA;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">No, I am under 18</button>
     </div>
   </div>
-  <script>
-    let ageConfirmed = false;
-    function confirmAge() {
-      ageConfirmed = true;
-      document.getElementById('ageModal').style.display = 'none';
-    }
-    function denyAge() {
-      window.location.href = 'https://www.google.com';
-    }
-    // Only show age modal when in signup mode
-    function showAgeModalIfNeeded() {
-      if (currentMode === 'signup' && !ageConfirmed) {
-        document.getElementById('ageModal').style.display = 'flex';
-      }
-    }
-  </script>
+
 </body>
 </html>
