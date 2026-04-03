@@ -776,7 +776,6 @@
       <div class="nav-right">
         <div class="deck-pill" id="swipeBadge">40 swipes left</div>
         <div class="deck-pill" id="deckPill">— nearby</div>
-        <button class="icon-btn" id="genderToggleBtn" onclick="toggleGenderPref()" title="Interested in" style="font-size:13px;font-weight:800;min-width:42px;">👫</button>
         <button class="icon-btn notif-btn" onclick="miruNotif.toggle()" title="Notifications">🔔<span class="notif-badge"></span></button>
         <button class="icon-btn" onclick="openSettings()" title="Settings">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -919,7 +918,8 @@
     // ── Supabase ──────────────────────────────────────────────
     const sb = supabase.createClient(
       window.SUPABASE_URL,
-      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY,
+      window.SUPABASE_OPTIONS || {}
     );
 
     // ── State ─────────────────────────────────────────────────
@@ -1813,41 +1813,6 @@
     });
     loadNotifPanel();
     setInterval(loadNotifPanel, 30000);
-  </script>
-
-  <script>
-    const PREF_LABELS = { men: '👨', women: '👩', everyone: '👫' };
-    const PREF_ORDER  = ['everyone', 'men', 'women'];
-
-    async function toggleGenderPref() {
-      const current = myProfile?.interested_in || 'everyone';
-      const next = PREF_ORDER[(PREF_ORDER.indexOf(current) + 1) % PREF_ORDER.length];
-      myProfile.interested_in = next;
-
-      // Update button icon
-      document.getElementById('genderToggleBtn').textContent = PREF_LABELS[next];
-
-      // Save to Supabase
-      await sb.from('profiles').update({ interested_in: next }).eq('user_id', me.id);
-
-      // Reload profiles with new filter
-      showToast(`Showing: ${next.charAt(0).toUpperCase() + next.slice(1)}`, 'success');
-      await loadProfiles();
-    }
-
-    // Set initial icon after profile loads
-    const _origInit = typeof init === 'function' ? init : null;
-    document.addEventListener('DOMContentLoaded', () => {
-      const origLoadProfiles = loadProfiles;
-      // Update button when profiles load
-      const checkBtn = setInterval(() => {
-        const btn = document.getElementById('genderToggleBtn');
-        if (btn && myProfile) {
-          btn.textContent = PREF_LABELS[myProfile.interested_in || 'everyone'];
-          clearInterval(checkBtn);
-        }
-      }, 500);
-    });
   </script>
 </body>
 </html>

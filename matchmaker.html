@@ -632,14 +632,10 @@
       <span class="tab-label">Messages</span>
     </a>
 
-    <a class="tab-item" href="profile.html">
-      <svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span class="tab-label">Profile</span>
-    </a>
-    </nav>
+  </nav>
 
   <script>
-    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY, window.SUPABASE_OPTIONS || {});
     let me = null;
     let state = {
       ai_enabled: false,
