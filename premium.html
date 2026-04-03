@@ -91,26 +91,15 @@
         </div>
       </div>
     </div>
-    <button class="cta-btn" onclick="startIAP()">Upgrade to Premium ✦</button>
-    <button class="restore-btn" onclick="restoreIAP()">Restore purchase</button>
+    <button class="cta-btn" onclick="notifyMe()">Notify me when available ✦</button>
+    <button class="restore-btn" onclick="history.back()">← Go back</button>
     <div class="legal">
-      Subscriptions are managed through your Apple ID. Cancel anytime in App Store settings. By subscribing you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.
+      By using Miru you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.
     </div>
   </div>
   <script>
-    function startIAP() {
-      if (window.webkit?.messageHandlers?.iap) {
-        window.webkit.messageHandlers.iap.postMessage({ action: 'purchase', productId: 'com.miruclub.premium.monthly' });
-      } else {
-        alert('Premium is available in the Miru iOS app.');
-      }
-    }
-    function restoreIAP() {
-      if (window.webkit?.messageHandlers?.iap) {
-        window.webkit.messageHandlers.iap.postMessage({ action: 'restore' });
-      } else {
-        alert('Restore purchase is available in the Miru iOS app.');
-      }
+    function notifyMe() {
+      alert('You will be notified when Premium launches!');
     }
   </script>
 </body>
