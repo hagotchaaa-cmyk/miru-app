@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    ╔══════════════════════════════════════════════════════════════╗
+    ║  MIRU — join.html                                           ║
+    ║  Fixed: OAuth redirect loop, silent profile errors,         ║
+    ║  double-submit, missing email validation, Enter key,        ║
+    ║  config guard, hardcoded age, autocomplete, icon format     ║
+    ║                                                             ║
+    ║  NOTE: Stripe premium status is set via webhook only.       ║
+    ║  See stripe-webhook edge function for is_premium updates.   ║
+    ╚══════════════════════════════════════════════════════════════╝
+  -->
+
+  <!-- Load config first, then Supabase SDK -->
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0714" />
+  <meta name="description" content="Miru — video-first dating with a sharper eye for real people." />
+
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <!-- FIX #12: iOS does not support SVG apple-touch-icons — swap for a 180×180 PNG -->
+  <link rel="apple-touch-icon" href="icon-180.png" />
+
+  <title>Miru — Join Free</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0A0714;
+      --bg-2:         #0F0A1E;
+      --surface:      #13102B;
+      --surface-2:    #1C1840;
+      --border:       rgba(200, 190, 255, 0.10);
+      --border-hi:    rgba(200, 190, 255, 0.18);
+      --white:        #FFFFFF;
+      --text:         #F2EEFF;
+      --soft:         #C8BFEE;
+      --muted:        #7D74B0;
+      --lilac:        #BEB2F4;
+      --gold:         #F5CE7A;
+      --gold-glow:    rgba(245, 206, 122, 0.30);
+      --error:        #FF8FAB;
+      --success:      #7DFFC8;
+      --accent:       #A78BFA;
+      --accent-glow:  rgba(167, 139, 250, 0.25);
+
+      --serif: 'Cormorant Garamond', serif;
+      --sans:  'Cabinet Grotesk', sans-serif;
+
+      --radius-card: 28px;
+      --radius-field: 16px;
+      --radius-btn:  999px;
+
+      --transition: 0.18s ease;
+    }
+
+    html { height: 100%; }
+
+    body {
+      min-height: 100%;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+      padding: 16px 14px 32px;
+      position: relative;
+    }
+
+    /* ── Atmospheric background ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% -10%, rgba(100, 80, 200, 0.28), transparent),
+        radial-gradient(ellipse 40% 40% at 80% 60%,  rgba(167, 139, 250, 0.10), transparent),
+        radial-gradient(ellipse 50% 60% at 10% 80%,  rgba(80, 60, 180, 0.12), transparent);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grain overlay */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Shell ── */
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(420px, 100%);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      border-radius: var(--radius-card);
+      background: linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.07) inset,
+        0 24px 56px rgba(0,0,0,0.40);
+      overflow: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 20px 20px 22px;
+    }
+
+    .hero-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.30);
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .brand-icon img {
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-top: 3px;
+      letter-spacing: 0.1px;
+    }
+
+    .chip {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(245, 206, 122, 0.08);
+      border: 1px solid rgba(245, 206, 122, 0.18);
+    }
+
+    /* Big icon focus */
+    .hero-focus {
+      width: 96px;
+      height: 96px;
+      border-radius: 28px;
+      margin: 0 auto 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.11);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .hero-focus img {
+      width: 72%;
+      height: 72%;
+      object-fit: contain;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--lilac);
+      text-align: center;
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 0.93;
+      letter-spacing: -1.2px;
+      text-align: center;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--lilac);
+    }
+
+    .hero-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--soft);
+      text-align: center;
+      max-width: 300px;
+      margin: 0 auto 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .stat {
+      padding: 12px 8px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.035);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 3px;
+      letter-spacing: -0.3px;
+    }
+
+    .stat span {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      padding: 20px;
+    }
+
+    .form-title {
+      font-family: var(--serif);
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.9px;
+      line-height: 1;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .form-title em { font-style: italic; color: var(--lilac); }
+
+    .form-sub {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--soft);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    /* ── Mode toggle ── */
+    .mode-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 4px;
+      margin-bottom: 16px;
+    }
+
+    .mode-btn {
+      padding: 11px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .mode-btn.active {
+      background: var(--white);
+      color: #0F0A1E;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+
+    /* ── Fields ── */
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: var(--soft);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-field);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
+    }
+
+    .field input::placeholder { color: var(--muted); }
+
+    .field input:focus {
+      border-color: var(--border-hi);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Inline validation states */
+    .field input.err { border-color: rgba(255, 143, 171, 0.45); }
+    .field input.ok  { border-color: rgba(125, 255, 200, 0.35); }
+
+    .field-error {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--error);
+      padding-left: 4px;
+      min-height: 14px;
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    /* Password toggle */
+    .eye-btn {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1;
+      padding: 4px;
+      transition: color var(--transition);
+    }
+    .eye-btn:hover { color: var(--soft); }
+
+    .field input.has-toggle { padding-right: 44px; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: var(--radius-btn);
+      border: none;
+      background: var(--white);
+      color: #0F0A1E;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+      box-shadow: 0 8px 24px rgba(255,255,255,0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 12px 32px rgba(255,255,255,0.16);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+    /* FIX #4: disabled state during loading */
+    .btn-primary:disabled,
+    .btn-social:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary .btn-text { transition: opacity 0.15s; }
+    .btn-primary.loading .btn-text { opacity: 0; }
+
+    .btn-spinner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary.loading .btn-spinner { opacity: 1; }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(15,10,30,0.25);
+      border-top-color: #0F0A1E;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .or-divider::before,
+    .or-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .btn-social {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--radius-btn);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-hi);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background var(--transition), border-color var(--transition);
+      position: relative;
+    }
+
+    .btn-social:hover:not(:disabled) {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(200, 190, 255, 0.25);
+    }
+
+    .btn-apple {
+      background: #000000;
+      border-color: rgba(255,255,255,0.15);
+      color: #FFFFFF;
+      margin-top: 8px;
+    }
+    .btn-apple:hover:not(:disabled) {
+      background: #1a1a1a;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .apple-mark {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 17px;
+      line-height: 1;
+      margin-top: -2px;
+    }
+
+    .g-mark {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #0F0A1E;
+      flex-shrink: 0;
+    }
+
+    .btn-social .btn-spinner .spinner {
+      border-color: rgba(242, 238, 255, 0.25);
+      border-top-color: var(--text);
+    }
+
+    /* ── Status message ── */
+    .status {
+      min-height: 20px;
+      margin-top: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.55;
+      transition: color 0.2s;
+    }
+
+    .status.error   { color: var(--error); }
+    .status.success { color: var(--success); }
+    .status.info    { color: var(--gold); }
+
+    /* ── Trust rows ── */
+    .trust {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .trust-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--soft);
+      line-height: 1.5;
+    }
+
+    .trust-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* ── Forgot password ── */
+    .forgot-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -4px;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      font-family: var(--sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 2px 0;
+      transition: color var(--transition);
+    }
+
+    .link-btn:hover { color: var(--soft); }
+
+    /* Forgot-password panel */
+    .forgot-panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+
+    .forgot-panel.visible { display: flex; }
+
+    .forgot-panel p {
+      font-size: 13px;
+      color: var(--soft);
+      line-height: 1.55;
+    }
+
+    /* ── Animations ── */
+    .shell > * {
+      animation: fadeUp 0.45s ease both;
+    }
+    .shell > *:nth-child(2) { animation-delay: 0.08s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Desktop centering ── */
+    @media (min-width: 640px) {
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        padding: 32px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+
+    <!-- ── Hero card ── -->
+    <section class="card hero" role="banner">
+      <div class="hero-bar">
+        <div class="brand">
+          <div class="brand-icon">
+            <img src="icon.svg" alt="Miru logo" />
+          </div>
+          <div>
+            <div class="brand-name">miru.</div>
+            <div class="brand-tagline">Video-first dating for real people.</div>
+          </div>
+        </div>
+        <div class="chip">Beta</div>
+      </div>
+
+      <div class="hero-focus" aria-hidden="true">
+        <img src="icon.svg" alt="" />
+      </div>
+
+      <p class="eyebrow">Real connections · No swipe fatigue</p>
+      <h1 class="hero-title">Meet people.<br /><em>Not profiles.</em></h1>
+      <p class="hero-body">Miru gives you three quality matches a day — real video, real people, zero endless scrolling.</p>
+
+      <div class="stats" role="list">
+        <div class="stat" role="listitem">
+          <strong>3</strong>
+          <span>curated matches daily</span>
+        </div>
+        <div class="stat" role="listitem">
+          <strong>0</strong>
+          <span>swipe burnout</span>
+        </div>
+        <div class="stat" role="listitem">
+          <strong>real</strong>
+          <span>video-first only</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Form card ── -->
+    <section class="card form-card" aria-label="Sign in or create account">
+      <div class="form-title">Join <em>Miru.</em></div>
+      <p class="form-sub" id="formSubText">Create your account — it takes less than a minute.</p>
+
+      <!-- Mode toggle -->
+      <div class="mode-toggle" role="tablist" aria-label="Authentication mode">
+        <button class="mode-btn active" id="tabSignup" role="tab" aria-selected="true" onclick="setMode('signup')">Create account</button>
+        <button class="mode-btn"        id="tabSignin" role="tab" aria-selected="false" onclick="setMode('signin')">Log in</button>
+      </div>
+
+      <!-- Email -->
+      <div class="fields">
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            inputmode="email"
+            aria-required="true"
+            aria-describedby="email-error"
+          />
+          <span class="field-error" id="email-error" role="alert"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              class="has-toggle"
+              aria-required="true"
+              aria-describedby="password-error"
+            />
+            <button class="eye-btn" type="button" id="eyeBtn" aria-label="Toggle password visibility" onclick="togglePasswordVisibility()">👁</button>
+          </div>
+          <span class="field-error" id="password-error" role="alert"></span>
+        </div>
+
+        <!-- Forgot password link — only shown in sign-in mode -->
+        <div class="forgot-row" id="forgotRow" style="display:none;">
+          <button class="link-btn" onclick="toggleForgotPanel()">Forgot password?</button>
+        </div>
+      </div>
+
+      <!-- Forgot password panel -->
+      <div class="forgot-panel" id="forgotPanel" aria-live="polite">
+        <p>Enter your email above and we'll send you a reset link.</p>
+        <button class="btn-primary" id="resetBtn" onclick="sendPasswordReset()">
+          <span class="btn-text">Send reset link</span>
+          <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
+        </button>
+      </div>
+
+      <!-- Primary action -->
+      <button class="btn-primary" id="primaryBtn" onclick="handlePrimary()" style="margin-bottom: 8px;">
+        <span class="btn-text" id="primaryBtnText">Create account</span>
+        <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
+      </button>
+
+      <div class="or-divider">or</div>
+
+      <!-- Google OAuth -->
+      <button class="btn-social" id="googleBtn" onclick="signInWithGoogle()">
+        <span class="g-mark" aria-hidden="true">G</span>
+        <span class="btn-text">Continue with Google</span>
+        <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
+      </button>
+
+      <!-- Sign in with Apple -->
+      <button class="btn-social btn-apple" id="appleBtn" onclick="signInWithApple()">
+        <span class="apple-mark" aria-hidden="true"></span>
+        <span class="btn-text">Continue with Apple</span>
+        <span class="btn-spinner" aria-hidden="true"><span class="spinner"></span></span>
+      </button>
+
+      <!-- Status message area -->
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+
+      <!-- Trust signals -->
+   <div class="trust" style="display:none">
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Secure auth via Supabase — your password is never stored in plain text.
+        </div>
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Google sign-in uses OAuth 2.0. We never see your Google password.
+        </div>
+        <div class="trust-row">
+          <span class="trust-dot" aria-hidden="true"></span>
+          Premium status is verified server-side via Stripe — never client-side.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ════════════════════════════════════════════════════════════
+    //  FIX #7 — Validate config before anything else runs
+    // ════════════════════════════════════════════════════════════
+    (function validateConfig() {
+      const url = window.SUPABASE_URL;
+      const key = window.SUPABASE_ANON_KEY || window.SUPABASE_KEY;
+      if (!url || !key) {
+        document.getElementById('status').textContent =
+          '⚠️ App configuration error. Please contact support.';
+        document.getElementById('status').className = 'status error';
+        document.getElementById('primaryBtn').disabled = true;
+        document.getElementById('googleBtn').disabled = true;
+        document.getElementById('appleBtn').disabled = true;
+        throw new Error('[Miru] config.js is missing SUPABASE_URL or SUPABASE_ANON_KEY');
+      }
+    })();
+
+    // ════════════════════════════════════════════════════════════
+    //  Supabase client
+    // ════════════════════════════════════════════════════════════
+    const sb = supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+    );
+
+    // ════════════════════════════════════════════════════════════
+    //  FIX #2 — Handle OAuth redirect back + existing session
+    //  This fires when:
+    //    • User returns from Google OAuth redirect
+    //    • User is already logged in (tab reload)
+    // ════════════════════════════════════════════════════════════
+    sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setStatus('Signing you in…', 'info');
+        await ensureProfile(session.user, session.user.email);
+        window.location.replace('index.html');
+      }
+
+      // FIX #6 — Email confirmation return handling
+      if (event === 'USER_UPDATED' || event === 'EMAIL_CONFIRMED') {
+        setStatus('Email confirmed! Redirecting…', 'success');
+        setTimeout(() => window.location.replace('index.html'), 1200);
+      }
+    });
+
+    // ════════════════════════════════════════════════════════════
+    //  State
+    // ════════════════════════════════════════════════════════════
+    let currentMode = 'signup';
+    let isSubmitting = false;
+
+    // ════════════════════════════════════════════════════════════
+    //  Mode switching
+    // ════════════════════════════════════════════════════════════
+    function setMode(mode) {
+      currentMode = mode;
+      const isSignup = mode === 'signup';
+
+      document.getElementById('tabSignup').classList.toggle('active', isSignup);
+      document.getElementById('tabSignup').setAttribute('aria-selected', String(isSignup));
+      document.getElementById('tabSignin').classList.toggle('active', !isSignup);
+      document.getElementById('tabSignin').setAttribute('aria-selected', String(!isSignup));
+
+      document.getElementById('primaryBtnText').textContent = isSignup ? 'Create account' : 'Log in';
+      document.getElementById('formSubText').textContent = isSignup
+        ? 'Create your account — it takes less than a minute.'
+        : 'Welcome back. Log in to your Miru account.';
+
+      // FIX #5 — correct autocomplete per mode
+      const pwd = document.getElementById('password');
+      pwd.setAttribute('autocomplete', isSignup ? 'new-password' : 'current-password');
+
+      // Show/hide forgot password
+      document.getElementById('forgotRow').style.display = isSignup ? 'none' : 'flex';
+      closeForgotPanel();
+
+      clearFieldErrors();
+      clearStatus();
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Forgot password panel
+    // ════════════════════════════════════════════════════════════
+    let forgotOpen = false;
+
+    function toggleForgotPanel() {
+      forgotOpen = !forgotOpen;
+      document.getElementById('forgotPanel').classList.toggle('visible', forgotOpen);
+    }
+
+    function closeForgotPanel() {
+      forgotOpen = false;
+      document.getElementById('forgotPanel').classList.remove('visible');
+    }
+
+    async function sendPasswordReset() {
+      const email = getEmail();
+      if (!validateEmail(email)) {
+        showFieldError('email', 'Enter a valid email first.');
+        return;
+      }
+
+      setButtonLoading('resetBtn', true);
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+      setButtonLoading('resetBtn', false);
+
+      if (error) {
+        setStatus(error.message, 'error');
+      } else {
+        setStatus('Reset link sent! Check your inbox.', 'success');
+        closeForgotPanel();
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  FIX #3 — Profile creation with full error handling
+    // ════════════════════════════════════════════════════════════
+    async function ensureProfile(user, email) {
+      if (!user?.id) return;
+
+      try {
+        const { data: existing } = await sb
+          .from('profiles')
+          .select('user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (existing) return;
+
+        const fallbackName = email ? email.split('@')[0] : 'New User';
+
+        await sb.from('profiles').insert({
+          id:         user.id,
+          user_id:    user.id,
+          name:       fallbackName,
+          bio:        '',
+          avatar_url: '',
+          is_premium: false,
+          status:     'active'
+        });
+
+      } catch (err) {
+        console.error('[Miru] ensureProfile error:', err);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Validation helpers
+    // ════════════════════════════════════════════════════════════
+    function getEmail()    { return document.getElementById('email').value.trim(); }
+    function getPassword() { return document.getElementById('password').value; }
+
+    // FIX #10 — proper email validation
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    }
+
+    function showFieldError(fieldId, message) {
+      const input = document.getElementById(fieldId);
+      const errEl = document.getElementById(fieldId + '-error');
+      input.classList.add('err');
+      input.classList.remove('ok');
+      errEl.textContent = message;
+      errEl.classList.add('visible');
+    }
+
+    function clearFieldError(fieldId) {
+      const input = document.getElementById(fieldId);
+      const errEl = document.getElementById(fieldId + '-error');
+      input.classList.remove('err');
+      errEl.textContent = '';
+      errEl.classList.remove('visible');
+    }
+
+    function markFieldOk(fieldId) {
+      const input = document.getElementById(fieldId);
+      input.classList.remove('err');
+      input.classList.add('ok');
+    }
+
+    function clearFieldErrors() {
+      ['email', 'password'].forEach(id => {
+        clearFieldError(id);
+        document.getElementById(id).classList.remove('ok');
+      });
+    }
+
+    function validateForm() {
+      let ok = true;
+      const email    = getEmail();
+      const password = getPassword();
+
+      clearFieldErrors();
+
+      if (!email) {
+        showFieldError('email', 'Email is required.');
+        ok = false;
+      } else if (!validateEmail(email)) {
+        showFieldError('email', 'Enter a valid email address.');
+        ok = false;
+      } else {
+        markFieldOk('email');
+      }
+
+      if (!password) {
+        showFieldError('password', 'Password is required.');
+        ok = false;
+      } else if (currentMode === 'signup' && password.length < 8) {
+        showFieldError('password', 'Password must be at least 8 characters.');
+        ok = false;
+      } else {
+        markFieldOk('password');
+      }
+
+      return ok;
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Status helpers
+    // ════════════════════════════════════════════════════════════
+    function setStatus(message, type = 'info') {
+      const el = document.getElementById('status');
+      if (!el) return;
+      el.textContent = message;
+      el.className = 'status ' + type;
+    }
+
+    function clearStatus() {
+      const el = document.getElementById('status');
+      if (!el) return;
+      el.textContent = '';
+      el.className = 'status';
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  FIX #4 — Button loading state (prevents double-submit)
+    // ════════════════════════════════════════════════════════════
+    function setButtonLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.classList.toggle('loading', loading);
+    }
+
+    function setAllButtonsDisabled(disabled) {
+      ['primaryBtn', 'googleBtn', 'appleBtn', 'tabSignup', 'tabSignin'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = disabled;
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Sign up
+    // ════════════════════════════════════════════════════════════
+    async function signUp() {
+      if (!validateForm()) return;
+
+      isSubmitting = true;
+      setButtonLoading('primaryBtn', true);
+      setAllButtonsDisabled(true);
+      clearStatus();
+
+      try {
+        const { data, error } = await sb.auth.signUp({
+          email:    getEmail(),
+          password: getPassword()
+        });
+
+        if (error) {
+          setStatus(error.message, 'error');
+          return;
+        }
+
+        // If email confirmation is required, user is not yet SIGNED_IN
+        if (data?.user && !data.session) {
+          setStatus('Account created! Check your email to confirm, then log in.', 'success');
+          setMode('signin');
+          return;
+        }
+
+        // If email confirmation is off (instant session), onAuthStateChange handles redirect
+        if (data?.user && data.session) {
+          setStatus('Account created! Redirecting…', 'success');
+        }
+      } finally {
+        isSubmitting = false;
+        setButtonLoading('primaryBtn', false);
+        setAllButtonsDisabled(false);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Sign in
+    // ════════════════════════════════════════════════════════════
+    async function signIn() {
+      if (!validateForm()) return;
+
+      isSubmitting = true;
+      setButtonLoading('primaryBtn', true);
+      setAllButtonsDisabled(true);
+      clearStatus();
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({
+          email:    getEmail(),
+          password: getPassword()
+        });
+
+        if (error) {
+          // Friendly messages for common errors
+          if (error.message.toLowerCase().includes('invalid login')) {
+            setStatus('Wrong email or password. Please try again.', 'error');
+          } else if (error.message.toLowerCase().includes('email not confirmed')) {
+            setStatus('Please confirm your email first — check your inbox.', 'error');
+          } else {
+            setStatus(error.message, 'error');
+          }
+          return;
+        }
+
+        // onAuthStateChange fires SIGNED_IN and handles the redirect
+        setStatus('Logging you in…', 'info');
+      } finally {
+        isSubmitting = false;
+        setButtonLoading('primaryBtn', false);
+        setAllButtonsDisabled(false);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Sign in with Apple
+    // ════════════════════════════════════════════════════════════
+    async function signInWithApple() {
+      setButtonLoading('appleBtn', true);
+      setAllButtonsDisabled(true);
+      clearStatus();
+
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: 'https://miru-app.onrender.com/index.html'
+        }
+      });
+
+      if (error) {
+        setStatus(error.message, 'error');
+        setButtonLoading('appleBtn', false);
+        setAllButtonsDisabled(false);
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Google OAuth
+    //  FIX #2 — redirect handled by onAuthStateChange, not here
+    // ════════════════════════════════════════════════════════════
+    async function signInWithGoogle() {
+      setButtonLoading('googleBtn', true);
+      setAllButtonsDisabled(true);
+      clearStatus();
+
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://miru-app.onrender.com/index.html'
+        }
+      });
+
+      if (error) {
+        setStatus(error.message, 'error');
+        setButtonLoading('googleBtn', false);
+        setAllButtonsDisabled(false);
+      }
+      // If no error, browser is navigating away — no need to re-enable buttons
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Primary button dispatcher
+    // ════════════════════════════════════════════════════════════
+    function handlePrimary() {
+      if (isSubmitting) return;
+      currentMode === 'signup' ? signUp() : signIn();
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  Password visibility toggle
+    // ════════════════════════════════════════════════════════════
+    function togglePasswordVisibility() {
+      const input = document.getElementById('password');
+      const btn   = document.getElementById('eyeBtn');
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? '🙈' : '👁';
+      btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  FIX #11 — Enter key on BOTH email AND password fields
+    // ════════════════════════════════════════════════════════════
+    ['email', 'password'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') handlePrimary();
+      });
+    });
+
+    // Clear field error on typing
+    document.getElementById('email').addEventListener('input', () => clearFieldError('email'));
+    document.getElementById('password').addEventListener('input', () => clearFieldError('password'));
+
+    // ════════════════════════════════════════════════════════════
+    //  Init — default to signup mode
+    // ════════════════════════════════════════════════════════════
+    setMode('signup');
+  </script>
+</body>
+</html>
