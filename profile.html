@@ -1250,6 +1250,36 @@
     }
     .about-edit-input:focus { border-color: var(--border-hi); }
 
+    /* ── Personality chips in edit modal + about tab ── */
+    .pers-section { margin-bottom: 14px; }
+    .pers-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 8px; }
+    .pers-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pers-chip {
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.13s, border-color 0.13s, color 0.13s;
+    }
+    .pers-chip.on {
+      background: rgba(184,174,255,0.12);
+      border-color: rgba(184,174,255,0.35);
+      color: var(--lilac);
+    }
+    .pers-chip.goal-chip.on {
+      background: rgba(125,255,200,0.08);
+      border-color: rgba(125,255,200,0.28);
+      color: var(--green);
+    }
+    .about-pers-wrap {
+      padding: 16px 18px 0;
+    }
+
     /* ── Account management modal ── */
     .acct-card {
       display: flex;
@@ -1401,6 +1431,32 @@
 
     <!-- About section -->
     <div class="about-section" id="aboutSection">
+      <!-- Personality (vibe + goal) -->
+      <div class="about-pers-wrap">
+        <div class="pers-section">
+          <div class="pers-label">My vibe</div>
+          <div class="pers-chips" id="aboutVibeChips">
+            <button class="pers-chip" data-value="funny"       onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Funny</button>
+            <button class="pers-chip" data-value="deep"        onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Deep talks</button>
+            <button class="pers-chip" data-value="chill"       onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Chill</button>
+            <button class="pers-chip" data-value="ambitious"   onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Ambitious</button>
+            <button class="pers-chip" data-value="creative"    onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Creative</button>
+            <button class="pers-chip" data-value="adventurous" onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Adventurous</button>
+            <button class="pers-chip" data-value="romantic"    onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Romantic</button>
+            <button class="pers-chip" data-value="homebody"    onclick="togglePersChip(this,'aboutVibeChips'); savePersonality()">Homebody</button>
+          </div>
+        </div>
+        <div class="pers-section">
+          <div class="pers-label">Looking for</div>
+          <div class="pers-chips" id="aboutGoalChips">
+            <button class="pers-chip goal-chip" data-value="relationship" onclick="selectGoalChipAbout(this); savePersonality()">Relationship</button>
+            <button class="pers-chip goal-chip" data-value="connection"   onclick="selectGoalChipAbout(this); savePersonality()">Real connection</button>
+            <button class="pers-chip goal-chip" data-value="casual"       onclick="selectGoalChipAbout(this); savePersonality()">Casual</button>
+            <button class="pers-chip goal-chip" data-value="unsure"       onclick="selectGoalChipAbout(this); savePersonality()">Not sure yet</button>
+          </div>
+        </div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:4px 18px 16px;"></div>
       <div class="about-grid">
         <div class="about-card" onclick="openAboutEdit('looking_for')">
           <span class="about-card-edit">✏️</span>
@@ -1610,6 +1666,28 @@
         <div class="field">
           <label>Banner photo</label>
           <button type="button" onclick="triggerBannerUpload()" style="width:100%;padding:12px 15px;border-radius:14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--soft);font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;text-align:left;transition:border-color 0.15s;" onmouseover="this.style.borderColor='rgba(180,170,255,0.22)'" onmouseout="this.style.borderColor='rgba(180,170,255,0.10)'">🏞️ &nbsp;Upload banner image</button>
+        </div>
+        <div class="field">
+          <label>Your vibe</label>
+          <div class="pers-chips" id="editVibeChips">
+            <button class="pers-chip" data-value="funny"       onclick="togglePersChip(this,'editVibeChips')">Funny</button>
+            <button class="pers-chip" data-value="deep"        onclick="togglePersChip(this,'editVibeChips')">Deep talks</button>
+            <button class="pers-chip" data-value="chill"       onclick="togglePersChip(this,'editVibeChips')">Chill</button>
+            <button class="pers-chip" data-value="ambitious"   onclick="togglePersChip(this,'editVibeChips')">Ambitious</button>
+            <button class="pers-chip" data-value="creative"    onclick="togglePersChip(this,'editVibeChips')">Creative</button>
+            <button class="pers-chip" data-value="adventurous" onclick="togglePersChip(this,'editVibeChips')">Adventurous</button>
+            <button class="pers-chip" data-value="romantic"    onclick="togglePersChip(this,'editVibeChips')">Romantic</button>
+            <button class="pers-chip" data-value="homebody"    onclick="togglePersChip(this,'editVibeChips')">Homebody</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Looking for</label>
+          <div class="pers-chips" id="editGoalChips">
+            <button class="pers-chip goal-chip" data-value="relationship" onclick="selectGoalChip(this)">Relationship</button>
+            <button class="pers-chip goal-chip" data-value="connection"   onclick="selectGoalChip(this)">Real connection</button>
+            <button class="pers-chip goal-chip" data-value="casual"       onclick="selectGoalChip(this)">Casual</button>
+            <button class="pers-chip goal-chip" data-value="unsure"       onclick="selectGoalChip(this)">Not sure yet</button>
+          </div>
         </div>
       </div>
       <button class="save-btn" onclick="saveEdit()">Save changes</button>
@@ -2035,12 +2113,28 @@
       document.getElementById('bioEl').textContent        = p.bio || 'Say something real.';
       document.getElementById('composerName').textContent = p.name || 'You';
 
-      // About section
+      // About section cards
       const am = p.about_me || {};
       document.getElementById('about_looking_for').textContent = am.looking_for || 'Connection with chemistry and a real vibe';
       document.getElementById('about_best_energy').textContent = am.best_energy || 'Intentional, playful, actually communicative';
       document.getElementById('about_ideal_night').textContent = am.ideal_night || 'Food, music, a walk, a conversation that keeps going';
       document.getElementById('about_status').textContent      = am.status      || 'Miru member';
+
+      // Vibe chips — sync both edit modal and about tab
+      const vibes = Array.isArray(p.vibes) ? p.vibes : [];
+      ['editVibeChips','aboutVibeChips'].forEach(id => {
+        document.querySelectorAll(`#${id} .pers-chip`).forEach(c => {
+          c.classList.toggle('on', vibes.includes(c.dataset.value));
+        });
+      });
+
+      // Goal chips
+      const goal = p.goal || '';
+      ['editGoalChips','aboutGoalChips'].forEach(id => {
+        document.querySelectorAll(`#${id} .pers-chip`).forEach(c => {
+          c.classList.toggle('on', c.dataset.value === goal);
+        });
+      });
 
       renderAvatar(p.avatar_url, p.name);
       renderBanner(p.banner_url || null);
@@ -2157,19 +2251,23 @@
     }
 
     async function saveEdit() {
-      const name = document.getElementById('editName').value.trim();
-      const bio  = document.getElementById('editBio').value.trim();
-      const age  = parseInt(document.getElementById('editAge').value) || null;
+      const name  = document.getElementById('editName').value.trim();
+      const bio   = document.getElementById('editBio').value.trim();
+      const age   = parseInt(document.getElementById('editAge').value) || null;
+      const vibes = [...document.querySelectorAll('#editVibeChips .pers-chip.on')].map(c => c.dataset.value);
+      const goal  = document.querySelector('#editGoalChips .pers-chip.on')?.dataset.value || null;
 
       const { error } = await sb.from('profiles')
-        .update({ name: name || myProfile.name, bio, age })
+        .update({ name: name || myProfile.name, bio, age, vibes, goal })
         .eq('user_id', me.id);
 
       if (error) { showToast(error.message, 'error'); return; }
 
-      myProfile.name = name || myProfile.name;
-      myProfile.bio  = bio;
-      myProfile.age  = age;
+      myProfile.name  = name || myProfile.name;
+      myProfile.bio   = bio;
+      myProfile.age   = age;
+      myProfile.vibes = vibes;
+      myProfile.goal  = goal;
       renderProfile(myProfile);
       closeEdit();
       showToast('Profile saved! ✨', 'success');
@@ -2394,6 +2492,17 @@
         await sb.from('likes').delete().eq('liked_id', uid);
         await sb.from('messages').delete().eq('sender_id', uid);
         await sb.from('profiles').delete().eq('user_id', uid);
+
+        // Delete from Supabase Auth via Edge Function
+        // so the email can be used to register again
+        const { data: { session } } = await sb.auth.getSession();
+        await fetch(`${window.SUPABASE_URL}/functions/v1/delete-account`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+            'Content-Type': 'application/json',
+          }
+        });
 
         await sb.auth.signOut();
         window.location.replace('auth.html');
@@ -2721,6 +2830,40 @@
       myProfile.about_me = current;
       document.getElementById(`about_${activeAboutField}`).textContent = val;
       closeModal('aboutEditModal');
+      showToast('Saved ✓', 'success');
+    }
+
+    // ── Personality chips ─────────────────────────────────────
+    function togglePersChip(btn, groupId) {
+      btn.classList.toggle('on');
+    }
+
+    function selectGoalChip(btn) {
+      document.querySelectorAll('#editGoalChips .pers-chip').forEach(c => c.classList.remove('on'));
+      btn.classList.add('on');
+    }
+
+    function selectGoalChipAbout(btn) {
+      document.querySelectorAll('#aboutGoalChips .pers-chip').forEach(c => c.classList.remove('on'));
+      btn.classList.add('on');
+    }
+
+    async function savePersonality() {
+      const vibes = [...document.querySelectorAll('#aboutVibeChips .pers-chip.on')].map(c => c.dataset.value);
+      const goal  = document.querySelector('#aboutGoalChips .pers-chip.on')?.dataset.value || null;
+
+      // Sync to edit modal chips too
+      document.querySelectorAll('#editVibeChips .pers-chip').forEach(c => {
+        c.classList.toggle('on', vibes.includes(c.dataset.value));
+      });
+      document.querySelectorAll('#editGoalChips .pers-chip').forEach(c => {
+        c.classList.toggle('on', c.dataset.value === goal);
+      });
+
+      const { error } = await sb.from('profiles').update({ vibes, goal }).eq('user_id', me.id);
+      if (error) { showToast(error.message, 'error'); return; }
+      myProfile.vibes = vibes;
+      myProfile.goal  = goal;
       showToast('Saved ✓', 'success');
     }
 
