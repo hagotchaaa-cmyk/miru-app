@@ -569,9 +569,41 @@
           </div>
         </div>
 
-        <div class="range-row">
-          <div class="range-field"><small>Age range</small><strong id="ageRangeText">24–32</strong></div>
-          <div class="range-field"><small>Distance</small><strong id="distanceText">Within 20 miles</strong></div>
+        <!-- Age Range -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <small style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);">Age range</small>
+            <strong id="ageRangeText" style="font-size:14px;color:var(--white);">24–32</strong>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div style="flex:1;">
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Min age</label>
+              <input type="number" id="ageMin" min="18" max="99" value="24" 
+                style="width:100%;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;"
+                oninput="updateAgeRange()" />
+            </div>
+            <div style="color:var(--muted);font-size:18px;margin-top:16px;">–</div>
+            <div style="flex:1;">
+              <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Max age</label>
+              <input type="number" id="ageMax" min="18" max="99" value="32"
+                style="width:100%;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;"
+                oninput="updateAgeRange()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Distance -->
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <small style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);">Distance</small>
+            <strong id="distanceText" style="font-size:14px;color:var(--white);">Within 20 miles</strong>
+          </div>
+          <input type="range" id="distanceSlider" min="5" max="100" value="20" step="5"
+            style="width:100%;accent-color:#B8AEFF;"
+            oninput="updateDistance()" />
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;">
+            <span>5 mi</span><span>100 mi</span>
+          </div>
         </div>
 
         <button class="btn-primary" onclick="savePreferences()">Save preferences</button>
@@ -670,6 +702,12 @@
         summary.textContent = 'Miru will keep manual browsing as your main mode until you turn AI Matchmaker on.';
       }
       document.getElementById('ageRangeText').textContent    = state.age_range.replace('-', '–');
+      const parts = state.age_range.split('-');
+      if (parts.length === 2) {
+        document.getElementById('ageMin').value = parts[0];
+        document.getElementById('ageMax').value = parts[1];
+      }
+      document.getElementById('distanceSlider').value = state.distance_miles || 20;
       document.getElementById('distanceText').textContent    = `Within ${state.distance_miles} miles`;
       document.getElementById('summaryGoal').textContent     = state.goal.charAt(0).toUpperCase() + state.goal.slice(1);
       document.getElementById('summaryVibes').textContent    = state.vibes.join(', ') || 'None selected';
@@ -682,6 +720,23 @@
       state.ai_enabled = !state.ai_enabled;
       if (!state.ai_enabled) state.week_mode = false;
       refreshToggleUI();
+    }
+
+    function updateAgeRange() {
+      const min = parseInt(document.getElementById('ageMin').value) || 18;
+      const max = parseInt(document.getElementById('ageMax').value) || 99;
+      const validMin = Math.min(min, max);
+      const validMax = Math.max(min, max);
+      state.age_range = validMin + '-' + validMax;
+      document.getElementById('ageRangeText').textContent = validMin + '–' + validMax;
+      document.getElementById('summaryAge').textContent = validMin + '–' + validMax;
+    }
+
+    function updateDistance() {
+      const val = document.getElementById('distanceSlider').value;
+      state.distance_miles = parseInt(val);
+      document.getElementById('distanceText').textContent = 'Within ' + val + ' miles';
+      document.getElementById('summaryDistance').textContent = 'Within ' + val + ' miles';
     }
 
     function selectSingle(groupId, button) {
