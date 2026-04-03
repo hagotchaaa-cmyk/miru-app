@@ -958,6 +958,10 @@
           <div class="strip-stat-val" id="superCount">—</div>
           <div class="strip-stat-label">⚡ Super likes</div>
         </div>
+        
+            
+          </div>
+        </div>
       </div>
 
       <!-- Quick actions — NO DUPLICATES -->
@@ -1123,7 +1127,7 @@
           name:       fallbackName,
           bio:        '',
           avatar_url: '',
-          is_premium: true
+          is_premium: false
           // age is NOT set here — collected during onboarding
         });
 
@@ -1144,7 +1148,7 @@
 
       document.getElementById('likeCount').textContent  = likes  ?? 0;
       document.getElementById('superCount').textContent = supers ?? 0;
-
+      document.getElementById('premiumLabel').textContent = myProfile?.is_premium ? 'Premium ✦' : 'Upgrade';
     }
 
     // ── Load match feed ───────────────────────────────────────
@@ -1229,7 +1233,7 @@
             <div class="mc-status-row">
               <span class="status-dot"></span>
               <span class="status-text">Active on Miru</span>
-
+              ${p.is_premium ? '<span class="mc-tag" style="margin-left:auto;">✦ Premium</span>' : ''}
             </div>
             ${p.bio ? `<div class="mc-bio">${esc(p.bio)}</div>` : ''}
             <div class="mc-tags">
@@ -1433,6 +1437,41 @@
     }
 
     loadNotifications();
+
+    // ── Push notification registration ────────────────────────
+    async function registerPush() {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js');
+        const perm = await Notification.requestPermission();
+        if (perm !== 'granted') return;
+
+        const vapidPublicKey = window.VAPID_PUBLIC_KEY;
+        if (!vapidPublicKey) return; // set in config.js
+
+        const sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidPublicKey,
+        });
+
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) return;
+
+        await sb.from('push_tokens').upsert({
+          user_id:      user.id,
+          platform:     'web',
+          subscription: sub.toJSON(),
+          token:        sub.endpoint,
+        }, { onConflict: 'user_id,token' });
+
+      } catch (err) {
+        console.warn('[push]', err);
+      }
+    }
+
+    // Ask for push permission after a short delay (less intrusive)
+    setTimeout(registerPush, 4000);
   </script>
   <!-- Notification Panel -->
   <div class="notif-panel" id="notifPanel">

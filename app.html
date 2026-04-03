@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#F8F6FF">
+<title>Miru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#F8F6FF;
+  --surface:#FFFFFF;
+  --surface2:#F0ECFF;
+  --border:#E4DEFF;
+  --border2:#D0C6FF;
+  --purple:#7C5CBF;
+  --purple-mid:#9B7FD4;
+  --purple-light:#C4B0F0;
+  --purple-pale:#EDE8FF;
+  --text:#1A1528;
+  --text2:#6B5F8A;
+  --text3:#A99DC0;
+  --like:#FF5E7A;
+  --pass:#A0A0B0;
+  --super:#5B8CFF;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --radius:16px;--radius-lg:24px;--radius-pill:999px;
+  --shadow:0 2px 20px rgba(124,92,191,0.08);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;overflow-x:hidden;min-height:100vh;-webkit-tap-highlight-color:transparent;}
+
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:rgba(248,246,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:6px;}
+.logo-mark{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;}
+.logo-eye{width:18px;height:11px;border:2px solid #fff;border-radius:999px;display:flex;align-items:center;justify-content:center;}
+.logo-pupil{width:5px;height:5px;border-radius:50%;background:#fff;}
+.logo-word{font-family:var(--serif);font-size:20px;font-weight:700;font-style:italic;color:var(--text);}
+.nav-right{display:flex;align-items:center;gap:.6rem;}
+.nav-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;position:relative;}
+.nav-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--like);border:2px solid var(--bg);}
+.nav-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-mid));display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;font-weight:700;color:#fff;border:2px solid var(--purple-light);cursor:pointer;}
+
+.mode-wrap{padding:.75rem 1.25rem 0;}
+.mode-toggle{display:flex;gap:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px;}
+.mode-pill{flex:1;padding:.5rem;border-radius:var(--radius-pill);text-align:center;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:var(--sans);}
+.mode-pill.active{background:var(--purple);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(124,92,191,.3);}
+
+main{padding:1rem 1.25rem 5rem;max-width:480px;margin:0 auto;}
+.dash-header{margin-bottom:1rem;}
+.dash-greeting{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem;}
+.dash-title{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1.15;}
+.dash-title em{font-style:italic;color:var(--purple);}
+
+.countdown{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem .9rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:12px;color:var(--text2);margin-bottom:1.25rem;}
+.cd-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:cdPulse 1.5s ease-in-out infinite;}
+@keyframes cdPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.cd-time{font-weight:600;color:var(--purple);}
+
+.swipe-hint{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.5rem;margin-bottom:.75rem;}
+.hint-item{display:flex;align-items:center;gap:.4rem;font-size:12px;color:var(--text3);}
+
+/* PROFILE CARD */
+.profile-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:1.25rem;position:relative;touch-action:pan-y;user-select:none;}
+
+.swipe-like{position:absolute;top:20px;left:16px;z-index:10;padding:6px 14px;border-radius:var(--radius-pill);border:3px solid var(--like);color:var(--like);font-size:16px;font-weight:800;letter-spacing:1px;opacity:0;transform:rotate(-15deg);font-family:var(--sans);}
+.swipe-pass{position:absolute;top:20px;right:16px;z-index:10;padding:6px 14px;border-radius:var(--radius-pill);border:3px solid var(--pass);color:var(--pass);font-size:16px;font-weight:800;letter-spacing:1px;opacity:0;transform:rotate(15deg);font-family:var(--sans);}
+.swipe-super{position:absolute;bottom:220px;left:50%;transform:translateX(-50%);z-index:10;padding:6px 14px;border-radius:var(--radius-pill);border:3px solid var(--super);color:var(--super);font-size:16px;font-weight:800;opacity:0;font-family:var(--sans);}
+
+.card-hero{height:260px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.hero-bg{width:100%;height:100%;position:absolute;inset:0;}
+.h1{background:linear-gradient(145deg,#ede6ff,#d8ccff,#c8b8f8);}
+.h2{background:linear-gradient(145deg,#ffe6f0,#ffd0e4,#f8bcd4);}
+.h3{background:linear-gradient(145deg,#e6f0ff,#d0e4ff,#bcd4f8);}
+.hero-fade{position:absolute;inset:0;background:linear-gradient(to top,rgba(255,255,255,.95) 0%,rgba(255,255,255,.1) 55%,transparent 100%);}
+.hero-play{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 4px 20px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;position:relative;z-index:2;}
+.play-tri{width:0;height:0;border-style:solid;border-width:9px 0 9px 17px;border-color:transparent transparent transparent var(--purple);margin-left:3px;}
+.hero-prompt{position:absolute;top:12px;left:12px;z-index:3;padding:4px 10px;border-radius:var(--radius-pill);font-family:var(--serif);font-size:11px;font-style:italic;background:rgba(255,255,255,.88);border:1px solid var(--border);color:var(--text2);}
+.hero-score{position:absolute;top:12px;right:12px;z-index:3;padding:4px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;background:var(--purple);color:#fff;}
+
+.card-info{padding:1rem 1.1rem;}
+.info-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem;}
+.info-name{font-family:var(--serif);font-size:22px;font-weight:700;}
+.info-age{font-size:14px;color:var(--text2);margin-left:.4rem;}
+.info-loc{font-size:12px;color:var(--text3);margin-top:2px;}
+.info-intent{padding:4px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;background:var(--purple-pale);border:1px solid var(--border);color:var(--purple);}
+
+.card-bio{font-size:14px;color:var(--text2);line-height:1.65;margin:.6rem 0;}
+.card-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin:.6rem 0;}
+.ctag{padding:4px 10px;border-radius:var(--radius-pill);font-size:11px;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+
+.compat-wrap{margin:.75rem 0;}
+.compat-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:.35rem;}
+.compat-row span:first-child{color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+.compat-row span:last-child{color:var(--purple);font-weight:600;}
+.compat-track{height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.compat-fill{height:100%;background:linear-gradient(to right,var(--purple-light),var(--purple));border-radius:2px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+
+/* PHOTO GRID */
+.grid-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem .5rem;border-top:1px solid var(--border);}
+.grid-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;}
+.grid-count{font-size:11px;color:var(--text3);}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.grid-item{aspect-ratio:1;position:relative;overflow:hidden;cursor:pointer;}
+.grid-item:active{opacity:.85;}
+.grid-bg{width:100%;height:100%;}
+.g1{background:linear-gradient(145deg,#ede6ff,#d8ccff);}
+.g2{background:linear-gradient(145deg,#ffe6f0,#ffd0e4);}
+.g3{background:linear-gradient(145deg,#e6f0ff,#d0e4ff);}
+.g4{background:linear-gradient(145deg,#e6ffe6,#ccf0cc);}
+.g5{background:linear-gradient(145deg,#fff8e6,#ffe8cc);}
+.g6{background:linear-gradient(145deg,#f0e6ff,#e0ccff);}
+.g7{background:linear-gradient(145deg,#ffe6e6,#ffd0d0);}
+.g8{background:linear-gradient(145deg,#e6fff8,#ccf0e8);}
+.g9{background:linear-gradient(145deg,#f8e6ff,#f0ccff);}
+.grid-type{position:absolute;top:6px;left:6px;padding:2px 7px;border-radius:var(--radius-pill);font-size:9px;font-weight:600;background:rgba(255,255,255,.88);}
+.grid-type.video{color:var(--purple);}
+.grid-type.photo{color:var(--text2);}
+
+/* CARD ACTIONS */
+.card-actions{display:flex;gap:.6rem;padding:.85rem 1.1rem 1.1rem;border-top:1px solid var(--border);}
+.btn-message{flex:2;padding:.8rem;border-radius:var(--radius-pill);background:var(--purple);color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-shadow:0 4px 16px rgba(124,92,191,.2);}
+.btn-message:active{transform:scale(.97);}
+.btn-view{flex:1;padding:.8rem;border-radius:var(--radius-pill);background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-family:var(--sans);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.btn-view:active{transform:scale(.97);}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;display:flex;justify-content:space-around;align-items:center;padding:.75rem 0 1.25rem;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--border);}
+.bnav{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:.25rem .75rem;border-radius:12px;position:relative;}
+.bnav:active{transform:scale(.9);}
+.bnav-icon{font-size:21px;color:var(--text3);}
+.bnav-label{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);}
+.bnav.active .bnav-icon,.bnav.active .bnav-label{color:var(--purple);}
+.bnav-dot{position:absolute;top:0;right:calc(50% - 16px);width:7px;height:7px;border-radius:50%;background:var(--like);border:2px solid #fff;}
+
+/* TOAST */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);padding:.6rem 1.25rem;border-radius:var(--radius-pill);font-size:13px;font-weight:500;z-index:999;background:var(--text);color:#fff;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.like-t{background:var(--like);}
+.toast.pass-t{background:var(--text2);}
+.toast.super-t{background:var(--super);}
+
+/* ALL DONE */
+.all-done{display:none;text-align:center;padding:4rem 1rem;}
+.all-done.show{display:block;}
+.done-emoji{font-size:52px;margin-bottom:1rem;}
+.done-title{font-family:var(--serif);font-size:26px;font-weight:700;margin-bottom:.75rem;}
+.done-title em{font-style:italic;color:var(--purple);}
+.done-sub{font-size:14px;color:var(--text2);line-height:1.7;max-width:280px;margin:0 auto 1.5rem;}
+.done-pill{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.25rem;border-radius:var(--radius-pill);background:var(--purple-pale);border:1px solid var(--border);font-size:13px;color:var(--purple);font-weight:500;}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="nav">
+  <div class="logo">
+    <div class="logo-mark"><div class="logo-eye"><div class="logo-pupil"></div></div></div>
+    <span class="logo-word">miru</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-btn">🔔<div class="nav-badge"></div></div>
+    <div class="nav-avatar" id="navAv">Y</div>
+  </div>
+</div>
+
+<div class="mode-wrap">
+  <div class="mode-toggle">
+    <button class="mode-pill active">🤖 AI picks for me</button>
+    <button class="mode-pill" onclick="window.location.href='explore.html'">👆 I'll explore</button>
+  </div>
+</div>
+
+<main>
+  <div class="dash-header" style="margin-top:1rem;">
+    <div class="dash-greeting">Good morning, <span id="greetName">friend</span> ✦</div>
+    <h1 class="dash-title">Your <em>3 matches</em><br>are waiting.</h1>
+  </div>
+
+  <div class="countdown">
+    <div class="cd-dot"></div>
+    Next batch in <span class="cd-time" id="cdTime">—</span>
+  </div>
+
+  <div class="swipe-hint">
+    <div class="hint-item">👈 Pass</div>
+    <div class="hint-item">⚡ Swipe up = Super</div>
+    <div class="hint-item">👉 Like</div>
+  </div>
+
+  <div id="matchList">
+
+    <!-- CARD 1 -->
+    <div class="profile-card" id="card0">
+      <div class="swipe-like" id="like0">LIKE ❤️</div>
+      <div class="swipe-pass" id="pass0">PASS</div>
+      <div class="swipe-super" id="super0">SUPER ⚡</div>
+      <div class="card-hero" onclick="showToast('Video coming soon ✦','')">
+        <div class="hero-bg h1"></div>
+        <div class="hero-fade"></div>
+        <div class="hero-play"><div class="play-tri"></div></div>
+        <div class="hero-prompt">"Make me laugh..."</div>
+        <div class="hero-score">97% match</div>
+      </div>
+      <div class="card-info">
+        <div class="info-top">
+          <div><div><span class="info-name">Sofia R.</span><span class="info-age">27</span></div><div class="info-loc">📍 2.4 mi · Phoenix, AZ</div></div>
+          <div class="info-intent">Relationship</div>
+        </div>
+        <div class="card-bio">Graphic designer by day, chaotic baker by night. I will challenge you to a hot sauce contest and win. Dogs are non-negotiable — mine is named Pretzel.</div>
+        <div class="card-tags"><span class="ctag">🛋️ chill</span><span class="ctag">🎨 artsy</span><span class="ctag">🐶 dog mom</span><span class="ctag">🕐 tonight</span></div>
+        <div class="compat-wrap">
+          <div class="compat-row"><span>Compatibility</span><span>97%</span></div>
+          <div class="compat-track"><div class="compat-fill" data-w="97%" style="width:0"></div></div>
+        </div>
+      </div>
+      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">9 photos · 3 videos</div></div>
+      <div class="photo-grid">
+        <div class="grid-item"><div class="grid-bg g1"></div><div class="grid-type video">▶ 0:22</div></div>
+        <div class="grid-item"><div class="grid-bg g2"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g4"></div><div class="grid-type video">▶ 0:18</div></div>
+        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g6"></div><div class="grid-type photo">📷</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-message" onclick="window.location.href='messages.html'">💬 Message Sofia</button>
+        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Full profile</button>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="profile-card" id="card1">
+      <div class="swipe-like" id="like1">LIKE ❤️</div>
+      <div class="swipe-pass" id="pass1">PASS</div>
+      <div class="swipe-super" id="super1">SUPER ⚡</div>
+      <div class="card-hero" onclick="showToast('Video coming soon ✦','')">
+        <div class="hero-bg h2"></div>
+        <div class="hero-fade"></div>
+        <div class="hero-play"><div class="play-tri"></div></div>
+        <div class="hero-prompt">"Something weird..."</div>
+        <div class="hero-score">91% match</div>
+      </div>
+      <div class="card-info">
+        <div class="info-top">
+          <div><div><span class="info-name">Marcus T.</span><span class="info-age">30</span></div><div class="info-loc">📍 1.1 mi · Tempe, AZ</div></div>
+          <div class="info-intent">Relationship</div>
+        </div>
+        <div class="card-bio">Software engineer who actually goes outside. Hiked 14 peaks last year. Looking for someone to debate the best Coen Brothers film with over coffee.</div>
+        <div class="card-tags"><span class="ctag">🏄 adventurous</span><span class="ctag">📚 deep talks</span><span class="ctag">☕ coffee</span><span class="ctag">🗓️ weekend</span></div>
+        <div class="compat-wrap">
+          <div class="compat-row"><span>Compatibility</span><span>91%</span></div>
+          <div class="compat-track"><div class="compat-fill" data-w="91%" style="width:0"></div></div>
+        </div>
+      </div>
+      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">7 photos · 2 videos</div></div>
+      <div class="photo-grid">
+        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type video">▶ 0:18</div></div>
+        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g7"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g1"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g4"></div><div class="grid-type video">▶ 0:25</div></div>
+        <div class="grid-item"><div class="grid-bg g8"></div><div class="grid-type photo">📷</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-message" onclick="window.location.href='messages.html'">💬 Message Marcus</button>
+        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Full profile</button>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="profile-card" id="card2">
+      <div class="swipe-like" id="like2">LIKE ❤️</div>
+      <div class="swipe-pass" id="pass2">PASS</div>
+      <div class="swipe-super" id="super2">SUPER ⚡</div>
+      <div class="card-hero" onclick="showToast('Video coming soon ✦','')">
+        <div class="hero-bg h3"></div>
+        <div class="hero-fade"></div>
+        <div class="hero-play"><div class="play-tri"></div></div>
+        <div class="hero-prompt">"Tell me a story..."</div>
+        <div class="hero-score">88% match</div>
+      </div>
+      <div class="card-info">
+        <div class="info-top">
+          <div><div><span class="info-name">Priya N.</span><span class="info-age">26</span></div><div class="info-loc">📍 4.8 mi · Scottsdale, AZ</div></div>
+          <div class="info-intent">Relationship</div>
+        </div>
+        <div class="card-bio">UX researcher who reads menus like novels. Will make you try the weird thing. Looking for someone who makes ordinary Tuesdays feel like a choice.</div>
+        <div class="card-tags"><span class="ctag">📚 intellectual</span><span class="ctag">🍜 foodie</span><span class="ctag">🏠 homebody</span><span class="ctag">🌿 flexible</span></div>
+        <div class="compat-wrap">
+          <div class="compat-row"><span>Compatibility</span><span>88%</span></div>
+          <div class="compat-track"><div class="compat-fill" data-w="88%" style="width:0"></div></div>
+        </div>
+      </div>
+      <div class="grid-header"><div class="grid-label">Photos & videos</div><div class="grid-count">11 photos · 3 videos</div></div>
+      <div class="photo-grid">
+        <div class="grid-item"><div class="grid-bg g6"></div><div class="grid-type video">▶ 0:29</div></div>
+        <div class="grid-item"><div class="grid-bg g8"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g2"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g9"></div><div class="grid-type photo">📷</div></div>
+        <div class="grid-item"><div class="grid-bg g3"></div><div class="grid-type video">▶ 0:15</div></div>
+        <div class="grid-item"><div class="grid-bg g5"></div><div class="grid-type photo">📷</div></div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-message" onclick="window.location.href='messages.html'">💬 Message Priya</button>
+        <button class="btn-view" onclick="window.location.href='profile.html'">👤 Full profile</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="all-done" id="allDone">
+    <div class="done-emoji">✨</div>
+    <h2 class="done-title">All caught up,<br><em id="doneName">friend.</em></h2>
+    <p class="done-sub">New matches drop tomorrow at 9am. Good things take time.</p>
+    <div class="done-pill">🌙 Next matches in <span id="doneTime">—</span></div>
+  </div>
+</main>
+
+<div class="bottom-nav">
+  <div class="bnav active"><div class="bnav-icon">💜</div><div class="bnav-label">Matches</div></div>
+  <div class="bnav" onclick="window.location.href='messages.html'"><div class="bnav-icon">💬</div><div class="bnav-label">Messages</div><div class="bnav-dot"></div></div>
+  <div class="bnav" onclick="window.location.href='explore.html'"><div class="bnav-icon">🔍</div><div class="bnav-label">Explore</div></div>
+  <div class="bnav" onclick="window.location.href='onboarding.html'"><div class="bnav-icon">👤</div><div class="bnav-label">Profile</div></div>
+</div>
+
+<script>
+const p=JSON.parse(localStorage.getItem('miru_profile')||'{}');
+const name=p.name||'friend';
+document.getElementById('greetName').textContent=name;
+document.getElementById('doneName').textContent=name+'!';
+document.getElementById('navAv').textContent=(name[0]||'Y').toUpperCase();
+
+function updateCD(){
+  const now=new Date(),next=new Date();
+  next.setHours(9,0,0,0);if(now>=next)next.setDate(next.getDate()+1);
+  const d=next-now,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);
+  const str=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('cdTime').textContent=str;
+  const dt=document.getElementById('doneTime');if(dt)dt.textContent=str;
+}
+updateCD();setInterval(updateCD,1000);
+
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.w;io.unobserve(e.target);}});},{threshold:.5});
+document.querySelectorAll('.compat-fill').forEach(b=>io.observe(b));
+
+let tt;
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type?type+'-t':'')+' show';
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+let actioned=0;
+
+function setupSwipe(card,idx){
+  let sx=0,sy=0,cx=0,cy=0,drag=false;
+  const likeEl=document.getElementById('like'+idx);
+  const passEl=document.getElementById('pass'+idx);
+  const superEl=document.getElementById('super'+idx);
+
+  function start(x,y){sx=x;sy=y;cx=x;cy=y;drag=true;card.style.transition='';}
+  function move(x,y){
+    if(!drag)return;cx=x;cy=y;
+    const dx=cx-sx,dy=cy-sy;
+    card.style.transform=`translateX(${dx}px) translateY(${dy<0?dy:0}px) rotate(${dx*0.035}deg)`;
+    if(dy<-60&&Math.abs(dx)<80){superEl.style.opacity=Math.min(1,Math.abs(dy)/80);likeEl.style.opacity=0;passEl.style.opacity=0;}
+    else if(dx>30){likeEl.style.opacity=Math.min(1,dx/80);passEl.style.opacity=0;superEl.style.opacity=0;}
+    else if(dx<-30){passEl.style.opacity=Math.min(1,Math.abs(dx)/80);likeEl.style.opacity=0;superEl.style.opacity=0;}
+    else{likeEl.style.opacity=0;passEl.style.opacity=0;superEl.style.opacity=0;}
+  }
+  function end(){
+    if(!drag)return;drag=false;
+    const dx=cx-sx,dy=cy-sy;
+    likeEl.style.opacity=0;passEl.style.opacity=0;superEl.style.opacity=0;
+    if(dy<-90&&Math.abs(dx)<90)dismiss(card,'super');
+    else if(dx>90)dismiss(card,'like');
+    else if(dx<-90)dismiss(card,'pass');
+    else{card.style.transition='transform .35s cubic-bezier(.175,.885,.32,1.275)';card.style.transform='';setTimeout(()=>card.style.transition='',350);}
+  }
+
+  card.addEventListener('touchstart',e=>{const t=e.touches[0];start(t.clientX,t.clientY);},{passive:true});
+  card.addEventListener('touchmove',e=>{const t=e.touches[0];move(t.clientX,t.clientY);},{passive:true});
+  card.addEventListener('touchend',end);
+  card.addEventListener('mousedown',e=>start(e.clientX,e.clientY));
+  document.addEventListener('mousemove',e=>{if(drag)move(e.clientX,e.clientY);});
+  document.addEventListener('mouseup',end);
+}
+
+function dismiss(card,action){
+  const tx=action==='like'?600:action==='pass'?-600:0;
+  const ty=action==='super'?-700:50;
+  const rot=action==='like'?25:action==='pass'?-25:0;
+  card.style.transition='transform .4s ease,opacity .35s ease';
+  card.style.transform=`translateX(${tx}px) translateY(${ty}px) rotate(${rot}deg)`;
+  card.style.opacity='0';
+  actioned++;
+  if(action==='like')showToast('❤️ Liked!','like');
+  else if(action==='pass')showToast('Passed','pass');
+  else showToast('⚡ Super liked!','super');
+  setTimeout(()=>{
+    card.style.display='none';
+    if(actioned>=3){document.getElementById('matchList').style.display='none';document.getElementById('allDone').classList.add('show');}
+  },400);
+}
+
+document.querySelectorAll('.profile-card').forEach((c,i)=>setupSwipe(c,i));
+</script>
+</body>
+</html>

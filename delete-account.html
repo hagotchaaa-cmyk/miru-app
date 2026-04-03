@@ -4,21 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#F8F6FF">
-<title>Miru — Delete Account</title>
+<title>Miru · Delete Account</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#F8F6FF;--surface:#fff;--border:#E4DEFF;
-  --purple:#7C5CBF;--purple-pale:#EDE8FF;
-  --text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;
-  --like:#FF5E7A;
-  --serif:'Playfair Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;
-  --radius:16px;--radius-pill:999px;
-}
+:root{--bg:#F8F6FF;--surface:#fff;--border:#E4DEFF;--purple:#7C5CBF;--purple-pale:#EDE8FF;--text:#1A1528;--text2:#6B5F8A;--text3:#A99DC0;--like:#FF5E7A;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;--radius:16px;--radius-pill:999px;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;min-height:100vh;}
 .nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:rgba(248,246,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);}
 .back{width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);text-decoration:none;}
@@ -33,8 +25,8 @@ main{max-width:480px;margin:0 auto;padding:2rem 1.25rem 4rem;text-align:center;}
 .warning-list{font-size:13px;color:#CC3355;padding-left:1.25rem;}
 .warning-list li{margin-bottom:.25rem;}
 .confirm-row{display:flex;align-items:center;gap:.75rem;padding:.85rem 1rem;border-radius:var(--radius);background:var(--surface);border:1.5px solid var(--border);margin-bottom:1.5rem;cursor:pointer;text-align:left;}
-.checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:12px;font-weight:700;}
-.checkbox.checked{background:var(--like);border-color:var(--like);color:#fff;}
+.checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.checkbox.checked{background:var(--like);border-color:var(--like);color:#fff;font-size:12px;font-weight:700;}
 .confirm-label{font-size:13px;color:var(--text2);}
 .delete-btn{width:100%;padding:1rem;border-radius:var(--radius-pill);background:var(--like);color:#fff;font-family:var(--sans);font-size:15px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(255,94,122,.25);min-height:52px;display:flex;align-items:center;justify-content:center;}
 .delete-btn:disabled{opacity:.4;cursor:not-allowed;}
@@ -47,14 +39,13 @@ main{max-width:480px;margin:0 auto;padding:2rem 1.25rem 4rem;text-align:center;}
 </head>
 <body>
 <div class="nav">
-  <a href="www/edit-profile.html" class="back">←</a>
+  <a href="onboarding.html" class="back">←</a>
   <div class="nav-title">Delete account</div>
 </div>
 <main>
-  <div class="icon">⚠️</div>
+  <div class="icon">🗑️</div>
   <h1 class="title">Delete your<br><em>account.</em></h1>
   <p class="sub">This is permanent and cannot be undone. Please read what will happen before proceeding.</p>
-
   <div class="warning-box">
     <div class="warning-title">What will be deleted:</div>
     <ul class="warning-list">
@@ -64,64 +55,43 @@ main{max-width:480px;margin:0 auto;padding:2rem 1.25rem 4rem;text-align:center;}
       <li>Your Premium subscription (no refund)</li>
     </ul>
   </div>
-
   <div class="error-msg" id="errorMsg"></div>
-
   <div class="confirm-row" onclick="toggleConfirm()">
     <div class="checkbox" id="confirmBox"></div>
     <div class="confirm-label">I understand this is permanent and cannot be undone</div>
   </div>
-
-  <button class="delete-btn" id="deleteBtn" onclick="deleteAccount()" disabled>
-    Delete my account
-  </button>
-  <button class="cancel-btn" onclick="window.location.href='edit-profile.html'">
-    Cancel — keep my account
-  </button>
+  <button class="delete-btn" id="deleteBtn" onclick="deleteAccount()" disabled>Delete my account</button>
+  <button class="cancel-btn" onclick="window.location.href='onboarding.html'">Cancel · keep my account</button>
 </main>
-
 <script>
-const { createClient } = supabase;
-const sb = createClient(
-  'https://rlmcwbaiuowbkgfzdlme.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8'
-);
-
-let confirmed = false;
-
-function toggleConfirm() {
-  confirmed = !confirmed;
-  const box = document.getElementById('confirmBox');
-  box.classList.toggle('checked', confirmed);
-  box.textContent = confirmed ? '✓' : '';
-  document.getElementById('deleteBtn').disabled = !confirmed;
-}
-
-async function deleteAccount() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = 'auth.html'; return; }
-
-  const btn = document.getElementById('deleteBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div>';
-
-  try {
-    const uid = session.user.id;
-    await sb.from('messages').delete().eq('sender_id', uid);
-    await sb.from('daily_matches').delete().eq('user_id', uid);
-    await sb.from('user_actions').delete().eq('user_id', uid);
-    await sb.from('conversations').delete().or('user_a.eq.' + uid + ',user_b.eq.' + uid);
-    await sb.from('media').delete().eq('user_id', uid);
-    await sb.from('profiles').delete().eq('id', uid);
+const {createClient}=supabase;
+const sb=createClient('https://rlmcwbaiuowbkgfzdlme.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbWN3YmFpdW93YmtnZnpkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTE1MTUsImV4cCI6MjA5MDIyNzUxNX0.VuY5iMcJ5W62gqjBMa6kQWQJwSa17L30Wp9KYQvD2b8');
+let confirmed=false;
+function toggleConfirm(){confirmed=!confirmed;document.getElementById('confirmBox').classList.toggle('checked',confirmed);document.getElementById('confirmBox').textContent=confirmed?'✓':'';document.getElementById('deleteBtn').disabled=!confirmed;}
+async function deleteAccount(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='auth.html';return;}
+  const btn=document.getElementById('deleteBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div>';
+  try{
+    const uid=session.user.id;
+    await sb.from('messages').delete().or('sender_id.eq.'+uid);
+    await sb.from('daily_matches').delete().or('user_id.eq.'+uid+',match_id.eq.'+uid);
+    await sb.from('user_actions').delete().eq('user_id',uid);
+    await sb.from('conversations').delete().or('user_a.eq.'+uid+',user_b.eq.'+uid);
+    await sb.from('media').delete().eq('user_id',uid);
+    await sb.from('profiles').delete().eq('id',uid);
+    await sb.functions.invoke('delete-account',{
+      headers:{Authorization:`Bearer ${session.access_token}`}
+    });
     await sb.auth.signOut();
     localStorage.clear();
-    alert('Your account has been permanently deleted.');
-    window.location.href = 'auth.html';
-  } catch (err) {
-    document.getElementById('errorMsg').textContent = 'Error: ' + err.message;
+    alert('Your account has been deleted. We are sorry to see you go.');
+    window.location.href='auth.html';
+  }catch(err){
+    document.getElementById('errorMsg').textContent='Error: '+err.message;
     document.getElementById('errorMsg').classList.add('show');
-    btn.disabled = false;
-    btn.innerHTML = 'Delete my account';
+    btn.disabled=false;btn.innerHTML='Delete my account';
   }
 }
 </script>

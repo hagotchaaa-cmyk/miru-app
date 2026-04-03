@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0A1A" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>Miru — Join Free</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0A1A;
+      --bg-2: #130F2A;
+      --surface: #171131;
+      --surface-2: #21194A;
+      --border: rgba(196, 184, 240, 0.14);
+      --border-strong: rgba(196, 184, 240, 0.22);
+      --white: #FFFFFF;
+      --text: #F7F4FF;
+      --text-soft: #D3CBF2;
+      --text-muted: #9E95C9;
+      --lilac: #C4B8F0;
+      --gold: #FFD98E;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+      --serif: 'Playfair Display', serif;
+      --sans: 'DM Sans', sans-serif;
+    }
+
+    html, body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(139, 126, 200, 0.24), transparent 28%),
+        linear-gradient(180deg, #120D25 0%, #0D0A1A 100%);
+      color: var(--text);
+      font-family: var(--sans);
+    }
+
+    body {
+      padding: 12px 12px 22px;
+      overflow-x: hidden;
+    }
+
+    .ambient::before,
+    .ambient::after {
+      content: "";
+      position: fixed;
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
+
+    .ambient::before {
+      top: -70px;
+      left: -90px;
+      background: rgba(139, 126, 200, 0.16);
+    }
+
+    .ambient::after {
+      right: -120px;
+      top: 300px;
+      background: rgba(196, 184, 240, 0.12);
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(430px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 12px;
+    }
+
+    .hero,
+    .card {
+      border-radius: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
+        linear-gradient(180deg, #171131 0%, #120D25 100%);
+      border: 1px solid rgba(196,184,240,0.12);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 18px;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -50px;
+      top: -30px;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(196,184,240,0.22), transparent 62%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-icon-shell {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.12), transparent 55%),
+        linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.26);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-icon {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 28px rgba(0,0,0,0.22));
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 34px;
+      font-style: italic;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.8px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .brand-sub {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .beta-chip {
+      padding: 9px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .hero-main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-focus {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 14px;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.14), transparent 55%),
+        linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 42px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .logo-focus img {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+    }
+
+    .eyebrow {
+      color: var(--lilac);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: 38px;
+      line-height: 0.95;
+      letter-spacing: -1.1px;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .hero-title em {
+      color: var(--lilac);
+      font-style: italic;
+    }
+
+    .hero-subcopy {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.65;
+      text-align: center;
+      max-width: 320px;
+      margin: 0 auto 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .stat {
+      padding: 12px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 3px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 10px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card-head {
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-family: var(--serif);
+      font-size: 31px;
+      line-height: 0.98;
+      letter-spacing: -0.9px;
+      color: var(--white);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .card-title em {
+      color: var(--lilac);
+      font-style: italic;
+    }
+
+    .card-sub {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 16px 0 14px;
+    }
+
+    .mode-btn {
+      padding: 13px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-soft);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .mode-btn.on {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 12px 28px rgba(255,255,255,0.12);
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 11px;
+      margin-bottom: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      color: var(--text-soft);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .field input {
+      width: 100%;
+      border-radius: 18px;
+      padding: 15px 15px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .field input::placeholder { color: #9187be; }
+
+    .cta-row {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn,
+    .social-btn,
+    .micro-link {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn,
+    .social-btn {
+      width: 100%;
+      padding: 15px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn.primary {
+      background: var(--white);
+      color: #120D25;
+      box-shadow: 0 12px 28px rgba(255,255,255,0.12);
+    }
+
+    .btn.ghost {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+
+    .or-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .or-row::before,
+    .or-row::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .social-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .google-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--white);
+      color: #120D25;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .micro-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .micro-link {
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 0;
+    }
+
+    .status-box {
+      min-height: 24px;
+      margin-top: 14px;
+      color: var(--gold);
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .trust-box {
+      margin-top: 16px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .trust-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-soft);
+      font-size: 12px;
+      line-height: 1.55;
+      font-weight: 700;
+      padding: 12px 13px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .trust-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--gold);
+      box-shadow: 0 0 18px rgba(255,217,142,0.45);
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 760px) {
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .shell {
+        width: min(430px, 100%);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient"></div>
+
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="brand">
+          <div class="brand-icon-shell">
+            <img class="brand-icon" src="icon.svg" alt="Miru logo" />
+          </div>
+          <div>
+            <div class="logo">miru.</div>
+            <div class="brand-sub">Video-first dating with a sharper eye for real people.</div>
+          </div>
+        </div>
+        <div class="beta-chip">Now in beta</div>
+      </div>
+
+      <div class="hero-main">
+        <div class="logo-focus">
+          <img src="icon.svg" alt="Miru icon feature" />
+        </div>
+        <div class="eyebrow">The logo is the first impression</div>
+        <h1 class="hero-title">Make them stop.<br /><em>Then sign in.</em></h1>
+        <div class="hero-subcopy">Phone-first, brand-first, and quick to use. The icon grabs attention first, then the form shows up fast.</div>
+
+        <div class="stats">
+          <div class="stat"><strong>3</strong><span>curated matches daily</span></div>
+          <div class="stat"><strong>0</strong><span>endless swipe burnout</span></div>
+          <div class="stat"><strong>real</strong><span>people over fake energy</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div class="card-title">Join <em>Miru.</em></div>
+        <div class="card-sub">Create an account or log back in. Clean, obvious, and made for phone screens first.</div>
+      </div>
+
+      <div class="mode-switch">
+        <button class="mode-btn on" id="signUpModeBtn" onclick="setMode('signup')">Create account</button>
+        <button class="mode-btn" id="signInModeBtn" onclick="setMode('signin')">Log in</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" />
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn primary" id="primaryBtn" onclick="handlePrimaryAction()">Create account</button>
+        <button class="btn ghost" id="secondaryBtn" onclick="toggleModeAction()">Already have an account? Log in</button>
+      </div>
+
+      <div class="or-row">or continue with</div>
+
+      <button class="social-btn" onclick="signInWithGoogle()">
+        <span class="google-mark">G</span>
+        Continue with Google
+      </button>
+
+      <div class="micro-links">
+        <button class="micro-link" onclick="setMode('signup')">New here?</button>
+        <button class="micro-link" onclick="setMode('signin')">Have an account?</button>
+      </div>
+
+      <div class="status-box" id="msg"></div>
+
+      <div class="trust-box">
+        <div class="trust-row"><span class="trust-dot"></span>Real account flow with Supabase email and OAuth support.</div>
+        <div class="trust-row"><span class="trust-dot"></span>Profile auto-creation stays connected to your existing Miru setup.</div>
+        <div class="trust-row"><span class="trust-dot"></span>Built to feel like a polished mobile app screen, not a web form.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
+    let authMode = 'signup';
+
+    function setStatus(message, isError = false) {
+      const box = document.getElementById('msg');
+      box.textContent = message || '';
+      box.style.color = isError ? '#FFB4C0' : '#FFD98E';
+    }
+
+    function setMode(mode) {
+      authMode = mode;
+      const signUpBtn = document.getElementById('signUpModeBtn');
+      const signInBtn = document.getElementById('signInModeBtn');
+      const primaryBtn = document.getElementById('primaryBtn');
+      const secondaryBtn = document.getElementById('secondaryBtn');
+      const passwordInput = document.getElementById('password');
+
+      signUpBtn.classList.toggle('on', mode === 'signup');
+      signInBtn.classList.toggle('on', mode === 'signin');
+
+      if (mode === 'signup') {
+        primaryBtn.textContent = 'Create account';
+        secondaryBtn.textContent = 'Already have an account? Log in';
+        passwordInput.setAttribute('autocomplete', 'new-password');
+      } else {
+        primaryBtn.textContent = 'Log in';
+        secondaryBtn.textContent = 'Need an account? Create one';
+        passwordInput.setAttribute('autocomplete', 'current-password');
+      }
+
+      setStatus('');
+    }
+
+    function toggleModeAction() {
+      setMode(authMode === 'signup' ? 'signin' : 'signup');
+    }
+
+    async function ensureProfileForUser(user, email) {
+      if (!user?.id) return;
+      const { data: existing } = await sb
+        .from('profiles')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existing) return;
+
+      const fallbackName = email ? email.split('@')[0] : 'New User';
+      await sb.from('profiles').insert({
+        user_id: user.id,
+        name: fallbackName,
+        age: 25,
+        bio: 'Say something real.',
+        avatar_url: '',
+        is_premium: false
+      });
+    }
+
+    async function signUp() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        setStatus('Enter your email and password first.', true);
+        return;
+      }
+
+      setStatus('Creating your account...');
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) {
+        setStatus(error.message, true);
+        return;
+      }
+
+      if (data?.user) {
+        await ensureProfileForUser(data.user, email);
+      }
+
+      setStatus('Account created. Check your email to confirm and then come back in.');
+    }
+
+    async function signIn() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        setStatus('Enter your email and password first.', true);
+        return;
+      }
+
+      setStatus('Logging you in...');
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        setStatus(error.message, true);
+        return;
+      }
+
+      if (data?.user) {
+        await ensureProfileForUser(data.user, email);
+      }
+
+      window.location.href = 'index.html';
+    }
+
+    async function signInWithGoogle() {
+      setStatus('Opening Google sign in...');
+      const { error } = await sb.auth.signInWithOAuth({ provider: 'google' });
+      if (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    function handlePrimaryAction() {
+      if (authMode === 'signup') {
+        signUp();
+      } else {
+        signIn();
+      }
+    }
+
+    document.getElementById('password').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        handlePrimaryAction();
+      }
+    });
+
+    setMode('signup');
+  </script>
+</body>
+</html>
