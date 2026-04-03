@@ -2788,7 +2788,7 @@
         const post = posts.find(p => p.id === editorPostId);
         const path = `${me.id}/image/${Date.now()}_edited.jpg`;
 
-        const { error: upErr } = await sb.storage.from('posts').upload(path, file, { upsert: false });
+        const { error: upErr } = await sb.storage.from('posts').upload(path, file, { upsert: false, contentType: file.type });
         if (upErr) throw upErr;
 
         const { data: urlData } = sb.storage.from('posts').getPublicUrl(path);
