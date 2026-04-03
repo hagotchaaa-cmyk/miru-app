@@ -775,9 +775,18 @@
         </button>
       </div>
 
-      <!-- 18+ hidden state — confirmed via modal -->
-      <input type="hidden" id="ageConfirm" value="false" />
-      <span id="age-error" style="display:none;font-size:11px;font-weight:700;color:#FF8FAB;margin-bottom:8px;display:none;">You must confirm you are 18 or older to continue.</span>
+      <!-- 18+ confirmation — only shown in signup mode -->
+      <div id="ageGateRow" style="display:none; margin-bottom:12px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="ageConfirm" style="width:18px;height:18px;margin-top:2px;accent-color:#B8AEFF;flex-shrink:0;" />
+          <span style="font-size:12px;color:#C4BCEE;line-height:1.55;font-family:'Cabinet Grotesk',sans-serif;font-weight:700;">
+            I confirm I am 18 years of age or older and agree to the
+            <a href="terms.html" style="color:#B8AEFF;">Terms of Service</a> and
+            <a href="privacy.html" style="color:#B8AEFF;">Privacy Policy</a>.
+          </span>
+        </label>
+        <span id="age-error" style="display:none;font-size:11px;font-weight:700;color:#FF8FAB;padding-left:4px;margin-top:4px;">You must confirm you are 18 or older to continue.</span>
+      </div>
 
       <!-- Primary action -->
       <button class="btn-primary" id="primaryBtn" onclick="handlePrimary()" style="margin-bottom: 8px;">
@@ -859,7 +868,6 @@
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         setStatus('Signing you in…', 'info');
         const isNew = await ensureProfile(session.user, session.user.email);
-        // New signup → onboarding, returning user → home
         if (event === 'SIGNED_IN' && isNew) {
           window.location.replace('onboarding.html');
         } else {
@@ -891,12 +899,13 @@
       const isSignup = mode === 'signup';
 
       document.getElementById('tabSignup').classList.toggle('active', isSignup);
+      if (isSignup && !ageConfirmed) { setTimeout(() => { document.getElementById('ageModal').style.display = 'flex'; }, 100); }
       document.getElementById('tabSignup').setAttribute('aria-selected', String(isSignup));
       document.getElementById('tabSignin').classList.toggle('active', !isSignup);
       document.getElementById('tabSignin').setAttribute('aria-selected', String(!isSignup));
 
       document.getElementById('primaryBtnText').textContent = isSignup ? 'Create account' : 'Log in';
-      // age gate handled by modal
+      document.getElementById('ageGateRow').style.display = isSignup ? 'block' : 'none';
       document.getElementById('formSubText').textContent = isSignup
         ? 'Create your account — it takes less than a minute.'
         : 'Welcome back. Log in to your Miru account.';
@@ -962,7 +971,7 @@
           .eq('user_id', user.id)
           .maybeSingle();
 
-        if (existing) return false; // existing user
+        if (existing) return false;
 
         const fallbackName = email ? email.split('@')[0] : 'New User';
 
@@ -976,7 +985,7 @@
           status:     'active'
         });
 
-        return true; // new user
+        return true;
 
       } catch (err) {
         console.error('[Miru] ensureProfile error:', err);
@@ -1096,9 +1105,8 @@
       if (!validateForm()) return;
 
       // 18+ age gate check
-      const ageConfirm = document.getElementById('ageConfirm');
       const ageError = document.getElementById('age-error');
-      if (ageConfirm.value !== 'true') {
+      if (!ageConfirmed) {
         ageError.style.display = 'block';
         return;
       }
@@ -1262,28 +1270,30 @@
   </script>
 
   <!-- Age Verification Modal -->
-  <div id="ageModal" style="position:fixed;inset:0;z-index:999;background:rgba(5,3,15,0.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div id="ageModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(5,3,15,0.88);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;">
     <div style="background:#100D22;border:1px solid rgba(180,170,255,0.22);border-radius:28px;padding:32px 24px;max-width:360px;width:100%;text-align:center;">
       <div style="font-size:52px;margin-bottom:16px;">🔞</div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;font-style:italic;color:#fff;margin-bottom:8px;">Are you 18+?</div>
-      <div style="font-size:14px;color:#C4BCEE;line-height:1.6;margin-bottom:24px;">Miru is only for adults. By continuing you confirm you are 18 years of age or older and agree to our <a href="terms.html" style="color:#B8AEFF;">Terms</a> and <a href="privacy.html" style="color:#B8AEFF;">Privacy Policy</a>.</div>
-      <button onclick="confirmAge()" style="width:100%;padding:14px;border-radius:999px;background:#fff;color:#0A0714;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:900;border:none;cursor:pointer;margin-bottom:10px;">Yes, I'm 18 or older</button>
-      <button onclick="denyAge()" style="width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(180,170,255,0.2);color:#7A72AA;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">No, I'm under 18</button>
+      <div style="font-size:14px;color:#C4BCEE;line-height:1.6;margin-bottom:24px;">Miru is only for adults. By continuing you confirm you are 18 or older and agree to our <a href="terms.html" style="color:#B8AEFF;">Terms</a> and <a href="privacy.html" style="color:#B8AEFF;">Privacy Policy</a>.</div>
+      <button onclick="confirmAge()" style="width:100%;padding:14px;border-radius:999px;background:#fff;color:#0A0714;font-family:'Cabinet Grotesk',sans-serif;font-size:14px;font-weight:900;border:none;cursor:pointer;margin-bottom:10px;">Yes, I am 18 or older</button>
+      <button onclick="denyAge()" style="width:100%;padding:12px;border-radius:999px;background:transparent;border:1px solid rgba(180,170,255,0.2);color:#7A72AA;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">No, I am under 18</button>
     </div>
   </div>
-
   <script>
+    let ageConfirmed = false;
     function confirmAge() {
-      document.getElementById('ageConfirm').value = 'true';
+      ageConfirmed = true;
       document.getElementById('ageModal').style.display = 'none';
     }
     function denyAge() {
       window.location.href = 'https://www.google.com';
     }
-    // Show modal immediately on page load
-    window.addEventListener('load', () => {
-      document.getElementById('ageModal').style.display = 'flex';
-    });
+    // Only show age modal when in signup mode
+    function showAgeModalIfNeeded() {
+      if (currentMode === 'signup' && !ageConfirmed) {
+        document.getElementById('ageModal').style.display = 'flex';
+      }
+    }
   </script>
 </body>
 </html>
