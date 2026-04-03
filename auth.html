@@ -867,8 +867,10 @@
     sb.auth.onAuthStateChange(async (event, session) => {
       if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session?.user) {
         setStatus('Signing you in…', 'info');
-        const isNew = await ensureProfile(session.user, session.user.email);
-        if (event === 'SIGNED_IN' && isNew) {
+        await ensureProfile(session.user, session.user.email);
+        const isNewSignup = sessionStorage.getItem('miru_new_signup') === '1';
+        sessionStorage.removeItem('miru_new_signup');
+        if (event === 'SIGNED_IN' && isNewSignup) {
           window.location.replace('onboarding.html');
         } else {
           window.location.replace('index.html');
@@ -882,7 +884,10 @@
     });
 
     sb.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) window.location.replace('index.html');
+      // Don't redirect if this is a new signup - let onAuthStateChange handle it
+      if (session?.user && !sessionStorage.getItem('miru_new_signup')) {
+        window.location.replace('index.html');
+      }
     });
 
     // ════════════════════════════════════════════════════════════
@@ -1103,6 +1108,7 @@
     // ════════════════════════════════════════════════════════════
     async function signUp() {
       if (!validateForm()) return;
+      sessionStorage.setItem('miru_new_signup', '1');
 
       // 18+ age gate check
       const ageError = document.getElementById('age-error');
