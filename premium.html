@@ -1,11 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="./config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=index.html" />
-  <title>Miru</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0714" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Miru — Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Cabinet+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0714; --border: rgba(180,170,255,0.10); --white: #FFFFFF;
+      --text: #F0ECFF; --soft: #C4BCEE; --muted: #7A72AA; --lilac: #B8AEFF; --gold: #F5CE7A;
+      --serif: 'Cormorant Garamond', serif; --sans: 'Cabinet Grotesk', sans-serif;
+    }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+    body { padding-bottom: 40px; }
+    body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(120,90,255,0.32), transparent); pointer-events: none; z-index: 0; }
+    .shell { max-width: 440px; margin: 0 auto; position: relative; z-index: 1; padding: 0 20px 40px; }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 0; }
+    .back-btn { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text); cursor: pointer; }
+    .logo { font-family: var(--serif); font-size: 22px; font-style: italic; font-weight: 700; color: var(--white); }
+    .hero { text-align: center; padding: 36px 0 28px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: rgba(245,206,122,0.10); border: 1px solid rgba(245,206,122,0.25); color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
+    .hero-title { font-family: var(--serif); font-size: 46px; font-weight: 700; font-style: italic; color: var(--white); line-height: 1; letter-spacing: -1px; margin-bottom: 12px; }
+    .hero-title span { color: var(--gold); }
+    .hero-sub { font-size: 15px; color: var(--soft); line-height: 1.65; max-width: 300px; margin: 0 auto; }
+    .features { display: flex; flex-direction: column; gap: 10px; margin: 28px 0 32px; }
+    .feature { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); }
+    .feature-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(245,206,122,0.08); border: 1px solid rgba(245,206,122,0.15); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .feature-title { font-size: 14px; font-weight: 800; color: var(--white); margin-bottom: 2px; }
+    .feature-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .cta-btn { width: 100%; padding: 16px; border-radius: 999px; background: var(--gold); color: #0A0714; font-family: var(--sans); font-size: 15px; font-weight: 900; border: none; cursor: pointer; box-shadow: 0 8px 28px rgba(245,206,122,0.22); margin-bottom: 12px; }
+    .restore-btn { width: 100%; padding: 12px; border-radius: 999px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 700; cursor: pointer; margin-bottom: 16px; }
+    .legal { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.65; }
+    .legal a { color: var(--lilac); text-decoration: none; }
+  </style>
 </head>
 <body>
-  <script>window.location.replace('index.html');</script>
+  <div class="shell">
+    <div class="top-bar">
+      <div class="back-btn" onclick="history.back()">←</div>
+      <div class="logo">miru.</div>
+      <div style="width:36px;"></div>
+    </div>
+    <div class="hero">
+      <div class="hero-badge">✦ Miru Premium</div>
+      <div class="hero-title">More <span>connection.</span><br>Less noise.</div>
+      <div class="hero-sub">Unlock the full Miru experience and find your people faster.</div>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">👀</div>
+        <div>
+          <div class="feature-title">See who liked you</div>
+          <div class="feature-desc">Know exactly who's already interested before you connect.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <div class="feature-title">Priority boost</div>
+          <div class="feature-desc">Appear at the top of discover and get seen by more people.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💬</div>
+        <div>
+          <div class="feature-title">Unlimited messages</div>
+          <div class="feature-desc">Message all your matches with no daily limits.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <div>
+          <div class="feature-title">Advanced matchmaking</div>
+          <div class="feature-desc">Fine-tune your preferences with AI-powered filtering.</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✦</div>
+        <div>
+          <div class="feature-title">Premium badge</div>
+          <div class="feature-desc">Stand out with a badge that builds trust on your profile.</div>
+        </div>
+      </div>
+    </div>
+    <button class="cta-btn" onclick="startIAP()">Upgrade to Premium ✦</button>
+    <button class="restore-btn" onclick="restoreIAP()">Restore purchase</button>
+    <div class="legal">
+      Subscriptions are managed through your Apple ID. Cancel anytime in App Store settings. By subscribing you agree to our <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.
+    </div>
+  </div>
+  <script>
+    function startIAP() {
+      if (window.webkit?.messageHandlers?.iap) {
+        window.webkit.messageHandlers.iap.postMessage({ action: 'purchase', productId: 'com.miruclub.premium.monthly' });
+      } else {
+        alert('Premium is available in the Miru iOS app.');
+      }
+    }
+    function restoreIAP() {
+      if (window.webkit?.messageHandlers?.iap) {
+        window.webkit.messageHandlers.iap.postMessage({ action: 'restore' });
+      } else {
+        alert('Restore purchase is available in the Miru iOS app.');
+      }
+    }
+  </script>
 </body>
 </html>
