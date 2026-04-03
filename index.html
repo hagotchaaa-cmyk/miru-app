@@ -1184,12 +1184,21 @@
 
       const likedIds = new Set((myLikes || []).map(l => l.target_user_id));
 
-      const { data, error } = await sb
+      // Load my preference
+      const { data: myProf } = await sb.from('profiles').select('interested_in').eq('user_id', me.id).maybeSingle();
+      const interestedIn = myProf?.interested_in || 'everyone';
+
+      let matchQuery = sb
         .from('profiles')
-        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until')
+        .select('user_id,name,age,bio,avatar_url,is_premium,boost_until,gender')
         .neq('user_id', me.id)
         .order('boost_until', { ascending: false, nullsFirst: false })
         .limit(20);
+
+      if (interestedIn === 'men') matchQuery = matchQuery.eq('gender', 'man');
+      else if (interestedIn === 'women') matchQuery = matchQuery.eq('gender', 'woman');
+
+      const { data, error } = await matchQuery;
 
       if (error) {
         document.getElementById('matchList').innerHTML = `
