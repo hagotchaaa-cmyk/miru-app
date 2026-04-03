@@ -118,11 +118,12 @@
       <div class="progress-seg active" id="seg0"></div>
       <div class="progress-seg" id="seg1"></div>
       <div class="progress-seg" id="seg2"></div>
+      <div class="progress-seg" id="seg3"></div>
     </div>
 
     <!-- Step 1: Basic info -->
     <div class="step active" id="step0">
-      <div class="step-eyebrow">Step 1 of 3</div>
+      <div class="step-eyebrow">Step 1 of 4</div>
       <div class="step-title">Tell us about you.</div>
       <div class="step-sub">Just the basics — you can always update this later.</div>
 
@@ -151,7 +152,7 @@
 
     <!-- Step 2: Looking for -->
     <div class="step" id="step1">
-      <div class="step-eyebrow">Step 2 of 3</div>
+      <div class="step-eyebrow">Step 2 of 4</div>
       <div class="step-title">What are you looking for?</div>
       <div class="step-sub">Pick everything that applies — no judgment here.</div>
 
@@ -168,7 +169,7 @@
 
     <!-- Step 3: Vibe -->
     <div class="step" id="step2">
-      <div class="step-eyebrow">Step 3 of 3</div>
+      <div class="step-eyebrow">Step 3 of 4</div>
       <div class="step-title">What's your vibe?</div>
       <div class="step-sub">Pick what feels like you. We use this to find better matches.</div>
 
@@ -181,6 +182,21 @@
         <div class="pill" onclick="togglePill(this)">🌙 Homebody</div>
         <div class="pill" onclick="togglePill(this)">🌍 Adventurous</div>
         <div class="pill" onclick="togglePill(this)">📚 Intellectual</div>
+      </div>
+
+      <button class="continue-btn" onclick="goStep(3)">Continue</button>
+    </div>
+
+    <!-- Step 4: Interested in -->
+    <div class="step" id="step3">
+      <div class="step-eyebrow">Step 4 of 4</div>
+      <div class="step-title">Who are you interested in?</div>
+      <div class="step-sub">This helps us show you the right people.</div>
+
+      <div class="pills" id="interestPills">
+        <div class="pill" onclick="selectInterest(this)" data-value="men">👨 Men</div>
+        <div class="pill" onclick="selectInterest(this)" data-value="women">👩 Women</div>
+        <div class="pill" onclick="selectInterest(this)" data-value="everyone">💜 Everyone</div>
       </div>
 
       <button class="continue-btn" onclick="finish()">Let's go</button>
@@ -201,7 +217,7 @@
   <script>
     const sb = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY || window.SUPABASE_KEY);
     let currentStep = 0;
-    const totalSteps = 3;
+    const totalSteps = 4;
 
     function updateProgress(step) {
       for (let i = 0; i < totalSteps; i++) {
@@ -231,6 +247,11 @@
       el.classList.toggle('on');
     }
 
+    function selectInterest(el) {
+      document.querySelectorAll('#interestPills .pill').forEach(p => p.classList.remove('on'));
+      el.classList.add('on');
+    }
+
     async function finish() {
       // Collect all data
       const name   = document.getElementById('inputName').value.trim();
@@ -241,6 +262,7 @@
         .map(p => p.textContent.trim());
       const vibes = [...document.querySelectorAll('#vibePills .pill.on')]
         .map(p => p.textContent.trim());
+      const interested_in = document.querySelector('#interestPills .pill.on')?.dataset.value || 'everyone';
 
       // Show done screen
       document.getElementById('step' + currentStep).classList.remove('active');
@@ -255,6 +277,7 @@
           name,
           age,
           gender,
+          interested_in,
           bio: vibes.length > 0 ? vibes.join(' · ') : '',
           status: 'active'
         }).eq('user_id', user.id);
